@@ -11,6 +11,7 @@
 
 namespace Liip\ImagineBundle\DependencyInjection;
 
+use Liip\ImagineBundle\Controller\ImagineController;
 use Liip\ImagineBundle\DependencyInjection\Factory\Loader\LoaderFactoryInterface;
 use Liip\ImagineBundle\DependencyInjection\Factory\Resolver\ResolverFactoryInterface;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
@@ -44,24 +45,24 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('liip_imagine', 'array');
+        $treeBuilder = new TreeBuilder('liip_imagine');
+        $rootNode = method_exists(TreeBuilder::class, 'getRootNode')
+            ? $treeBuilder->getRootNode()
+            : $treeBuilder->root('liip_imagine');
 
         $resolversPrototypeNode = $rootNode
             ->children()
                 ->arrayNode('resolvers')
                     ->useAttributeAsKey('name')
                     ->prototype('array')
-                        ->performNoDeepMerging()
-        ;
+                        ->performNoDeepMerging();
         $this->addResolversSections($resolversPrototypeNode);
 
         $loadersPrototypeNode = $rootNode
             ->children()
                 ->arrayNode('loaders')
                     ->useAttributeAsKey('name')
-                    ->prototype('array')
-        ;
+                    ->prototype('array');
         $this->addLoadersSections($loadersPrototypeNode);
 
         $rootNode
@@ -71,38 +72,36 @@ class Configuration implements ConfigurationInterface
                         empty($v['loaders']) ||
                         empty($v['loaders']['default']) ||
                         empty($v['resolvers']) ||
-                        empty($v['resolvers']['default'])
-                    ;
+                        empty($v['resolvers']['default']);
                 })
                 ->then(function ($v) {
                     if (empty($v['loaders'])) {
-                        $v['loaders'] = array();
+                        $v['loaders'] = [];
                     }
 
-                    if (false == is_array($v['loaders'])) {
+                    if (false === \is_array($v['loaders'])) {
                         throw new \LogicException('Loaders has to be array');
                     }
 
-                    if (false == array_key_exists('default', $v['loaders'])) {
-                        $v['loaders']['default'] = array('filesystem' => null);
+                    if (false === \array_key_exists('default', $v['loaders'])) {
+                        $v['loaders']['default'] = ['filesystem' => null];
                     }
 
                     if (empty($v['resolvers'])) {
-                        $v['resolvers'] = array();
+                        $v['resolvers'] = [];
                     }
 
-                    if (false == is_array($v['resolvers'])) {
+                    if (false === \is_array($v['resolvers'])) {
                         throw new \LogicException('Resolvers has to be array');
                     }
 
-                    if (false == array_key_exists('default', $v['resolvers'])) {
-                        $v['resolvers']['default'] = array('web_path' => null);
+                    if (false === \array_key_exists('default', $v['resolvers'])) {
+                        $v['resolvers']['default'] = ['web_path' => null];
                     }
 
                     return $v;
                 })
-            ->end()
-        ;
+            ->end();
 
         $rootNode
             ->fixXmlConfig('filter_set', 'filter_sets')
@@ -110,7 +109,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('driver')->defaultValue('gd')
                     ->validate()
                         ->ifTrue(function ($v) {
-                            return !in_array($v, array('gd', 'imagick', 'gmagick'));
+                            return !\in_array($v, ['gd', 'imagick', 'gmagick'], true);
                         })
                         ->thenInvalid('Invalid imagine driver specified: %s')
                     ->end()
@@ -122,9 +121,8 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('controller')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->scalarNode('filter_action')->defaultValue('liip_imagine.controller:filterAction')->end()
-                        ->scalarNode('filter_runtime_action')->defaultValue('liip_imagine.controller:filterRuntimeAction')->end()
-                        ->scalarNode('redirect_response_code')->defaultValue(301)->end()
+                        ->scalarNode('filter_action')->defaultValue(sprintf('%s::filterAction', ImagineController::class))->end()
+                        ->scalarNode('filter_runtime_action')->defaultValue(sprintf('%s::filterRuntimeAction', ImagineController::class))->end()
                     ->end()
                 ->end()
                 ->arrayNode('filter_sets')
@@ -149,7 +147,7 @@ class Configuration implements ConfigurationInterface
                                 ->end()
                             ->end()
                             ->arrayNode('post_processors')
-                                ->defaultValue(array())
+                                ->defaultValue([])
                                 ->useAttributeAsKey('name')
                                 ->prototype('array')
                                     ->useAttributeAsKey('name')
@@ -171,24 +169,27 @@ class Configuration implements ConfigurationInterface
     /**
      * @param ArrayNodeDefinition $resolversPrototypeNode
      */
-    protected function addResolversSections(ArrayNodeDefinition $resolversPrototypeNode)
+    private function addResolversSections(ArrayNodeDefinition $resolversPrototypeNode)
     {
-        foreach ($this->resolversFactories as $factory) {
-            $factory->addConfiguration(
-                $resolversPrototypeNode->children()->arrayNode($factory->getName())
-            );
-        }
+        $this->addConfigurationSections($this->resolversFactories, $resolversPrototypeNode);
     }
 
     /**
      * @param ArrayNodeDefinition $resolversPrototypeNode
      */
-    protected function addLoadersSections(ArrayNodeDefinition $resolversPrototypeNode)
+    private function addLoadersSections(ArrayNodeDefinition $resolversPrototypeNode)
     {
-        foreach ($this->loadersFactories as $factory) {
-            $factory->addConfiguration(
-                $resolversPrototypeNode->children()->arrayNode($factory->getName())
-            );
+        $this->addConfigurationSections($this->loadersFactories, $resolversPrototypeNode);
+    }
+
+    /**
+     * @param array               $factories
+     * @param ArrayNodeDefinition $definition
+     */
+    private function addConfigurationSections(array $factories, ArrayNodeDefinition $definition)
+    {
+        foreach ($factories as $f) {
+            $f->addConfiguration($definition->children()->arrayNode($f->getName()));
         }
     }
 }

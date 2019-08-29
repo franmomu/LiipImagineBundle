@@ -12,17 +12,17 @@
 namespace Liip\ImagineBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 
 /**
- * Be default, a metadata reader that requires the "exif" PHP extension is used. This compiler pass checks if the
- * extension is loaded or not, and switches to a metadata reader (that does not rely on "exif") if not.
+ * Replaces the default exif-extension-based metadata reader with a degraded one if the exif extensions is not loaded.
  */
 class MetadataReaderCompilerPass extends AbstractCompilerPass
 {
     /**
      * @var string
      */
-    private static $metadataReaderParameter = 'liip_imagine.meta_data.reader.class';
+    private static $metadataReaderServiceId = 'liip_imagine.meta_data.reader';
 
     /**
      * @var string
@@ -37,19 +37,23 @@ class MetadataReaderCompilerPass extends AbstractCompilerPass
     /**
      * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         if (!$this->isExifExtensionLoaded() && $this->isExifMetadataReaderSet($container)) {
-            $container->setParameter(self::$metadataReaderParameter, self::$metadataReaderDefaultClass);
-            $message = 'Overwrote "%s" parameter value from "%s" to "%s" due to missing "exif" extension '
-                .'(installing the "exif" extension is highly recommended; you may experience degraded '
-                .'metadata handling without it)';
-            $this->log($container, $message, array(
-                self::$metadataReaderParameter,
-                self::$metadataReaderExifClass,
-                self::$metadataReaderDefaultClass,
-            ));
+            $container->setDefinition(self::$metadataReaderServiceId, new Definition(self::$metadataReaderDefaultClass));
+            $message = 'Replaced the "%s" metadata reader service with "%s" from "%s" due to missing "exif" extension '.
+                       '(as you may experience degraded metadata handling without the exif extension, installation is '.
+                       'highly recommended)';
+            $this->log($container, $message, self::$metadataReaderServiceId, self::$metadataReaderDefaultClass, self::$metadataReaderExifClass);
         }
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isExifExtensionLoaded(): bool
+    {
+        return \extension_loaded('exif');
     }
 
     /**
@@ -57,16 +61,8 @@ class MetadataReaderCompilerPass extends AbstractCompilerPass
      *
      * @return bool
      */
-    private function isExifMetadataReaderSet(ContainerBuilder $container)
+    private function isExifMetadataReaderSet(ContainerBuilder $container): bool
     {
-        return $container->getParameter(self::$metadataReaderParameter) === self::$metadataReaderExifClass;
-    }
-
-    /**
-     * @return bool
-     */
-    protected function isExifExtensionLoaded()
-    {
-        return extension_loaded('exif');
+        return $container->getDefinition(self::$metadataReaderServiceId)->getClass() === self::$metadataReaderExifClass;
     }
 }

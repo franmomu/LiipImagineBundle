@@ -20,16 +20,6 @@ use Liip\ImagineBundle\Tests\Functional\AbstractWebTestCase;
  */
 class FileSystemLocatorTest extends AbstractWebTestCase
 {
-    /**
-     * @param string $name
-     *
-     * @return FileSystemLocator
-     */
-    private function getFileSystemLoaderLocator($name)
-    {
-        return $this->getPrivateProperty($this->getService(sprintf('liip_imagine.binary.loader.%s', $name)), 'locator');
-    }
-
     public function testBundleResourcesOnAllLoader()
     {
         static::createClient();
@@ -37,7 +27,7 @@ class FileSystemLocatorTest extends AbstractWebTestCase
         $locator = $this->getFileSystemLoaderLocator('bundles_all');
         $roots = $this->getPrivateProperty($locator, 'roots');
 
-        $this->assertTrue(count($roots) >= 2);
+        $this->assertTrue(\count($roots) >= 2);
         $this->assertStringEndsWith('FooBundle/Resources/public', $roots['LiipFooBundle']);
         $this->assertStringEndsWith('BarBundle/Resources/public', $roots['LiipBarBundle']);
 
@@ -52,7 +42,7 @@ class FileSystemLocatorTest extends AbstractWebTestCase
         $locator = $this->getFileSystemLoaderLocator('bundles_only_foo');
         $roots = $this->getPrivateProperty($locator, 'roots');
 
-        $this->assertTrue(count($roots) >= 1);
+        $this->assertTrue(\count($roots) >= 1);
         $this->assertStringEndsWith('FooBundle/Resources/public', $roots['LiipFooBundle']);
 
         $this->assertFooBundleResourcesExist($locator);
@@ -65,10 +55,20 @@ class FileSystemLocatorTest extends AbstractWebTestCase
         $locator = $this->getFileSystemLoaderLocator('bundles_only_bar');
         $roots = $this->getPrivateProperty($locator, 'roots');
 
-        $this->assertTrue(count($roots) >= 1);
+        $this->assertTrue(\count($roots) >= 1);
         $this->assertStringEndsWith('BarBundle/Resources/public', $roots['LiipBarBundle']);
 
         $this->assertBarBundleResourcesExist($locator, true);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return FileSystemLocator
+     */
+    private function getFileSystemLoaderLocator($name)
+    {
+        return $this->getPrivateProperty($this->getService(sprintf('liip_imagine.binary.loader.%s', $name)), 'locator');
     }
 
     /**
@@ -100,7 +100,7 @@ class FileSystemLocatorTest extends AbstractWebTestCase
      * @param string           $expectedContents
      * @param string|null      $message
      */
-    private function assertLocatedFileContentsStartsWith(LocatorInterface $locator, $filePath, $expectedContents, $message = null)
+    private function assertLocatedFileContentsStartsWith(LocatorInterface $locator, $filePath, $expectedContents, $message = '')
     {
         $this->assertStringStartsWith($expectedContents, file_get_contents($locator->locate($filePath)), $message);
     }

@@ -13,13 +13,13 @@ The default configuration for the bundle looks like this:
         resolvers:
             default:
                 web_path:
-                    web_root: ~ # %kernel.root_dir%/../web
+                    web_root: ~ # %kernel.project_dir%/public (%kernel.project_dir%/web for Symfony < 4.0.0)
                     cache_prefix: ~ # media/cache
 
         loaders:
             default:
                 filesystem:
-                    data_root: ~  # %kernel.root_dir%/../web/
+                    data_root: ~  # %kernel.project_dir%/public (%kernel.project_dir%/web for Symfony < 4.0.0)
 
         driver:               gd
         cache:                default
@@ -72,7 +72,6 @@ Each filter set that you specify has the following options:
   for more information) and options that should be passed to the specific filter type.
 * ``post_processors`` - sets post-processors to be applied on filtered image
   (see Post-Processors section in the :doc:`filters chapter <filters>` for details).
-* ``quality`` - override the default quality of 100 for the generated images. **(deprecated)**
 * ``jpeg_quality`` - override the quality for jpeg images (this overrides the
   ``quality`` option above)
 * ``png_compression_level`` - set the compression level for png images (0-9)

@@ -11,33 +11,38 @@
 
 namespace Liip\ImagineBundle\Tests\DependencyInjection\Factory\Loader;
 
+use Liip\ImagineBundle\DependencyInjection\Factory\Loader\LoaderFactoryInterface;
 use Liip\ImagineBundle\DependencyInjection\Factory\Loader\StreamLoaderFactory;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
- * @covers \Liip\ImagineBundle\DependencyInjection\Factory\Loader\StreamLoaderFactory<extended>
+ * @covers \Liip\ImagineBundle\DependencyInjection\Factory\Loader\StreamLoaderFactory
  */
-class StreamLoaderFactoryTest extends \Phpunit_Framework_TestCase
+class StreamLoaderFactoryTest extends TestCase
 {
     public function testImplementsLoaderFactoryInterface()
     {
-        $rc = new \ReflectionClass('\Liip\ImagineBundle\DependencyInjection\Factory\Loader\StreamLoaderFactory');
+        $rc = new \ReflectionClass(StreamLoaderFactory::class);
 
-        $this->assertTrue($rc->implementsInterface('\Liip\ImagineBundle\DependencyInjection\Factory\Loader\LoaderFactoryInterface'));
+        $this->assertTrue($rc->implementsInterface(LoaderFactoryInterface::class));
     }
 
     public function testCouldBeConstructedWithoutAnyArguments()
     {
-        new StreamLoaderFactory();
+        $loader = new StreamLoaderFactory();
+
+        $this->assertInstanceOf(StreamLoaderFactory::class, $loader);
     }
 
     public function testReturnExpectedName()
     {
         $loader = new StreamLoaderFactory();
 
-        $this->assertEquals('stream', $loader->getName());
+        $this->assertSame('stream', $loader->getName());
     }
 
     public function testCreateLoaderDefinitionOnCreate()
@@ -46,34 +51,35 @@ class StreamLoaderFactoryTest extends \Phpunit_Framework_TestCase
 
         $loader = new StreamLoaderFactory();
 
-        $loader->create($container, 'the_loader_name', array(
+        $loader->create($container, 'the_loader_name', [
             'wrapper' => 'theWrapper',
             'context' => 'theContext',
-        ));
+        ]);
 
         $this->assertTrue($container->hasDefinition('liip_imagine.binary.loader.the_loader_name'));
 
         $loaderDefinition = $container->getDefinition('liip_imagine.binary.loader.the_loader_name');
-        $this->assertInstanceOf('Symfony\Component\DependencyInjection\DefinitionDecorator', $loaderDefinition);
-        $this->assertEquals('liip_imagine.binary.loader.prototype.stream', $loaderDefinition->getParent());
+        $this->assertInstanceOf(ChildDefinition::class, $loaderDefinition);
+        $this->assertSame('liip_imagine.binary.loader.prototype.stream', $loaderDefinition->getParent());
 
-        $this->assertEquals('theWrapper', $loaderDefinition->getArgument(0));
-        $this->assertEquals('theContext', $loaderDefinition->getArgument(1));
+        $this->assertSame('theWrapper', $loaderDefinition->getArgument(0));
+        $this->assertSame('theContext', $loaderDefinition->getArgument(1));
     }
 
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage The child node "wrapper" at path "stream" must be configured.
-     */
     public function testThrowIfWrapperNotSetOnAddConfiguration()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('stream', 'array');
+        $this->expectException(\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException::class);
+        $this->expectExceptionMessage('The child node "wrapper" at path "stream" must be configured.');
+
+        $treeBuilder = new TreeBuilder('stream');
+        $rootNode = method_exists(TreeBuilder::class, 'getRootNode')
+            ? $treeBuilder->getRootNode()
+            : $treeBuilder->root('stream');
 
         $resolver = new StreamLoaderFactory();
         $resolver->addConfiguration($rootNode);
 
-        $this->processConfigTree($treeBuilder, array());
+        $this->processConfigTree($treeBuilder, []);
     }
 
     public function testProcessCorrectlyOptionsOnAddConfiguration()
@@ -81,39 +87,43 @@ class StreamLoaderFactoryTest extends \Phpunit_Framework_TestCase
         $expectedWrapper = 'theWrapper';
         $expectedContext = 'theContext';
 
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('stream', 'array');
+        $treeBuilder = new TreeBuilder('stream');
+        $rootNode = method_exists(TreeBuilder::class, 'getRootNode')
+            ? $treeBuilder->getRootNode()
+            : $treeBuilder->root('stream');
 
         $loader = new StreamLoaderFactory();
         $loader->addConfiguration($rootNode);
 
-        $config = $this->processConfigTree($treeBuilder, array(
-            'stream' => array(
+        $config = $this->processConfigTree($treeBuilder, [
+            'stream' => [
                 'wrapper' => $expectedWrapper,
                 'context' => $expectedContext,
-            ),
-        ));
+            ],
+        ]);
 
         $this->assertArrayHasKey('wrapper', $config);
-        $this->assertEquals($expectedWrapper, $config['wrapper']);
+        $this->assertSame($expectedWrapper, $config['wrapper']);
 
         $this->assertArrayHasKey('context', $config);
-        $this->assertEquals($expectedContext, $config['context']);
+        $this->assertSame($expectedContext, $config['context']);
     }
 
     public function testAddDefaultOptionsIfNotSetOnAddConfiguration()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('stream', 'array');
+        $treeBuilder = new TreeBuilder('stream');
+        $rootNode = method_exists(TreeBuilder::class, 'getRootNode')
+            ? $treeBuilder->getRootNode()
+            : $treeBuilder->root('stream');
 
         $loader = new StreamLoaderFactory();
         $loader->addConfiguration($rootNode);
 
-        $config = $this->processConfigTree($treeBuilder, array(
-            'stream' => array(
+        $config = $this->processConfigTree($treeBuilder, [
+            'stream' => [
                 'wrapper' => 'aWrapper',
-            ),
-        ));
+            ],
+        ]);
 
         $this->assertArrayHasKey('context', $config);
         $this->assertNull($config['context']);

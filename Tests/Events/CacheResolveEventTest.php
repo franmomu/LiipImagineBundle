@@ -12,11 +12,12 @@
 namespace Liip\ImagineBundle\Tests\Events;
 
 use Liip\ImagineBundle\Events\CacheResolveEvent;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Liip\ImagineBundle\Events\CacheResolveEvent
  */
-class CacheResolveEventTest extends \PHPUnit_Framework_TestCase
+class CacheResolveEventTest extends TestCase
 {
     protected function setUp()
     {
@@ -26,7 +27,7 @@ class CacheResolveEventTest extends \PHPUnit_Framework_TestCase
     {
         $event = new CacheResolveEvent('default_path', 'default_filter');
 
-        $this->assertAttributeEquals('default_path', 'path', $event);
+        $this->assertAttributeSame('default_path', 'path', $event);
     }
 
     public function testShouldAllowSetPathByMethod()
@@ -34,14 +35,14 @@ class CacheResolveEventTest extends \PHPUnit_Framework_TestCase
         $event = new CacheResolveEvent('default_path', 'default_filter');
         $event->setPath('new_path');
 
-        $this->assertAttributeEquals('new_path', 'path', $event);
+        $this->assertAttributeSame('new_path', 'path', $event);
     }
 
     public function testShouldAllowGetPathWhichWasSetInConstruct()
     {
         $event = new CacheResolveEvent('default_path', 'default_filter');
 
-        $this->assertEquals('default_path', $event->getPath());
+        $this->assertSame('default_path', $event->getPath());
     }
 
     public function testShouldAllowGetPathWhichWasSetByMethod()
@@ -49,14 +50,14 @@ class CacheResolveEventTest extends \PHPUnit_Framework_TestCase
         $event = new CacheResolveEvent('default_path', 'default_filter');
         $event->setPath('new_path');
 
-        $this->assertEquals('new_path', $event->getPath());
+        $this->assertSame('new_path', $event->getPath());
     }
 
     public function testShouldAllowSetFilterInConstruct()
     {
         $event = new CacheResolveEvent('default_path', 'default_filter');
 
-        $this->assertAttributeEquals('default_filter', 'filter', $event);
+        $this->assertAttributeSame('default_filter', 'filter', $event);
     }
 
     public function testShouldAllowSetFilterByMethod()
@@ -64,14 +65,14 @@ class CacheResolveEventTest extends \PHPUnit_Framework_TestCase
         $event = new CacheResolveEvent('default_path', 'default_filter');
         $event->setFilter('new_filter');
 
-        $this->assertAttributeEquals('new_filter', 'filter', $event);
+        $this->assertAttributeSame('new_filter', 'filter', $event);
     }
 
     public function testShouldAllowGetFilterWhichWasSetInConstruct()
     {
         $event = new CacheResolveEvent('default_path', 'default_filter');
 
-        $this->assertEquals('default_filter', $event->getFilter());
+        $this->assertSame('default_filter', $event->getFilter());
     }
 
     public function testShouldAllowGetFilterWhichWasSetByMethod()
@@ -79,14 +80,14 @@ class CacheResolveEventTest extends \PHPUnit_Framework_TestCase
         $event = new CacheResolveEvent('default_path', 'default_filter');
         $event->setFilter('new_filter');
 
-        $this->assertEquals('new_filter', $event->getFilter());
+        $this->assertSame('new_filter', $event->getFilter());
     }
 
     public function testShouldAllowSetUrlInConstruct()
     {
         $event = new CacheResolveEvent('default_path', 'default_filter', 'default_url');
 
-        $this->assertAttributeEquals('default_url', 'url', $event);
+        $this->assertAttributeSame('default_url', 'url', $event);
     }
 
     public function testShouldAllowSetUrlByMethod()
@@ -94,14 +95,14 @@ class CacheResolveEventTest extends \PHPUnit_Framework_TestCase
         $event = new CacheResolveEvent('default_path', 'default_filter');
         $event->setUrl('new_url');
 
-        $this->assertAttributeEquals('new_url', 'url', $event);
+        $this->assertAttributeSame('new_url', 'url', $event);
     }
 
     public function testShouldAllowGetUrlWhichWasSetInConstruct()
     {
         $event = new CacheResolveEvent('default_path', 'default_filter', 'default_url');
 
-        $this->assertEquals('default_url', $event->getUrl());
+        $this->assertSame('default_url', $event->getUrl());
     }
 
     public function testShouldAllowGetUrlWhichWasSetByMethod()
@@ -109,6 +110,6 @@ class CacheResolveEventTest extends \PHPUnit_Framework_TestCase
         $event = new CacheResolveEvent('default_path', 'default_filter');
         $event->setUrl('new_url');
 
-        $this->assertEquals('new_url', $event->getUrl());
+        $this->assertSame('new_url', $event->getUrl());
     }
 }

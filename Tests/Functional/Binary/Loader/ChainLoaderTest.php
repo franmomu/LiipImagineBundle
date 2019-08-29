@@ -19,24 +19,24 @@ use Liip\ImagineBundle\Tests\Functional\AbstractWebTestCase;
  */
 class ChainLoaderTest extends AbstractWebTestCase
 {
+    public function testFind(): void
+    {
+        static::createClient();
+
+        $loader = $this->getLoader('baz');
+
+        foreach (['images/cats.jpeg', 'images/cats2.jpeg', 'file.ext', 'bar-bundle-file.ext', 'foo-bundle-file.ext'] as $file) {
+            $this->assertNotNull($loader->find($file));
+        }
+    }
+
     /**
      * @param string $name
      *
      * @return ChainLoader|object
      */
-    private function getLoader($name)
+    private function getLoader(string $name): ChainLoader
     {
         return $this->getService(sprintf('liip_imagine.binary.loader.%s', $name));
-    }
-
-    public function testFind()
-    {
-        static::createClient();
-
-        $loader = $this->getLoader('default');
-
-        foreach (array('images/cats.jpeg', 'images/cats2.jpeg', 'file.ext', 'bar-bundle-file.ext', 'foo-bundle-file.ext') as $file) {
-            $this->assertNotNull($loader->find($file));
-        }
     }
 }

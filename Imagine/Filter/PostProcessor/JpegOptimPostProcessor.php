@@ -15,7 +15,6 @@ use Liip\ImagineBundle\Binary\BinaryInterface;
 use Liip\ImagineBundle\Exception\Imagine\Filter\PostProcessor\InvalidOptionException;
 use Liip\ImagineBundle\Model\Binary;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\ProcessBuilder;
 
 class JpegOptimPostProcessor extends AbstractPostProcessor
 {
@@ -112,15 +111,17 @@ class JpegOptimPostProcessor extends AbstractPostProcessor
      *
      * @return BinaryInterface
      */
-    protected function doProcess(BinaryInterface $binary, array $options = array())
+    protected function doProcess(BinaryInterface $binary, array $options = []): BinaryInterface
     {
         if (!$this->isBinaryTypeJpgImage($binary)) {
             return $binary;
         }
 
-        $file = $this->writeTemporaryFile($binary, $options, 'imagine-post-processor-optipng');
+        $file = $this->writeTemporaryFile($binary, $options, 'imagine-post-processor-jpegoptim');
 
-        $process = $this->setupProcessBuilder($options)->add($file)->getProcess();
+        $arguments = $this->getProcessArguments($options);
+        $arguments[] = $file;
+        $process = $this->createProcess($arguments, $options);
         $process->run();
 
         if (!$this->isSuccessfulProcess($process)) {
@@ -138,14 +139,14 @@ class JpegOptimPostProcessor extends AbstractPostProcessor
     /**
      * @param array $options
      *
-     * @return ProcessBuilder
+     * @return array
      */
-    private function setupProcessBuilder(array $options = array())
+    private function getProcessArguments(array $options = []): array
     {
-        $builder = $this->createProcessBuilder(array($this->executablePath), $options);
+        $arguments = [$this->executablePath];
 
-        if (isset($options['strip_all']) ? $options['strip_all'] : $this->strip) {
-            $builder->add('--strip-all');
+        if ($options['strip_all'] ?? $this->strip) {
+            $arguments[] = '--strip-all';
         }
 
         if (isset($options['max'])) {
@@ -159,20 +160,20 @@ class JpegOptimPostProcessor extends AbstractPostProcessor
             $options['quality'] = $options['max'];
         }
 
-        if ($quality = isset($options['quality']) ? $options['quality'] : $this->quality) {
+        if ($quality = $options['quality'] ?? $this->quality) {
             if (!in_array($options['quality'], range(0, 100))) {
                 throw new InvalidOptionException('the "quality" option must be an int between 0 and 100', $options);
             }
 
-            $builder->add(sprintf('--max=%d', $quality));
+            $arguments[] = sprintf('--max=%d', $quality);
         }
 
-        if (isset($options['progressive']) ? $options['progressive'] : $this->progressive) {
-            $builder->add('--all-progressive');
+        if ($options['progressive'] ?? $this->progressive) {
+            $arguments[] = '--all-progressive';
         } else {
-            $builder->add('--all-normal');
+            $arguments[] = '--all-normal';
         }
 
-        return $builder;
+        return $arguments;
     }
 }

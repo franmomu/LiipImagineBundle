@@ -12,6 +12,7 @@
 namespace Liip\ImagineBundle\Imagine\Cache\Resolver;
 
 use Liip\ImagineBundle\Binary\BinaryInterface;
+use Liip\ImagineBundle\Imagine\Cache\Helper\PathHelper;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Routing\RequestContext;
 
@@ -68,8 +69,8 @@ class WebPathResolver implements ResolverInterface
     public function resolve($path, $filter)
     {
         return sprintf('%s/%s',
-            $this->getBaseUrl(),
-            $this->getFileUrl($path, $filter)
+            rtrim($this->getBaseUrl(), '/'),
+            ltrim($this->getFileUrl($path, $filter), '/')
         );
     }
 
@@ -102,7 +103,7 @@ class WebPathResolver implements ResolverInterface
         }
 
         if (empty($paths)) {
-            $filtersCacheDir = array();
+            $filtersCacheDir = [];
             foreach ($filters as $filter) {
                 $filtersCacheDir[] = $this->cacheRoot.'/'.$filter;
             }
@@ -124,7 +125,7 @@ class WebPathResolver implements ResolverInterface
      */
     protected function getFilePath($path, $filter)
     {
-        return $this->webRoot.'/'.$this->getFileUrl($path, $filter);
+        return $this->webRoot.'/'.$this->getFullPath($path, $filter);
     }
 
     /**
@@ -132,10 +133,7 @@ class WebPathResolver implements ResolverInterface
      */
     protected function getFileUrl($path, $filter)
     {
-        // crude way of sanitizing URL scheme ("protocol") part
-        $path = str_replace('://', '---', $path);
-
-        return $this->cachePrefix.'/'.$filter.'/'.ltrim($path, '/');
+        return PathHelper::filePathToUrlPath($this->getFullPath($path, $filter));
     }
 
     /**
@@ -144,16 +142,16 @@ class WebPathResolver implements ResolverInterface
     protected function getBaseUrl()
     {
         $port = '';
-        if ('https' == $this->requestContext->getScheme() && $this->requestContext->getHttpsPort() != 443) {
+        if ('https' === $this->requestContext->getScheme() && 443 !== $this->requestContext->getHttpsPort()) {
             $port = ":{$this->requestContext->getHttpsPort()}";
         }
 
-        if ('http' == $this->requestContext->getScheme() && $this->requestContext->getHttpPort() != 80) {
+        if ('http' === $this->requestContext->getScheme() && 80 !== $this->requestContext->getHttpPort()) {
             $port = ":{$this->requestContext->getHttpPort()}";
         }
 
         $baseUrl = $this->requestContext->getBaseUrl();
-        if ('.php' == substr($this->requestContext->getBaseUrl(), -4)) {
+        if ('.php' === mb_substr($this->requestContext->getBaseUrl(), -4)) {
             $baseUrl = pathinfo($this->requestContext->getBaseurl(), PATHINFO_DIRNAME);
         }
         $baseUrl = rtrim($baseUrl, '/\\');
@@ -164,5 +162,13 @@ class WebPathResolver implements ResolverInterface
             $port,
             $baseUrl
         );
+    }
+
+    private function getFullPath($path, $filter)
+    {
+        // crude way of sanitizing URL scheme ("protocol") part
+        $path = str_replace('://', '---', $path);
+
+        return $this->cachePrefix.'/'.$filter.'/'.ltrim($path, '/');
     }
 }

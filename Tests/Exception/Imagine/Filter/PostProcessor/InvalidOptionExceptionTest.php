@@ -12,25 +12,26 @@
 namespace Liip\ImagineBundle\Tests\Exception\Imagine\Filter\PostProcessor;
 
 use Liip\ImagineBundle\Exception\Imagine\Filter\PostProcessor\InvalidOptionException;
+use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
 
 /**
  * @covers \Liip\ImagineBundle\Exception\Imagine\Filter\PostProcessor\InvalidOptionException
  */
-class InvalidOptionExceptionTest extends \PHPUnit_Framework_TestCase
+class InvalidOptionExceptionTest extends TestCase
 {
     /**
      * @return array[]
      */
     public static function provideExceptionMessageData()
     {
-        return array(
-            array('a foobar message', array(), ''),
-            array('a foobar message', array('foo' => 'bar'), 'foo="bar"'),
-            array('a foobar message', array('baz' => new \stdClass()), 'baz="stdClass::__set_state(array())"'),
-            array('a foobar message', array('foo' => 'bar', 'baz' => new \stdClass()), 'foo="bar", baz="stdClass::__set_state(array())"'),
-            array('a foobar message', array('foo' => 'bar', 'baz' => new \stdClass(), 'int' => 100, 'array' => array('this', 'that')), 'foo="bar", baz="stdClass::__set_state(array())", int="100", array="["this","that"]"'),
-            array('a foobar message', array('foo' => 'bar', 'baz' => new \stdClass(), 'int' => 100, 'array' => array('this' => 'that')), 'foo="bar", baz="stdClass::__set_state(array())", int="100", array="{"this":"that"}"'),
-        );
+        return [
+            ['a foobar message', [], ''],
+            ['a foobar message', ['foo' => 'bar'], 'foo="bar"'],
+            ['a foobar message', ['baz' => new \stdClass()], 'baz="{}"'],
+            ['a foobar message', ['foo' => 'bar', 'baz' => new \stdClass()], 'foo="bar", baz="{}"'],
+            ['a foobar message', ['foo' => 'bar', 'baz' => new \stdClass(), 'int' => 100, 'array' => ['this', 'that']], 'foo="bar", baz="{}", int="100", array="["this","that"]"'],
+            ['a foobar message', ['foo' => 'bar', 'baz' => new \stdClass(), 'int' => 100, 'array' => ['this' => 'that']], 'foo="bar", baz="{}", int="100", array="{"this":"that"}"'],
+        ];
     }
 
     /**

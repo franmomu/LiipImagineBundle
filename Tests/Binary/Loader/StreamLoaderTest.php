@@ -19,12 +19,11 @@ use Liip\ImagineBundle\Tests\AbstractTest;
  */
 class StreamLoaderTest extends AbstractTest
 {
-    /**
-     * @expectedException \Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException
-     * @expectedExceptionMessageRegExp {Source image file://.+ not found.}
-     */
     public function testThrowsIfInvalidPathGivenOnFind()
     {
+        $this->expectException(\Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException::class);
+        $this->expectExceptionMessageRegExp('{Source image file://.+ not found.}');
+
         $loader = new StreamLoader('file://');
         $loader->find($this->temporaryPath.'/invalid.jpeg');
     }
@@ -33,9 +32,8 @@ class StreamLoaderTest extends AbstractTest
     {
         $loader = new StreamLoader('file://');
 
-        $this->assertSame(
-            file_get_contents($this->fixturesPath.'/assets/cats.jpeg'),
-            $loader->find($this->fixturesPath.'/assets/cats.jpeg')
+        $this->assertStringEqualsFile(
+            $this->fixturesPath.'/assets/cats.jpeg', $loader->find($this->fixturesPath.'/assets/cats.jpeg')
         );
     }
 
@@ -43,18 +41,16 @@ class StreamLoaderTest extends AbstractTest
     {
         $loader = new StreamLoader('file://', stream_context_create());
 
-        $this->assertSame(
-            file_get_contents($this->fixturesPath.'/assets/cats.jpeg'),
-            $loader->find($this->fixturesPath.'/assets/cats.jpeg')
+        $this->assertStringEqualsFile(
+            $this->fixturesPath.'/assets/cats.jpeg', $loader->find($this->fixturesPath.'/assets/cats.jpeg')
         );
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The given context is no valid resource
-     */
     public function testThrowsIfInvalidResourceGivenInConstructor()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The given context is no valid resource');
+
         new StreamLoader('an-invalid-resource-name', true);
     }
 }

@@ -31,9 +31,8 @@ It is based on `filesystem transport`_.
     # app/config/config.yml
 
     enqueue:
-        transport:
-            # you could set other available transports
-            default: 'file://%kernel.root_dir%/../var/enqueue'
+        default:
+            transport: 'file://%kernel.root_dir%/../var/queues'
         client: ~
 
 Step 2: Configure LiipImagineBundle
@@ -72,7 +71,7 @@ You can force cache to be recreated and in this case the cached image is removed
     <?php
 
     use Enqueue\Client\ProducerInterface;
-    use Liip\ImagineBundle\Async\Topics;
+    use Liip\ImagineBundle\Async\Commands;
     use Liip\ImagineBundle\Async\ResolveCache;
     use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -80,16 +79,21 @@ You can force cache to be recreated and in this case the cached image is removed
      * @var ContainerInterface $container
      * @var ProducerInterface $producer
      */
-    $producer = $container->get('enqueue.producer');
+    $producer = $container->get(ProducerInterface::class);
 
     // resolve all caches
-    $producer->send(Topics::RESOLVE_CACHE, new ResolveCache('the/path/img.png'));
+    $producer->sendCommand(Commands::RESOLVE_CACHE, new ResolveCache('the/path/img.png'));
 
     // resolve specific cache
-    $producer->send(Topics::RESOLVE_CACHE, new ResolveCache('the/path/img.png', array('fooFilter')));
+    $producer->sendCommand(Commands::RESOLVE_CACHE, new ResolveCache('the/path/img.png', array('fooFilter')));
 
     // force resolve (removes the cache if exists)
-    $producer->send(Topics::RESOLVE_CACHE, new ResolveCache('the/path/img.png', null, true));
+    $producer->sendCommand(Commands::RESOLVE_CACHE, new ResolveCache('the/path/img.png', null, true));
+
+    // send command and wait for reply
+    $reply = $producer->sendCommand(Commands::RESOLVE_CACHE, new ResolveCache('the/path/img.png', null, true), true);
+
+    $replyMessage = $reply->receive(20000); // wait for 20 sec
 
 
 .. _`enqueue library`: https://github.com/php-enqueue/enqueue-dev

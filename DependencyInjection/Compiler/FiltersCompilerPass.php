@@ -23,12 +23,12 @@ class FiltersCompilerPass extends AbstractCompilerPass
     {
         $tags = $container->findTaggedServiceIds('liip_imagine.filter.loader');
 
-        if (count($tags) > 0 && $container->hasDefinition('liip_imagine.filter.manager')) {
+        if (\count($tags) > 0 && $container->hasDefinition('liip_imagine.filter.manager')) {
             $manager = $container->getDefinition('liip_imagine.filter.manager');
 
             foreach ($tags as $id => $tag) {
-                $manager->addMethodCall('addLoader', array($tag[0]['loader'], new Reference($id)));
-                $this->log($container, 'Registered imagine-bundle filter loader: %s', array($id));
+                $manager->addMethodCall('addLoader', [$tag[0]['loader'], new Reference($id)]);
+                $this->log($container, 'Registered filter loader: %s', $id);
             }
         }
     }
