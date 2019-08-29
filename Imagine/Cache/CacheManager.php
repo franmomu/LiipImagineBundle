@@ -20,6 +20,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface as ContractsEventDispatcherInterface;
 
 class CacheManager
 {
@@ -36,7 +37,7 @@ class CacheManager
     /**
      * @var ResolverInterface[]
      */
-    protected $resolvers = array();
+    protected $resolvers = [];
 
     /**
      * @var SignerInterface
@@ -92,40 +93,6 @@ class CacheManager
     }
 
     /**
-     * Gets a resolver for the given filter.
-     *
-     * In case there is no specific resolver, but a default resolver has been configured, the default will be returned.
-     *
-     * @param string $filter
-     * @param string $resolver
-     *
-     * @throws \OutOfBoundsException If neither a specific nor a default resolver is available
-     *
-     * @return ResolverInterface
-     */
-    protected function getResolver($filter, $resolver)
-    {
-        // BC
-        if (false == $resolver) {
-            $config = $this->filterConfig->get($filter);
-
-            $resolverName = empty($config['cache']) ? $this->defaultResolver : $config['cache'];
-        } else {
-            $resolverName = $resolver;
-        }
-
-        if (!isset($this->resolvers[$resolverName])) {
-            throw new \OutOfBoundsException(sprintf(
-                'Could not find resolver "%s" for "%s" filter type',
-                $resolverName,
-                $filter
-            ));
-        }
-
-        return $this->resolvers[$resolverName];
-    }
-
-    /**
      * Gets filtered path for rendering in the browser.
      * It could be the cached one or an url of filter action.
      *
@@ -136,21 +103,19 @@ class CacheManager
      *
      * @return string
      */
-    public function getBrowserPath($path, $filter, array $runtimeConfig = array(), $resolver = null)
+    public function getBrowserPath($path, $filter, array $runtimeConfig = [], $resolver = null)
     {
         if (!empty($runtimeConfig)) {
             $rcPath = $this->getRuntimePath($path, $runtimeConfig);
 
             return $this->isStored($rcPath, $filter, $resolver) ?
                 $this->resolve($rcPath, $filter, $resolver) :
-                $this->generateUrl($path, $filter, $runtimeConfig, $resolver)
-            ;
+                $this->generateUrl($path, $filter, $runtimeConfig, $resolver);
         }
 
         return $this->isStored($path, $filter, $resolver) ?
             $this->resolve($path, $filter, $resolver) :
-            $this->generateUrl($path, $filter, array(), $resolver)
-        ;
+            $this->generateUrl($path, $filter, [], $resolver);
     }
 
     /**
@@ -176,12 +141,12 @@ class CacheManager
      *
      * @return string
      */
-    public function generateUrl($path, $filter, array $runtimeConfig = array(), $resolver = null)
+    public function generateUrl($path, $filter, array $runtimeConfig = [], $resolver = null)
     {
-        $params = array(
+        $params = [
             'path' => ltrim($path, '/'),
             'filter' => $filter,
-        );
+        ];
 
         if ($resolver) {
             $params['resolver'] = $resolver;
@@ -226,19 +191,34 @@ class CacheManager
      */
     public function resolve($path, $filter, $resolver = null)
     {
-        if (false !== strpos($path, '/../') || 0 === strpos($path, '../')) {
+        if (false !== mb_strpos($path, '/../') || 0 === mb_strpos($path, '../')) {
             throw new NotFoundHttpException(sprintf("Source image was searched with '%s' outside of the defined root path", $path));
         }
 
         $preEvent = new CacheResolveEvent($path, $filter);
-        $this->dispatcher->dispatch(ImagineEvents::PRE_RESOLVE, $preEvent);
+        $this->dispatchWithBC($preEvent, ImagineEvents::PRE_RESOLVE);
 
         $url = $this->getResolver($preEvent->getFilter(), $resolver)->resolve($preEvent->getPath(), $preEvent->getFilter());
 
         $postEvent = new CacheResolveEvent($preEvent->getPath(), $preEvent->getFilter(), $url);
-        $this->dispatcher->dispatch(ImagineEvents::POST_RESOLVE, $postEvent);
+        $this->dispatchWithBC($postEvent, ImagineEvents::POST_RESOLVE);
 
         return $postEvent->getUrl();
+    }
+
+    /**
+     * BC Layer for Symfony < 4.3
+     *
+     * @param CacheResolveEvent $event
+     * @param string $eventName
+     */
+    private function dispatchWithBC(CacheResolveEvent $event, string $eventName): void
+    {
+        if ($this->dispatcher instanceof ContractsEventDispatcherInterface) {
+            $this->dispatcher->dispatch($event, $eventName);
+        } else {
+            $this->dispatcher->dispatch($eventName, $event);
+        }
     }
 
     /**
@@ -262,12 +242,11 @@ class CacheManager
     {
         if (null === $filters) {
             $filters = array_keys($this->filterConfig->all());
+        } elseif (!\is_array($filters)) {
+            $filters = [$filters];
         }
-        if (!is_array($filters)) {
-            $filters = array($filters);
-        }
-        if (!is_array($paths)) {
-            $paths = array($paths);
+        if (!\is_array($paths)) {
+            $paths = [$paths];
         }
 
         $paths = array_filter($paths);
@@ -277,7 +256,7 @@ class CacheManager
         foreach ($filters as $filter) {
             $resolver = $this->getResolver($filter, null);
 
-            $list = isset($mapping[$resolver]) ? $mapping[$resolver] : array();
+            $list = isset($mapping[$resolver]) ? $mapping[$resolver] : [];
 
             $list[] = $filter;
 
@@ -287,5 +266,39 @@ class CacheManager
         foreach ($mapping as $resolver) {
             $resolver->remove($paths, $mapping[$resolver]);
         }
+    }
+
+    /**
+     * Gets a resolver for the given filter.
+     *
+     * In case there is no specific resolver, but a default resolver has been configured, the default will be returned.
+     *
+     * @param string $filter
+     * @param string $resolver
+     *
+     * @throws \OutOfBoundsException If neither a specific nor a default resolver is available
+     *
+     * @return ResolverInterface
+     */
+    protected function getResolver($filter, $resolver)
+    {
+        // BC
+        if (!$resolver) {
+            $config = $this->filterConfig->get($filter);
+
+            $resolverName = empty($config['cache']) ? $this->defaultResolver : $config['cache'];
+        } else {
+            $resolverName = $resolver;
+        }
+
+        if (!isset($this->resolvers[$resolverName])) {
+            throw new \OutOfBoundsException(sprintf(
+                'Could not find resolver "%s" for "%s" filter type',
+                $resolverName,
+                $filter
+            ));
+        }
+
+        return $this->resolvers[$resolverName];
     }
 }

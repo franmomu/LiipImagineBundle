@@ -23,7 +23,6 @@ class JpegOptimPostProcessorTest extends AbstractPostProcessorTestCase
 {
    /**
      * @group legacy
-     *
      * @expectedDeprecation The %s::setMax() method was deprecated in %s and will be removed in %s. You must setup the class state via its __construct() method. You can still pass filter-specific options to the process() method to overwrite behavior.
      */
     public function testDeprecatedSetMaxMethod()
@@ -33,7 +32,6 @@ class JpegOptimPostProcessorTest extends AbstractPostProcessorTestCase
 
     /**
      * @group legacy
-     *
      * @expectedDeprecation The %s::setProgressive() method was deprecated in %s and will be removed in %s. You must setup the class state via its __construct() method. You can still pass filter-specific options to the process() method to overwrite behavior.
      */
     public function testDeprecatedSetProgressiveMethod()
@@ -43,7 +41,6 @@ class JpegOptimPostProcessorTest extends AbstractPostProcessorTestCase
 
     /**
      * @group legacy
-     *
      * @expectedDeprecation The %s::setStripAll() method was deprecated in %s and will be removed in %s. You must setup the class state via its __construct() method. You can still pass filter-specific options to the process() method to overwrite behavior.
      */
     public function testDeprecatedSetStripAllMethod()
@@ -57,7 +54,7 @@ class JpegOptimPostProcessorTest extends AbstractPostProcessorTestCase
      */
     public function testInvalidLevelOption()
     {
-        $this->getSetupProcessBuilderArguments(array('quality' => 1000));
+        $this->getProcessArguments(['quality' => 1000]);
     }
 
     /**
@@ -69,7 +66,7 @@ class JpegOptimPostProcessorTest extends AbstractPostProcessorTestCase
      */
     public function testOptionThrowsWhenBothMaxAndQualityAreSet()
     {
-        $this->getSetupProcessBuilderArguments(array('max' => 50, 'quality' => 50));
+        $this->getProcessArguments(['max' => 50, 'quality' => 50]);
     }
 
     /**
@@ -79,22 +76,22 @@ class JpegOptimPostProcessorTest extends AbstractPostProcessorTestCase
      */
     public function testInvalidStripDeprecationMessage()
     {
-        $this->assertContains('--max=50', $this->getSetupProcessBuilderArguments(array('max' => 50)));
+        $this->assertContains('--max=50', $this->getProcessArguments(['max' => 50]));
     }
 
     /**
      * @return mixed[]
      */
-    public static function provideSetupProcessBuilderData()
+    public static function provideProcessArgumentsData()
     {
-        $data = array(
-            array(array(), array('--strip-all', '--all-progressive')),
-            array(array('strip_all' => false), array('--all-progressive')),
-            array(array('strip_all' => true), array('--strip-all', '--all-progressive')),
-            array(array('quality' => 50), array('--strip-all', '--max=50', '--all-progressive')),
-            array(array('progressive' => false), array('--strip-all', '--all-normal')),
-            array(array('progressive' => true), array('--strip-all', '--all-progressive')),
-       );
+        $data = [
+            [[], ['--strip-all', '--all-progressive']],
+            [['strip_all' => false], ['--all-progressive']],
+            [['strip_all' => true], ['--strip-all', '--all-progressive']],
+            [['quality' => 50], ['--strip-all', '--max=50', '--all-progressive']],
+            [['progressive' => false], ['--strip-all', '--all-normal']],
+            [['progressive' => true], ['--strip-all', '--all-progressive']],
+        ];
 
         return array_map(function (array $d) {
             array_unshift($d[1], AbstractPostProcessorTestCase::getPostProcessAsFileExecutable());
@@ -104,11 +101,11 @@ class JpegOptimPostProcessorTest extends AbstractPostProcessorTestCase
     }
 
     /**
-     * @dataProvider provideSetupProcessBuilderData
+     * @dataProvider provideProcessArgumentsData
      */
-    public function testSetupProcessBuilder(array $options, array $expected)
+    public function testProcessArguments(array $options, array $expected)
     {
-        $this->assertSame($expected, $this->getSetupProcessBuilderArguments($options));
+        $this->assertSame($expected, $this->getProcessArguments($options));
     }
 
     public function testProcessWithNonSupportedMimeType()
@@ -120,7 +117,7 @@ class JpegOptimPostProcessorTest extends AbstractPostProcessorTestCase
             ->method('getMimeType')
             ->willReturn('application/x-php');
 
-        $this->assertSame($binary, $this->getPostProcessorInstance()->process($binary, array()));
+        $this->assertSame($binary, $this->getPostProcessorInstance()->process($binary, []));
     }
 
     /**
@@ -129,14 +126,14 @@ class JpegOptimPostProcessorTest extends AbstractPostProcessorTestCase
     public static function provideProcessData()
     {
         $file = file_get_contents(__FILE__);
-        $data = array(
-            array(array(), '--strip-all --all-progressive'),
-            array(array('strip_all' => false), '--all-progressive'),
-            array(array('strip_all' => true), '--strip-all --all-progressive'),
-            array(array('quality' => 50), '--strip-all --max=50 --all-progressive'),
-            array(array('progressive' => false), '--strip-all --all-normal'),
-            array(array('progressive' => true), '--strip-all --all-progressive'),
-        );
+        $data = [
+            [[], '--strip-all --all-progressive'],
+            [['strip_all' => false], '--all-progressive'],
+            [['strip_all' => true], '--strip-all --all-progressive'],
+            [['quality' => 50], '--strip-all --max=50 --all-progressive'],
+            [['progressive' => false], '--strip-all --all-normal'],
+            [['progressive' => true], '--strip-all --all-progressive'],
+        ];
 
         return array_map(function ($d) use ($file) {
             array_unshift($d, $file);
@@ -176,7 +173,7 @@ class JpegOptimPostProcessorTest extends AbstractPostProcessorTestCase
      */
     public function testProcessError($content, array $options, $expected)
     {
-        $process = $this->getPostProcessorInstance(array(static::getPostProcessAsFileFailingExecutable()));
+        $process = $this->getPostProcessorInstance([static::getPostProcessAsFileFailingExecutable()]);
         $process->process(new Binary('content', 'image/jpeg', 'jpeg'), $options);
     }
 
@@ -185,8 +182,8 @@ class JpegOptimPostProcessorTest extends AbstractPostProcessorTestCase
      *
      * @return JpegOptimPostProcessor
      */
-    protected function getPostProcessorInstance(array $parameters = array())
+    protected function getPostProcessorInstance(array $parameters = [])
     {
-        return new JpegOptimPostProcessor(isset($parameters[0]) ? $parameters[0] : static::getPostProcessAsFileExecutable());
+        return new JpegOptimPostProcessor($parameters[0] ?? static::getPostProcessAsFileExecutable());
     }
 }

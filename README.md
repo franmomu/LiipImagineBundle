@@ -2,10 +2,11 @@
 
 |       Travis-CI        |        Style-CI         |         Coverage        |        Downloads        |         Release         |
 |:----------------------:|:-----------------------:|:-----------------------:|:-----------------------:|:-----------------------:|
-| [![Travis](https://src.run/shield/liip/LiipImagineBundle/1.0/travis.svg)](https://src.run/service/liip/LiipImagineBundle/1.0/travis) | [![Style CI](https://src.run/shield/liip/LiipImagineBundle/1.0/styleci.svg)](https://src.run/service/liip/LiipImagineBundle/1.0/styleci) | [![Coverage](https://src.run/shield/liip/LiipImagineBundle/1.0/coveralls.svg)](https://src.run/service/liip/LiipImagineBundle/1.0/coveralls) | [![Downloads](https://src.run/shield/liip/LiipImagineBundle/packagist_dt.svg)](https://src.run/service/liip/LiipImagineBundle/packagist) | [![Latest Stable Version](https://src.run/shield/liip/LiipImagineBundle/packagist_v.svg)](https://src.run/service/liip/LiipImagineBundle/packagist) | 
+| [![Travis](https://src.run/shield/liip/LiipImagineBundle/2.0/travis.svg)](https://src.run/service/liip/LiipImagineBundle/2.0/travis) | [![Style CI](https://src.run/shield/liip/LiipImagineBundle/2.0/styleci.svg)](https://src.run/service/liip/LiipImagineBundle/2.0/styleci) | [![Coverage](https://src.run/shield/liip/LiipImagineBundle/2.0/coveralls.svg)](https://src.run/service/liip/LiipImagineBundle/2.0/coveralls) | [![Downloads](https://src.run/shield/liip/LiipImagineBundle/packagist_dt.svg)](https://src.run/service/liip/LiipImagineBundle/packagist) | [![Latest Stable Version](https://src.run/shield/liip/LiipImagineBundle/packagist_v.svg)](https://src.run/service/liip/LiipImagineBundle/packagist) | 
 
-*This bundle provides an image manipulation abstraction toolkit for [Symfony](http://symfony.com/)-based projects.*
-
+*This bundle provides an image manipulation abstraction toolkit for
+[Symfony](http://symfony.com/)-based projects.*
+ 
 ## Overview
 
 - [Filter Sets](http://symfony.com/doc/master/bundles/LiipImagineBundle/basic-usage.html):
@@ -50,6 +51,10 @@ filter.
 <img src="{{ asset('/relative/path/to/image.jpg') | imagine_filter('my_thumb') }}" />
 ```
 
+### Contributor Code of Conduct
+
+This project is released with a [Contributor Code of Conduct](.github/CODE_OF_CONDUCT.md).
+By participating in this project you agree to abide by its terms.
 
 ### Attribution
 
@@ -303,7 +308,7 @@ $resolvedPath = $imagineCacheManager->getBrowserPath('/relative/path/to/image.jp
 
 ## Filters
 
-This bundle provides a set of built-in filters andy ou may easily
+This bundle provides a set of built-in filters and you may easily
 define your own filters as well. Reference the
 [filters chapter](http://symfony.com/doc/master/bundles/LiipImagineBundle/filters.html)
 from our documentation.
@@ -312,8 +317,8 @@ from our documentation.
 ## Use as a Service
 
 If you need to use your defined "filter sets" from within your controller, you 
-can fetch this bundle's controller from the service container and handle 
-the response yourself.
+can fetch this bundle's FilterService from the service container to do the heavy
+lifting for you.
 
 ```php
 <?php
@@ -322,30 +327,25 @@ class MyController extends Controller
 {
     public function indexAction()
     {
-        /** @var ImagineController */
+        /** @var FilterService */
         $imagine = $this
             ->container
-            ->get('liip_imagine.controller');
+            ->get('liip_imagine.service.filter');
 
-        /** @var RedirectResponse */
-        $imagemanagerResponse = $imagine
-            ->filterAction(
-                $this->request,         // http request
-                'uploads/foo.jpg',      // original image you want to apply a filter to
-                'my_thumb'              // filter defined in config.yml
-            );
-
-        /** @var CacheManager */
-        $cacheManager = $this
-            ->container
-            ->get('liip_imagine.cache.manager');
-
-        /** @var string */
-        $sourcePath = $cacheManager
-            ->getBrowserPath(
-                'uploads/foo.jpg',
-                'my_thumb'
-            );
+        // 1) Simple filter, OR
+        $resourcePath = $imagine->getUrlOfFilteredImage('uploads/foo.jpg', 'my_thumb');
+        
+        // 2) Runtime configuration
+        $runtimeConfig = [
+            'thumbnail' => [
+                'size' => [200, 200]
+            ],
+        ];
+        $resourcePath = $imagine->getUrlOfFilteredImageWithRuntimeFilters(
+            'uploads/foo.jpg',
+            'my_thumb',
+            $runtimeConfig
+        );
 
         // ..
     }
@@ -353,32 +353,6 @@ class MyController extends Controller
 
 ?>
 ```
-
-If you need to add more logic, the recommended solution is to either
-extend `ImagineController.php` or use it as the basis for your own 
-implementation.
-
-To use the controller in another service, you have to simulate a new request.
-
-```php
-<?php
-
-/** @var ImagineController */
-$imagine = $this
-    ->container
-    ->get('liip_imagine.controller');
-
-/** @var Response */
-$response = $imagine
-    ->filterAction(
-        new Symfony\Component\HttpFoundation\Request(),
-        'uploads/foo.jpg',
-        'my_thumb'
-    );
-
-?>
-```
-
 
 ## Data Roots
 

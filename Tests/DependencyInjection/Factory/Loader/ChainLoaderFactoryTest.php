@@ -12,9 +12,11 @@
 namespace Liip\ImagineBundle\Tests\DependencyInjection\Factory\Loader;
 
 use Liip\ImagineBundle\DependencyInjection\Factory\Loader\ChainLoaderFactory;
+use Liip\ImagineBundle\DependencyInjection\Factory\Loader\LoaderFactoryInterface;
 use Liip\ImagineBundle\Tests\DependencyInjection\Factory\FactoryTestCase;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
@@ -22,67 +24,63 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class ChainLoaderFactoryTest extends FactoryTestCase
 {
-    public function testCouldBeConstructedWithoutAnyArguments()
+    public function testImplementsLoaderFactoryInterface(): void
     {
-        new ChainLoaderFactory();
+        $this->assertInstanceOf(LoaderFactoryInterface::class, new ChainLoaderFactory());
     }
 
-    public function testImplementsLoaderFactoryInterface()
+    public function testReturnsExpectedName(): void
     {
-        $this->assertInstanceOf('\Liip\ImagineBundle\DependencyInjection\Factory\Loader\LoaderFactoryInterface', new ChainLoaderFactory());
+        $this->assertSame('chain', (new ChainLoaderFactory())->getName());
     }
 
-    public function testReturnsExpectedName()
-    {
-        $loader = new ChainLoaderFactory();
-
-        $this->assertEquals('chain', $loader->getName());
-    }
-
-    public function testCreateLoaderDefinition()
+    public function testCreateLoaderDefinition(): void
     {
         $container = new ContainerBuilder();
 
         $loader = new ChainLoaderFactory();
-        $loader->create($container, 'the_loader_name', array(
-            'loaders' => array(
+        $loader->create($container, 'the_loader_name', [
+            'loaders' => [
                 'foo',
                 'bar',
                 'baz',
-            ),
-        ));
+            ],
+        ]);
 
         $this->assertTrue($container->hasDefinition('liip_imagine.binary.loader.the_loader_name'));
 
+        /** @var ChildDefinition $loaderDefinition */
         $loaderDefinition = $container->getDefinition('liip_imagine.binary.loader.the_loader_name');
 
         $this->assertInstanceOfChildDefinition($loaderDefinition);
-        $this->assertEquals('liip_imagine.binary.loader.prototype.chain', $loaderDefinition->getParent());
+        $this->assertSame('liip_imagine.binary.loader.prototype.chain', $loaderDefinition->getParent());
 
         foreach ($loaderDefinition->getArgument(0) as $reference) {
             $this->assertInstanceOf('\Symfony\Component\DependencyInjection\Reference', $reference);
         }
     }
 
-    public function testProcessOptionsOnAddConfiguration()
+    public function testProcessOptionsOnAddConfiguration(): void
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('chain', 'array');
+        $treeBuilder = new TreeBuilder('chain');
+        $rootNode = method_exists(TreeBuilder::class, 'getRootNode')
+            ? $treeBuilder->getRootNode()
+            : $treeBuilder->root('chain');
 
         $loader = new ChainLoaderFactory();
         $loader->addConfiguration($rootNode);
 
-        $config = $this->processConfigTree($treeBuilder, array(
-            'chain' => array(
-                'loaders' => array(
+        $config = $this->processConfigTree($treeBuilder, [
+            'chain' => [
+                'loaders' => [
                     'foo',
                     'bar',
-                ),
-            ),
-        ));
+                ],
+            ],
+        ]);
 
         $this->assertArrayHasKey('loaders', $config);
-        $this->assertSame(array('foo', 'bar'), $config['loaders']);
+        $this->assertSame(['foo', 'bar'], $config['loaders']);
     }
 
     /**
@@ -91,10 +89,8 @@ class ChainLoaderFactoryTest extends FactoryTestCase
      *
      * @return array
      */
-    private function processConfigTree(TreeBuilder $treeBuilder, array $configs)
+    private function processConfigTree(TreeBuilder $treeBuilder, array $configs): array
     {
-        $processor = new Processor();
-
-        return $processor->process($treeBuilder->buildTree(), $configs);
+        return (new Processor())->process($treeBuilder->buildTree(), $configs);
     }
 }

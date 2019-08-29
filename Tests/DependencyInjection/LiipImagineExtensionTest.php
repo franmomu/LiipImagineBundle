@@ -11,15 +11,16 @@
 
 namespace Liip\ImagineBundle\Tests\DependencyInjection;
 
+use Liip\ImagineBundle\Controller\ImagineController;
 use Liip\ImagineBundle\DependencyInjection\Factory\Loader\FileSystemLoaderFactory;
 use Liip\ImagineBundle\DependencyInjection\Factory\Resolver\WebPathResolverFactory;
 use Liip\ImagineBundle\DependencyInjection\LiipImagineExtension;
 use Liip\ImagineBundle\Tests\AbstractTest;
-use Liip\ImagineBundle\Utility\Framework\SymfonyFramework;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesser;
+use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
 use Symfony\Component\Yaml\Parser;
 
 /**
@@ -33,13 +34,12 @@ class LiipImagineExtensionTest extends AbstractTest
      */
     protected $containerBuilder;
 
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     */
     public function testUserLoadThrowsExceptionUnlessDriverIsValid()
     {
+        $this->expectException(\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException::class);
+
         $loader = new LiipImagineExtension();
-        $loader->load(array(array('driver' => 'foo')), new ContainerBuilder());
+        $loader->load([['driver' => 'foo']], new ContainerBuilder());
     }
 
     public function testLoadWithDefaults()
@@ -50,15 +50,12 @@ class LiipImagineExtensionTest extends AbstractTest
         $this->assertAlias('liip_imagine.gd', 'liip_imagine');
         $this->assertHasDefinition('liip_imagine.controller');
         $this->assertDICConstructorArguments(
-            $this->containerBuilder->getDefinition('liip_imagine.controller'),
-            array(
+            $this->containerBuilder->getDefinition(ImagineController::class),
+            [
+                new Reference('liip_imagine.service.filter'),
                 new Reference('liip_imagine.data.manager'),
-                new Reference('liip_imagine.filter.manager'),
-                new Reference('liip_imagine.cache.manager'),
                 new Reference('liip_imagine.cache.signer'),
-                new Reference('logger', ContainerInterface::IGNORE_ON_INVALID_REFERENCE),
-                '%liip_imagine.controller.redirect_response_code%',
-            )
+            ]
         );
     }
 
@@ -70,54 +67,35 @@ class LiipImagineExtensionTest extends AbstractTest
         $this->assertTrue(isset($param['small']['filters']['route']['requirements']));
 
         $variable1 = $param['small']['filters']['route']['requirements']['variable1'];
-        $this->assertEquals('value1', $variable1, sprintf('%s parameter is correct', $variable1));
+        $this->assertSame('value1', $variable1, sprintf('%s parameter is correct', $variable1));
     }
 
     public static function provideFactoryData()
     {
-        return array(
-            array(
+        return [
+            [
                 'liip_imagine.mime_type_guesser',
-                array('Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser', 'getInstance'),
-            ),
-            array(
+                [MimeTypeGuesser::class, 'getInstance'],
+            ],
+            [
                 'liip_imagine.extension_guesser',
-                array('Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesser', 'getInstance'),
-            ),
-        );
+                [ExtensionGuesser::class, 'getInstance'],
+            ],
+        ];
     }
 
     /**
      * @dataProvider provideFactoryData
+     *
+     * @param string $service
+     * @param string $factory
      */
     public function testFactoriesConfiguration($service, $factory)
     {
-        if (SymfonyFramework::isKernelLessThan(2, 6)) {
-            $this->markTestSkipped('No need to test on symfony < 2.6');
-        }
-
         $this->createEmptyConfiguration();
         $definition = $this->containerBuilder->getDefinition($service);
 
-        $this->assertEquals($factory, $definition->getFactory());
-    }
-
-    /**
-     * @group legacy
-     *
-     * @dataProvider provideFactoryData
-     */
-    public function testFactoriesConfigurationLegacy($service, $factory)
-    {
-        if (SymfonyFramework::isKernelGreaterThanOrEqualTo(2, 6)) {
-            $this->markTestSkipped('No need to test on symfony >= 2.6');
-        }
-
-        $this->createEmptyConfiguration();
-        $definition = $this->containerBuilder->getDefinition($service);
-
-        $this->assertEquals($factory[0], $definition->getFactoryClass());
-        $this->assertEquals($factory[1], $definition->getFactoryMethod());
+        $this->assertSame($factory, $definition->getFactory());
     }
 
     protected function createEmptyConfiguration()
@@ -126,20 +104,24 @@ class LiipImagineExtensionTest extends AbstractTest
         $loader = new LiipImagineExtension();
         $loader->addLoaderFactory(new FileSystemLoaderFactory());
         $loader->addResolverFactory(new WebPathResolverFactory());
-        $loader->load(array(array()), $this->containerBuilder);
+        $loader->load([[]], $this->containerBuilder);
 
-        $this->assertTrue($this->containerBuilder instanceof ContainerBuilder);
+        $this->assertInstanceOf(ContainerBuilder::class, $this->containerBuilder);
     }
 
     protected function createFullConfiguration()
     {
+        if (!class_exists(Parser::class)) {
+            $this->markTestSkipped('Requires the symfony/yaml package.');
+        }
+
         $this->containerBuilder = new ContainerBuilder();
         $loader = new LiipImagineExtension();
         $loader->addLoaderFactory(new FileSystemLoaderFactory());
         $loader->addResolverFactory(new WebPathResolverFactory());
-        $loader->load(array($this->getFullConfig()), $this->containerBuilder);
+        $loader->load([$this->getFullConfig()], $this->containerBuilder);
 
-        $this->assertTrue($this->containerBuilder instanceof ContainerBuilder);
+        $this->assertInstanceOf(ContainerBuilder::class, $this->containerBuilder);
     }
 
     protected function getFullConfig()
@@ -188,7 +170,7 @@ EOF;
      */
     private function assertAlias($value, $key)
     {
-        $this->assertEquals($value, (string) $this->containerBuilder->getAlias($key), sprintf('%s alias is correct', $key));
+        $this->assertSame($value, (string) $this->containerBuilder->getAlias($key), sprintf('%s alias is correct', $key));
     }
 
     /**
@@ -197,7 +179,7 @@ EOF;
      */
     private function assertParameter($value, $key)
     {
-        $this->assertEquals($value, $this->containerBuilder->getParameter($key), sprintf('%s parameter is correct', $key));
+        $this->assertSame($value, $this->containerBuilder->getParameter($key), sprintf('%s parameter is correct', $key));
     }
 
     /**
@@ -214,11 +196,20 @@ EOF;
      */
     private function assertDICConstructorArguments(Definition $definition, array $arguments)
     {
-        $this->assertEquals($arguments, $definition->getArguments(), "Expected and actual DIC Service constructor arguments of definition '".$definition->getClass()."' don't match.");
-    }
+        $castArrayElementsToString = function (array $a): array {
+            return array_map(function ($v) { return (string) $v; }, $a);
+        };
 
-    protected function tearDown()
-    {
-        unset($this->containerBuilder);
+        $implodeArrayElements = function (array $a): string {
+            return sprintf('[%s]:%d', implode(',', $a), \count($a));
+        };
+
+        $expectedArguments = $castArrayElementsToString($arguments);
+        $providedArguments = $castArrayElementsToString($definition->getArguments());
+
+        $this->assertSame($expectedArguments, $providedArguments, vsprintf('Definition arguments (%s) do not match expected arguments (%s).', [
+            $implodeArrayElements($providedArguments),
+            $implodeArrayElements($expectedArguments),
+        ]));
     }
 }

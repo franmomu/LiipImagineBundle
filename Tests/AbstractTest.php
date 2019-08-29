@@ -23,13 +23,15 @@ use Liip\ImagineBundle\Imagine\Data\DataManager;
 use Liip\ImagineBundle\Imagine\Filter\FilterConfiguration;
 use Liip\ImagineBundle\Imagine\Filter\FilterManager;
 use Liip\ImagineBundle\Imagine\Filter\PostProcessor\PostProcessorInterface;
+use Liip\ImagineBundle\Service\FilterService;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesserInterface;
 use Symfony\Component\Routing\RouterInterface;
 
-abstract class AbstractTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractTest extends TestCase
 {
     /**
      * @var Filesystem
@@ -59,16 +61,27 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
         $this->filesystem->mkdir($this->temporaryPath);
     }
 
+    protected function tearDown()
+    {
+        if (!$this->filesystem) {
+            return;
+        }
+
+        if ($this->filesystem->exists($this->temporaryPath)) {
+            $this->filesystem->remove($this->temporaryPath);
+        }
+    }
+
     /**
      * @return string[]
      */
     public function invalidPathProvider()
     {
-        return array(
-            array($this->fixturesPath.'/assets/../../foobar.png'),
-            array($this->fixturesPath.'/assets/some_folder/../foobar.png'),
-            array('../../outside/foobar.jpg'),
-        );
+        return [
+            [$this->fixturesPath.'/assets/../../foobar.png'],
+            [$this->fixturesPath.'/assets/some_folder/../foobar.png'],
+            ['../../outside/foobar.jpg'],
+        ];
     }
 
     /**
@@ -77,10 +90,10 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
     protected function createFilterConfiguration()
     {
         $config = new FilterConfiguration();
-        $config->set('thumbnail', array(
-            'size' => array(180, 180),
+        $config->set('thumbnail', [
+            'size' => [180, 180],
             'mode' => 'outbound',
-        ));
+        ]);
 
         return $config;
     }
@@ -91,13 +104,13 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
     protected function createCacheManagerMock()
     {
         return $this
-            ->getMockBuilder('\Liip\ImagineBundle\Imagine\Cache\CacheManager')
-            ->setConstructorArgs(array(
+            ->getMockBuilder(CacheManager::class)
+            ->setConstructorArgs([
                 $this->createFilterConfiguration(),
                 $this->createRouterInterfaceMock(),
                 $this->createSignerInterfaceMock(),
                 $this->createEventDispatcherInterfaceMock(),
-            ))
+            ])
             ->getMock();
     }
 
@@ -106,7 +119,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
      */
     protected function createFilterConfigurationMock()
     {
-        return $this->createObjectMock('\Liip\ImagineBundle\Imagine\Filter\FilterConfiguration');
+        return $this->createObjectMock(FilterConfiguration::class);
     }
 
     /**
@@ -114,7 +127,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
      */
     protected function createSignerInterfaceMock()
     {
-        return $this->createObjectMock('\Liip\ImagineBundle\Imagine\Cache\SignerInterface');
+        return $this->createObjectMock(SignerInterface::class);
     }
 
     /**
@@ -122,7 +135,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
      */
     protected function createRouterInterfaceMock()
     {
-        return $this->createObjectMock('\Symfony\Component\Routing\RouterInterface');
+        return $this->createObjectMock(RouterInterface::class);
     }
 
     /**
@@ -130,7 +143,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
      */
     protected function createCacheResolverInterfaceMock()
     {
-        return $this->createObjectMock('\Liip\ImagineBundle\Imagine\Cache\Resolver\ResolverInterface');
+        return $this->createObjectMock(ResolverInterface::class);
     }
 
     /**
@@ -138,7 +151,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
      */
     protected function createEventDispatcherInterfaceMock()
     {
-        return $this->createObjectMock('\Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        return $this->createObjectMock(EventDispatcherInterface::class);
     }
 
     /**
@@ -146,7 +159,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
      */
     protected function getImageInterfaceMock()
     {
-        return $this->createObjectMock('\Imagine\Image\ImageInterface');
+        return $this->createObjectMock(ImageInterface::class);
     }
 
     /**
@@ -154,7 +167,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
      */
     protected function getMetadataBagMock()
     {
-        return $this->createObjectMock('\Imagine\Image\Metadata\MetadataBag');
+        return $this->createObjectMock(MetadataBag::class);
     }
 
     /**
@@ -162,7 +175,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
      */
     protected function createImagineInterfaceMock()
     {
-        return $this->createObjectMock('\Imagine\Image\ImagineInterface');
+        return $this->createObjectMock(ImagineInterface::class);
     }
 
     /**
@@ -170,7 +183,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
      */
     protected function createLoggerInterfaceMock()
     {
-        return $this->createObjectMock('\Psr\Log\LoggerInterface');
+        return $this->createObjectMock(LoggerInterface::class);
     }
 
     /**
@@ -178,7 +191,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
      */
     protected function createBinaryLoaderInterfaceMock()
     {
-        return $this->createObjectMock('\Liip\ImagineBundle\Binary\Loader\LoaderInterface');
+        return $this->createObjectMock(LoaderInterface::class);
     }
 
     /**
@@ -186,7 +199,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
      */
     protected function createMimeTypeGuesserInterfaceMock()
     {
-        return $this->createObjectMock('\Liip\ImagineBundle\Binary\MimeTypeGuesserInterface');
+        return $this->createObjectMock(MimeTypeGuesserInterface::class);
     }
 
     /**
@@ -194,7 +207,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
      */
     protected function createExtensionGuesserInterfaceMock()
     {
-        return $this->createObjectMock('\Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesserInterface');
+        return $this->createObjectMock(ExtensionGuesserInterface::class);
     }
 
     /**
@@ -202,7 +215,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
      */
     protected function createPostProcessorInterfaceMock()
     {
-        return $this->createObjectMock('\Liip\ImagineBundle\Imagine\Filter\PostProcessor\PostProcessorInterface');
+        return $this->createObjectMock(PostProcessorInterface::class);
     }
 
     /**
@@ -210,7 +223,15 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
      */
     protected function createFilterManagerMock()
     {
-        return $this->createObjectMock('\Liip\ImagineBundle\Imagine\Filter\FilterManager', array(), false);
+        return $this->createObjectMock(FilterManager::class, [], false);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|FilterService
+     */
+    protected function createFilterServiceMock()
+    {
+        return $this->createObjectMock('\Liip\ImagineBundle\Service\FilterService');
     }
 
     /**
@@ -218,7 +239,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
      */
     protected function createDataManagerMock()
     {
-        return $this->createObjectMock('\Liip\ImagineBundle\Imagine\Data\DataManager', array(), false);
+        return $this->createObjectMock(DataManager::class, [], false);
     }
 
     /**
@@ -229,11 +250,11 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
      *
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    protected function createObjectMock($object, array $methods = array(), $constructorInvoke = false, array $constructorParams = array())
+    protected function createObjectMock($object, array $methods = [], $constructorInvoke = false, array $constructorParams = [])
     {
         $builder = $this->getMockBuilder($object);
 
-        if (count($methods) > 0) {
+        if (\count($methods) > 0) {
             $builder->setMethods($methods);
         }
 
@@ -243,7 +264,7 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
             $builder->disableOriginalConstructor();
         }
 
-        if (count($constructorParams) > 0) {
+        if (\count($constructorParams) > 0) {
             $builder->setConstructorArgs($constructorParams);
         }
 
@@ -264,16 +285,5 @@ abstract class AbstractTest extends \PHPUnit_Framework_TestCase
         $m->setAccessible(true);
 
         return $m;
-    }
-
-    protected function tearDown()
-    {
-        if (!$this->filesystem) {
-            return;
-        }
-
-        if ($this->filesystem->exists($this->temporaryPath)) {
-            $this->filesystem->remove($this->temporaryPath);
-        }
     }
 }

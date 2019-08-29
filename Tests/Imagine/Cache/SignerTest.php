@@ -12,6 +12,7 @@
 namespace Liip\ImagineBundle\Tests\Imagine\Cache;
 
 use Liip\ImagineBundle\Imagine\Cache\Signer;
+use Liip\ImagineBundle\Imagine\Cache\SignerInterface;
 use Liip\ImagineBundle\Tests\AbstractTest;
 
 /**
@@ -21,21 +22,23 @@ class SignerTest extends AbstractTest
 {
     public function testImplementsSignerInterface()
     {
-        $rc = new \ReflectionClass('\Liip\ImagineBundle\Imagine\Cache\Signer');
+        $rc = new \ReflectionClass(Signer::class);
 
-        $this->assertTrue($rc->implementsInterface('\Liip\ImagineBundle\Imagine\Cache\SignerInterface'));
+        $this->assertTrue($rc->implementsInterface(SignerInterface::class));
     }
 
     public function testCouldBeConstructedWithSecret()
     {
-        new Signer('aSecret');
+        $signer = new Signer('aSecret');
+
+        $this->assertInstanceOf(Signer::class, $signer);
     }
 
     public function testShouldReturnShortHashOnSign()
     {
         $singer = new Signer('aSecret');
 
-        $this->assertEquals(8, strlen($singer->sign('aPath')));
+        $this->assertSame(8, mb_strlen($singer->sign('aPath')));
     }
 
     public function testShouldSingAndSuccessfullyCheckPathWithoutRuntimeConfig()
@@ -49,26 +52,26 @@ class SignerTest extends AbstractTest
     {
         $singer = new Signer('aSecret');
 
-        $this->assertTrue($singer->check($singer->sign('aPath', array('aConfig')), 'aPath', array('aConfig')));
+        $this->assertTrue($singer->check($singer->sign('aPath', ['aConfig']), 'aPath', ['aConfig']));
     }
 
     public function testShouldConvertRecursivelyToStringAllRuntimeConfigParameters()
     {
         $singer = new Signer('aSecret');
 
-        $runtimeConfigInts = array(
+        $runtimeConfigInts = [
             'foo' => 14,
-            'bar' => array(
+            'bar' => [
                 'bar' => 15,
-            ),
-        );
+            ],
+        ];
 
-        $runtimeConfigStrings = array(
+        $runtimeConfigStrings = [
             'foo' => '14',
-            'bar' => array(
+            'bar' => [
                 'bar' => '15',
-            ),
-        );
+            ],
+        ];
 
         $this->assertTrue($singer->check($singer->sign('aPath', $runtimeConfigInts), 'aPath', $runtimeConfigStrings));
     }

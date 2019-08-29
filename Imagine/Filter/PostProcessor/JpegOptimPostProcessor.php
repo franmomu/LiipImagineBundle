@@ -15,7 +15,6 @@ use Liip\ImagineBundle\Binary\BinaryInterface;
 use Liip\ImagineBundle\Exception\Imagine\Filter\PostProcessor\InvalidOptionException;
 use Liip\ImagineBundle\Model\Binary;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\ProcessBuilder;
 
 class JpegOptimPostProcessor extends AbstractPostProcessor
 {
@@ -57,7 +56,7 @@ class JpegOptimPostProcessor extends AbstractPostProcessor
     }
 
     /**
-     * @deprecated All post-processor setters have been deprecated in 1.10.0 for removal in 2.0. You must only use the
+     * @deprecated All post-processor setters have been deprecated in 2.2 for removal in 3.0. You must only use the
      *             class's constructor to set the property state.
      *
      * @param int $maxQuality
@@ -73,7 +72,7 @@ class JpegOptimPostProcessor extends AbstractPostProcessor
     }
 
     /**
-     * @deprecated All post-processor setters have been deprecated in 1.10.0 for removal in 2.0. You must only use the
+     * @deprecated All post-processor setters have been deprecated in 2.2 for removal in 3.0. You must only use the
      *             class's constructor to set the property state.
      *
      * @param bool $progressive
@@ -89,7 +88,7 @@ class JpegOptimPostProcessor extends AbstractPostProcessor
     }
 
     /**
-     * @deprecated All post-processor setters have been deprecated in 1.10.0 for removal in 2.0. You must only use the
+     * @deprecated All post-processor setters have been deprecated in 2.2 for removal in 3.0. You must only use the
      *             class's constructor to set the property state.
      *
      * @param bool $strip
@@ -105,22 +104,19 @@ class JpegOptimPostProcessor extends AbstractPostProcessor
     }
 
     /**
-     * @param BinaryInterface $binary
-     * @param array           $options
-     *
-     * @throws ProcessFailedException
-     *
-     * @return BinaryInterface
+     * @inheritDoc
      */
-    protected function doProcess(BinaryInterface $binary, array $options = array())
+    public function process(BinaryInterface $binary, array $options = []): BinaryInterface
     {
         if (!$this->isBinaryTypeJpgImage($binary)) {
             return $binary;
         }
 
-        $file = $this->writeTemporaryFile($binary, $options, 'imagine-post-processor-optipng');
+        $file = $this->writeTemporaryFile($binary, $options, 'imagine-post-processor-jpegoptim');
 
-        $process = $this->setupProcessBuilder($options)->add($file)->getProcess();
+        $arguments = $this->getProcessArguments($options);
+        $arguments[] = $file;
+        $process = $this->createProcess($arguments, $options);
         $process->run();
 
         if (!$this->isSuccessfulProcess($process)) {
@@ -138,18 +134,18 @@ class JpegOptimPostProcessor extends AbstractPostProcessor
     /**
      * @param array $options
      *
-     * @return ProcessBuilder
+     * @return array
      */
-    private function setupProcessBuilder(array $options = array())
+    private function getProcessArguments(array $options = []): array
     {
-        $builder = $this->createProcessBuilder(array($this->executablePath), $options);
+        $arguments = [$this->executablePath];
 
-        if (isset($options['strip_all']) ? $options['strip_all'] : $this->strip) {
-            $builder->add('--strip-all');
+        if ($options['strip_all'] ?? $this->strip) {
+            $arguments[] = '--strip-all';
         }
 
         if (isset($options['max'])) {
-            @trigger_error(sprintf('The "max" option was deprecated in 1.10.0 and will be removed in 2.0. '.
+            @trigger_error(sprintf('The "max" option was deprecated in 2.2 and will be removed in 3.0. '.
                 'Instead, use the "quality" option.'), E_USER_DEPRECATED);
 
             if (isset($options['quality'])) {
@@ -159,20 +155,20 @@ class JpegOptimPostProcessor extends AbstractPostProcessor
             $options['quality'] = $options['max'];
         }
 
-        if ($quality = isset($options['quality']) ? $options['quality'] : $this->quality) {
+        if ($quality = $options['quality'] ?? $this->quality) {
             if (!in_array($options['quality'], range(0, 100))) {
                 throw new InvalidOptionException('the "quality" option must be an int between 0 and 100', $options);
             }
 
-            $builder->add(sprintf('--max=%d', $quality));
+            $arguments[] = sprintf('--max=%d', $quality);
         }
 
-        if (isset($options['progressive']) ? $options['progressive'] : $this->progressive) {
-            $builder->add('--all-progressive');
+        if ($options['progressive'] ?? $this->progressive) {
+            $arguments[] = '--all-progressive';
         } else {
-            $builder->add('--all-normal');
+            $arguments[] = '--all-normal';
         }
 
-        return $builder;
+        return $arguments;
     }
 }

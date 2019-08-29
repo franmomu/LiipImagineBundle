@@ -13,46 +13,23 @@ namespace Liip\ImagineBundle\Binary\Locator;
 
 use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
 use Liip\ImagineBundle\Exception\InvalidArgumentException;
-use Symfony\Component\OptionsResolver\Exception\ExceptionInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FileSystemLocator implements LocatorInterface
 {
     /**
      * @var string[]
      */
-    private $roots = array();
+    private $roots = [];
 
     /**
      * @param string[] $roots
+     * @param bool     $allowUnresolvable
      */
-    public function __construct(array $roots = array())
+    public function __construct(array $roots = [], bool $allowUnresolvable = false)
     {
-        $this->roots = array_map(array($this, 'sanitizeRootPath'), $roots);
-    }
-
-    /**
-     * @deprecated Since version 0.9.0, use __construct(array $roots) instead
-     *
-     * @param array[] $options
-     */
-    public function setOptions(array $options = array())
-    {
-        $resolver = new OptionsResolver();
-        $resolver->setDefaults(array('roots' => array()));
-
-        try {
-            $options = $resolver->resolve($options);
-        } catch (ExceptionInterface $e) {
-            throw new InvalidArgumentException(sprintf('Invalid options provided to %s()', __METHOD__), null, $e);
-        }
-
-        @trigger_error(
-            sprintf('%s() is deprecated. Pass the data roots to the constructor instead.', __METHOD__),
-            E_USER_DEPRECATED
-        );
-
-        $this->roots = array_map(array($this, 'sanitizeRootPath'), (array) $options['roots']);
+        $this->roots = array_filter(array_map(function (string $root) use ($allowUnresolvable): ?string {
+            return $this->sanitizeRootPath($root, $allowUnresolvable);
+        }, $roots));
     }
 
     /**
@@ -62,13 +39,13 @@ class FileSystemLocator implements LocatorInterface
      *
      * @return string
      */
-    public function locate($path)
+    public function locate(string $path): string
     {
-        if (false !== $absolute = $this->locateUsingRootPlaceholder($path)) {
+        if (null !== $absolute = $this->locateUsingRootPlaceholder($path)) {
             return $this->sanitizeAbsolutePath($absolute);
         }
 
-        if (false !== $absolute = $this->locateUsingRootPathsSearch($path)) {
+        if (null !== $absolute = $this->locateUsingRootPathsSearch($path)) {
             return $this->sanitizeAbsolutePath($absolute);
         }
 
@@ -77,65 +54,74 @@ class FileSystemLocator implements LocatorInterface
     }
 
     /**
+     * @param string $root
      * @param string $path
      *
-     * @return bool|string
+     * @return string|null
      */
-    private function locateUsingRootPathsSearch($path)
+    protected function generateAbsolutePath(string $root, string $path): ?string
+    {
+        if (false !== $absolute = realpath($root.DIRECTORY_SEPARATOR.$path)) {
+            return $absolute;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string $path
+     *
+     * @return string|null
+     */
+    private function locateUsingRootPathsSearch(string $path): ?string
     {
         foreach ($this->roots as $root) {
-            if (false !== $absolute = $this->generateAbsolutePath($root, $path)) {
+            if (null !== $absolute = $this->generateAbsolutePath($root, $path)) {
                 return $absolute;
             }
         }
 
-        return false;
+        return null;
     }
 
     /**
      * @param string $path
      *
-     * @return bool|string
+     * @return string|null
      */
-    private function locateUsingRootPlaceholder($path)
+    private function locateUsingRootPlaceholder(string $path): ?string
     {
-        if (0 !== strpos($path, '@') || 1 !== preg_match('{@(?<name>[^:]+):(?<path>.+)}', $path, $matches)) {
-            return false;
+        if (0 !== mb_strpos($path, '@') || 1 !== preg_match('{^@(?<name>[^:]+):(?<path>.+)$}', $path, $match)) {
+            return null;
         }
 
-        if (isset($this->roots[$matches['name']])) {
-            return $this->generateAbsolutePath($this->roots[$matches['name']], $matches['path']);
+        if (isset($this->roots[$match['name']])) {
+            return $this->generateAbsolutePath($this->roots[$match['name']], $match['path']);
         }
 
-        throw new NotLoadableException(sprintf('Invalid root placeholder "%s" for path "%s"',
-            $matches['name'], $matches['path']));
+        throw new NotLoadableException(sprintf('Invalid root placeholder "@%s" for path "%s"',
+            $match['name'], $match['path']));
     }
 
     /**
-     * @param string $root
      * @param string $path
-     *
-     * @return string|false
-     */
-    protected function generateAbsolutePath($root, $path)
-    {
-        return realpath($root.DIRECTORY_SEPARATOR.$path);
-    }
-
-    /**
-     * @param string $root
+     * @param bool   $allowUnresolvable
      *
      * @throws InvalidArgumentException
      *
-     * @return string
+     * @return string|null
      */
-    private function sanitizeRootPath($root)
+    private function sanitizeRootPath(string $path, bool $allowUnresolvable): ?string
     {
-        if (!empty($root) && false !== $realRoot = realpath($root)) {
-            return $realRoot;
+        if (!empty($path) && false !== $real = realpath($path)) {
+            return $real;
         }
 
-        throw new InvalidArgumentException(sprintf('Root image path not resolvable "%s"', $root));
+        if ($allowUnresolvable) {
+            return null;
+        }
+
+        throw new InvalidArgumentException(sprintf('Root image path not resolvable "%s"', $path));
     }
 
     /**
@@ -145,15 +131,22 @@ class FileSystemLocator implements LocatorInterface
      *
      * @return string
      */
-    private function sanitizeAbsolutePath($path)
+    private function sanitizeAbsolutePath(string $path): string
     {
-        foreach ($this->roots as $root) {
-            if (0 === strpos($path, $root)) {
-                return $path;
-            }
+        $roots = array_filter($this->roots, function (string $root) use ($path): bool {
+            return 0 === mb_strpos($path, $root);
+        });
+
+        if (0 === \count($roots)) {
+            throw new NotLoadableException(
+                sprintf('Source image invalid "%s" as it is outside of the defined root path(s) "%s"', $path, implode(':', $this->roots))
+            );
         }
 
-        throw new NotLoadableException(sprintf('Source image invalid "%s" as it is outside of the defined root path(s) "%s"',
-            $path, implode(':', $this->roots)));
+        if (!is_readable($path)) {
+            throw new NotLoadableException(sprintf('Source image invalid "%s" as it is not readable', $path));
+        }
+
+        return $path;
     }
 }

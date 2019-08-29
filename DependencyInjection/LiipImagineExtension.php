@@ -13,11 +13,13 @@ namespace Liip\ImagineBundle\DependencyInjection;
 
 use Liip\ImagineBundle\DependencyInjection\Factory\Loader\LoaderFactoryInterface;
 use Liip\ImagineBundle\DependencyInjection\Factory\Resolver\ResolverFactoryInterface;
+use Liip\ImagineBundle\Imagine\Cache\CacheManager;
+use Liip\ImagineBundle\Imagine\Data\DataManager;
+use Liip\ImagineBundle\Imagine\Filter\FilterManager;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
-use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class LiipImagineExtension extends Extension
@@ -25,12 +27,12 @@ class LiipImagineExtension extends Extension
     /**
      * @var ResolverFactoryInterface[]
      */
-    protected $resolversFactories = array();
+    private $resolversFactories = [];
 
     /**
      * @var LoaderFactoryInterface[]
      */
-    protected $loadersFactories = array();
+    private $loadersFactories = [];
 
     /**
      * @param ResolverFactoryInterface $resolverFactory
@@ -57,7 +59,10 @@ class LiipImagineExtension extends Extension
     }
 
     /**
-     * @see Symfony\Component\DependencyInjection\Extension.ExtensionInterface::load()
+     * @see \Symfony\Component\DependencyInjection\Extension.ExtensionInterface::load()
+     *
+     * @param array            $configs
+     * @param ContainerBuilder $container
      */
     public function load(array $configs, ContainerBuilder $container)
     {
@@ -66,25 +71,26 @@ class LiipImagineExtension extends Extension
             $configs
         );
 
+        $container->setParameter('liip_imagine.resolvers', $config['resolvers']);
+        $container->setParameter('liip_imagine.loaders', $config['loaders']);
+
         $this->loadResolvers($config['resolvers'], $container);
         $this->loadLoaders($config['loaders'], $container);
 
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('imagine.xml');
+        $loader->load('commands.xml');
 
         if ($config['enqueue']) {
             $loader->load('enqueue.xml');
         }
 
-        $this->setFactories($container);
-
-        if (interface_exists('Imagine\Image\Metadata\MetadataReaderInterface')) {
-            $container->getDefinition('liip_imagine.'.$config['driver'])->addMethodCall('setMetadataReader', array(new Reference('liip_imagine.meta_data.reader')));
-        } else {
-            $container->removeDefinition('liip_imagine.meta_data.reader');
-        }
+        $container->setParameter('liip_imagine.driver_service', 'liip_imagine.'.$config['driver']);
 
         $container->setAlias('liip_imagine', new Alias('liip_imagine.'.$config['driver']));
+        $container->setAlias(CacheManager::class, new Alias('liip_imagine.cache.manager', false));
+        $container->setAlias(DataManager::class, new Alias('liip_imagine.data.manager', false));
+        $container->setAlias(FilterManager::class, new Alias('liip_imagine.filter.manager', false));
 
         $container->setParameter('liip_imagine.cache.resolver.default', $config['cache']);
 
@@ -95,61 +101,40 @@ class LiipImagineExtension extends Extension
 
         $container->setParameter('liip_imagine.controller.filter_action', $config['controller']['filter_action']);
         $container->setParameter('liip_imagine.controller.filter_runtime_action', $config['controller']['filter_runtime_action']);
-        $container->setParameter('liip_imagine.controller.redirect_response_code', $config['controller']['redirect_response_code']);
 
-        $resources = $container->hasParameter('twig.form.resources') ? $container->getParameter('twig.form.resources') : array();
-        $resources[] = 'LiipImagineBundle:Form:form_div_layout.html.twig';
-        $container->setParameter('twig.form.resources', $resources);
+        $container->setParameter('twig.form.resources', array_merge(
+            $container->hasParameter('twig.form.resources') ? $container->getParameter('twig.form.resources') : [],
+            ['@LiipImagine/Form/form_div_layout.html.twig']
+        ));
     }
 
     /**
      * @param array            $config
      * @param ContainerBuilder $container
      */
-    protected function loadResolvers(array $config, ContainerBuilder $container)
+    private function loadResolvers(array $config, ContainerBuilder $container)
     {
-        foreach ($config as $resolverName => $resolverConfig) {
-            $factoryName = key($resolverConfig);
-            $factory = $this->resolversFactories[$factoryName];
-
-            $factory->create($container, $resolverName, $resolverConfig[$factoryName]);
-        }
+        $this->createFactories($this->resolversFactories, $config, $container);
     }
 
     /**
      * @param array            $config
      * @param ContainerBuilder $container
      */
-    protected function loadLoaders(array $config, ContainerBuilder $container)
+    private function loadLoaders(array $config, ContainerBuilder $container)
     {
-        foreach ($config as $loaderName => $loaderConfig) {
-            $factoryName = key($loaderConfig);
-            $factory = $this->loadersFactories[$factoryName];
-
-            $factory->create($container, $loaderName, $loaderConfig[$factoryName]);
-        }
+        $this->createFactories($this->loadersFactories, $config, $container);
     }
 
     /**
+     * @param array            $factories
+     * @param array            $configurations
      * @param ContainerBuilder $container
      */
-    private function setFactories(ContainerBuilder $container)
+    private function createFactories(array $factories, array $configurations, ContainerBuilder $container)
     {
-        $factories = array(
-            'liip_imagine.mime_type_guesser' => array('Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser', 'getInstance'),
-            'liip_imagine.extension_guesser' => array('Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesser', 'getInstance'),
-        );
-
-        foreach ($factories as $service => $factory) {
-            $definition = $container->getDefinition($service);
-            if (method_exists($definition, 'setFactory')) {
-                // to be inlined in imagine.xml when dependency on Symfony DependencyInjection is bumped to 2.6
-                $definition->setFactory($factory);
-            } else {
-                // to be removed when dependency on Symfony DependencyInjection is bumped to 2.6
-                $definition->setFactoryClass($factory[0]);
-                $definition->setFactoryMethod($factory[1]);
-            }
+        foreach ($configurations as $name => $conf) {
+            $factories[key($conf)]->create($container, $name, $conf[key($conf)]);
         }
     }
 }

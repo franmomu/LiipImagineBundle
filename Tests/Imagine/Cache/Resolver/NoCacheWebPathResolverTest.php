@@ -23,14 +23,16 @@ class NoCacheWebPathResolverTest extends AbstractTest
 {
     public function testCouldBeConstructedWithRequestContextAsArgument()
     {
-        new NoCacheWebPathResolver(new RequestContext());
+        $resolver = new NoCacheWebPathResolver(new RequestContext());
+
+        $this->assertInstanceOf(NoCacheWebPathResolver::class, $resolver);
     }
 
     public function testComposeSchemaHostAndPathOnResolve()
     {
         $resolver = new NoCacheWebPathResolver(new RequestContext('', 'GET', 'thehost', 'theSchema'));
 
-        $this->assertEquals('theschema://thehost/aPath', $resolver->resolve('aPath', 'aFilter'));
+        $this->assertSame('theschema://thehost/aPath', $resolver->resolve('aPath', 'aFilter'));
     }
 
     public function testDoNothingOnStore()
@@ -43,18 +45,24 @@ class NoCacheWebPathResolverTest extends AbstractTest
     public function testDoNothingForPathAndFilterOnRemove()
     {
         $resolver = new NoCacheWebPathResolver(new RequestContext());
-        $resolver->remove(array('a/path'), array('aFilter'));
+        $resolver->remove(['a/path'], ['aFilter']);
+
+        $this->assertInstanceOf(NoCacheWebPathResolver::class, $resolver);
     }
 
     public function testDoNothingForSomePathsAndSomeFiltersOnRemove()
     {
         $resolver = new NoCacheWebPathResolver(new RequestContext());
-        $resolver->remove(array('foo', 'bar'), array('foo', 'bar'));
+        $resolver->remove(['foo', 'bar'], ['foo', 'bar']);
+
+        $this->assertInstanceOf(NoCacheWebPathResolver::class, $resolver);
     }
 
     public function testDoNothingForEmptyPathAndEmptyFilterOnRemove()
     {
         $resolver = new NoCacheWebPathResolver(new RequestContext());
-        $resolver->remove(array(), array());
+        $resolver->remove([], []);
+
+        $this->assertInstanceOf(NoCacheWebPathResolver::class, $resolver);
     }
 }

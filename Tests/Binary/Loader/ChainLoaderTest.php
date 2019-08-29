@@ -13,59 +13,57 @@ namespace Liip\ImagineBundle\Tests\Binary\Loader;
 
 use Liip\ImagineBundle\Binary\Loader\ChainLoader;
 use Liip\ImagineBundle\Binary\Loader\FileSystemLoader;
+use Liip\ImagineBundle\Binary\Loader\LoaderInterface;
 use Liip\ImagineBundle\Binary\Locator\FileSystemLocator;
+use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
 use Liip\ImagineBundle\Model\FileBinary;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\File\MimeType\ExtensionGuesser;
 use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
 
 /**
  * @covers \Liip\ImagineBundle\Binary\Loader\ChainLoader
  */
-class ChainLoaderTest extends \PHPUnit_Framework_TestCase
+class ChainLoaderTest extends TestCase
 {
-    public function testConstruction()
+    public function testImplementsLoaderInterface(): void
     {
-        $this->getChainLoader();
-    }
-
-    public function testImplementsLoaderInterface()
-    {
-        $this->assertInstanceOf('\Liip\ImagineBundle\Binary\Loader\LoaderInterface', $this->getChainLoader());
+        $this->assertInstanceOf(LoaderInterface::class, $this->getChainLoader());
     }
 
     /**
      * @return array[]
      */
-    public static function provideLoadCases()
+    public static function provideLoadCases(): array
     {
         $file = pathinfo(__FILE__, PATHINFO_BASENAME);
 
-        return array(
-            array(
+        return [
+            [
                 __DIR__,
                 $file,
-            ),
-            array(
+            ],
+            [
                 __DIR__.'/',
                 $file,
-            ),
-            array(
+            ],
+            [
                 __DIR__, '/'.
                 $file,
-            ),
-            array(
+            ],
+            [
                 __DIR__.'/../../Binary/Loader',
                 '/'.$file,
-            ),
-            array(
+            ],
+            [
                 realpath(__DIR__.'/..'),
                 'Loader/'.$file,
-            ),
-            array(
+            ],
+            [
                 __DIR__.'/../',
                 '/Loader/../../Binary/Loader/'.$file,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -74,65 +72,101 @@ class ChainLoaderTest extends \PHPUnit_Framework_TestCase
      * @param string $root
      * @param string $path
      */
-    public function testLoad($root, $path)
+    public function testLoad(string $root, string $path): void
     {
-        $this->assertValidLoaderFindReturn($this->getChainLoader(array($root))->find($path));
+        $this->assertValidLoaderFindReturn($this->getChainLoader([$root])->find($path));
     }
 
     /**
      * @return array[]
      */
-    public function provideInvalidPathsData()
+    public function provideInvalidPathsData(): array
     {
-        return array(
-            array('../Loader/../../Binary/Loader/../../../Resources/config/routing.yaml'),
-            array('../../Binary/'),
-        );
+        return [
+            ['../Loader/../../Binary/Loader/../../../Resources/config/routing.yaml'],
+            ['../../Binary/'],
+        ];
     }
 
     /**
      * @dataProvider provideInvalidPathsData
      *
-     * @expectedException \Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException
-     * @expectedExceptionMessage Source image not resolvable
+     * @param string $path
      */
-    public function testThrowsIfFileDoesNotExist($path)
+    public function testThrowsIfFileDoesNotExist(string $path): void
     {
+        $this->expectException(NotLoadableException::class);
+        $this->expectExceptionMessageRegExp('{Source image not resolvable "[^"]+" using "FileSystemLoader=\[foo\]" 1 loaders}');
+
         $this->getChainLoader()->find($path);
     }
 
     /**
-     * @return FileSystemLocator
+     * @dataProvider provideInvalidPathsData
+     *
+     * @param string $path
      */
-    private function getFileSystemLocator()
+    public function testThrowsIfFileDoesNotExistWithMultipleLoaders(string $path): void
     {
-        return new FileSystemLocator();
+        $this->expectException(NotLoadableException::class);
+        $this->expectExceptionMessageRegExp('{Source image not resolvable "[^"]+" using "FileSystemLoader=\[foo\], FileSystemLoader=\[bar\]" 2 loaders \(internal exceptions: FileSystemLoader=\[.+\], FileSystemLoader=\[.+\]\)\.}');
+
+        $this->getChainLoader([], [
+            'foo' => new FileSystemLoader(
+                MimeTypeGuesser::getInstance(),
+                ExtensionGuesser::getInstance(),
+                $this->getFileSystemLocator([
+                    realpath(__DIR__.'/../../'),
+                ])
+            ),
+            'bar' => new FileSystemLoader(
+                MimeTypeGuesser::getInstance(),
+                ExtensionGuesser::getInstance(),
+                $this->getFileSystemLocator([
+                    realpath(__DIR__.'/../../../'),
+                ])
+            ),
+        ])->find($path);
     }
 
     /**
      * @param string[] $paths
      *
+     * @return FileSystemLocator
+     */
+    private function getFileSystemLocator(array $paths = []): FileSystemLocator
+    {
+        return new FileSystemLocator($paths);
+    }
+
+    /**
+     * @param string[]           $paths
+     * @param FileSystemLoader[] $loaders
+     *
      * @return ChainLoader
      */
-    private function getChainLoader(array $paths = array())
+    private function getChainLoader(array $paths = [], array $loaders = null): ChainLoader
     {
-        return new ChainLoader(array(
-            'foo' => new FileSystemLoader(
-                MimeTypeGuesser::getInstance(),
-                ExtensionGuesser::getInstance(),
-                $paths ?: array(__DIR__),
-                $this->getFileSystemLocator()
-            ),
-        ));
+        if (null === $loaders) {
+            $loaders = [
+                'foo' => new FileSystemLoader(
+                    MimeTypeGuesser::getInstance(),
+                    ExtensionGuesser::getInstance(),
+                    $this->getFileSystemLocator($paths ?: [__DIR__])
+                ),
+            ];
+        }
+
+        return new ChainLoader($loaders);
     }
 
     /**
      * @param FileBinary|mixed $return
      * @param string|null      $message
      */
-    private function assertValidLoaderFindReturn($return, $message = null)
+    private function assertValidLoaderFindReturn($return, string $message = ''): void
     {
-        $this->assertInstanceOf('\Liip\ImagineBundle\Model\FileBinary', $return, $message);
+        $this->assertInstanceOf(FileBinary::class, $return, $message);
         $this->assertStringStartsWith('text/', $return->getMimeType(), $message);
     }
 }

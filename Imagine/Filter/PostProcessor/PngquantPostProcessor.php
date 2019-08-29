@@ -15,7 +15,6 @@ use Liip\ImagineBundle\Binary\BinaryInterface;
 use Liip\ImagineBundle\Exception\Imagine\Filter\PostProcessor\InvalidOptionException;
 use Liip\ImagineBundle\Model\Binary;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\ProcessBuilder;
 
 /**
  * pngquant post-processor, for optimal, web-safe, lossy png compression
@@ -37,7 +36,7 @@ class PngquantPostProcessor extends AbstractPostProcessor
      * @param string $executablePath
      * @param array  $quality
      */
-    public function __construct($executablePath = '/usr/bin/pngquant', $quality = array(80, 100))
+    public function __construct($executablePath = '/usr/bin/pngquant', $quality = [80, 100])
     {
         parent::__construct($executablePath);
 
@@ -45,7 +44,7 @@ class PngquantPostProcessor extends AbstractPostProcessor
     }
 
     /**
-     * @deprecated All post-processor setters have been deprecated in 1.10.0 for removal in 2.0. You must only use the
+     * @deprecated All post-processor setters have been deprecated in 2.2 for removal in 3.0. You must only use the
      *             class's constructor to set the property state.
      *
      * @param string $quality
@@ -61,23 +60,22 @@ class PngquantPostProcessor extends AbstractPostProcessor
     }
 
     /**
-     * @param BinaryInterface $binary
-     * @param array           $options
-     *
-     * @throws ProcessFailedException
-     *
-     * @return BinaryInterface
+     * @inheritDoc
      */
-    protected function doProcess(BinaryInterface $binary, array $options = array())
+    public function process(BinaryInterface $binary, array $options = []): BinaryInterface
     {
         if (!$this->isBinaryTypePngImage($binary)) {
             return $binary;
         }
 
-        $process = $this->setupProcessBuilder($options, $binary)->add('-')->setInput($binary->getContent())->getProcess();
+        $arguments = $this->getProcessArguments($options);
+        $arguments[] = '-';
+        $process = $this->createProcess($arguments, $options);
+        $process->setInput($binary->getContent());
         $process->run();
 
-        if (!$this->isSuccessfulProcess($process, array(0, 98, 99), array())) {
+
+        if (!$this->isSuccessfulProcess($process, [0, 98, 99], [])) {
             throw new ProcessFailedException($process);
         }
 
@@ -87,16 +85,16 @@ class PngquantPostProcessor extends AbstractPostProcessor
     /**
      * @param array $options
      *
-     * @return ProcessBuilder
+     * @return array
      */
-    private function setupProcessBuilder(array $options = array())
+    private function getProcessArguments(array $options = []): array
     {
-        $builder = $this->createProcessBuilder(array($this->executablePath), $options);
+        $arguments = [$this->executablePath];
 
-        if ($quality = isset($options['quality']) ? $options['quality'] : $this->quality) {
+        if ($quality = $options['quality'] ?? $this->quality) {
             if (is_string($quality) && false !== strpos($quality, '-')) {
-                @trigger_error(sprintf('Passing the "quality" option as a string was deprecated in 1.10.0 and ' .
-                    'will be removed in 2.0. Instead, pass wither an integer representing the max value or an array ' .
+                @trigger_error(sprintf('Passing the "quality" option as a string was deprecated in 2.2 and ' .
+                    'will be removed in 3.0. Instead, pass wither an integer representing the max value or an array ' .
                     'representing the minimum and maximum values.'), E_USER_DEPRECATED);
 
                 $quality = array_map(function ($q) {
@@ -105,7 +103,7 @@ class PngquantPostProcessor extends AbstractPostProcessor
             }
 
             if (!is_array($quality)) {
-                $quality = array(0, (int) $quality);
+                $quality = [0, (int) $quality];
             }
 
             if (1 === count($quality)) {
@@ -114,11 +112,14 @@ class PngquantPostProcessor extends AbstractPostProcessor
 
             if ($quality[0] > $quality[1]) {
                 throw new InvalidOptionException('the "quality" option cannot have a greater minimum value value than maximum quality value', $options);
-            } elseif (!in_array($quality[0], range(0, 100)) || !in_array($quality[1], range(0, 100))) {
+            }
+
+            if (!in_array($quality[0], range(0, 100)) || !in_array($quality[1], range(0, 100))) {
                 throw new InvalidOptionException('the "quality" option value(s) must be an int between 0 and 100', $options);
             }
 
-            $builder->add('--quality')->add(sprintf('%d-%d', $quality[0], $quality[1]));
+            $arguments[] = '--quality';
+            $arguments[] = sprintf('%d-%d', $quality[0], $quality[1]);
         }
 
         if (isset($options['speed'])) {
@@ -126,19 +127,21 @@ class PngquantPostProcessor extends AbstractPostProcessor
                 throw new InvalidOptionException('the "speed" option must be an int between 1 and 11', $options);
             }
 
-            $builder->add('--speed')->add($options['speed']);
+            $arguments[] = '--speed';
+            $arguments[] = $options['speed'];
         }
 
         if (isset($options['dithering'])) {
             if (false === $options['dithering']) {
-                $builder->add('--nofs');
+                $arguments[] = '--nofs';
             } elseif ($options['dithering'] >= 0 && $options['dithering'] <= 1) {
-                $builder->add('--floyd')->add($options['dithering']);
+                $arguments[] = '--floyd';
+                $arguments[] = $options['dithering'];
             } elseif (true !== $options['dithering']) {
                 throw new InvalidOptionException('the "dithering" option must be a float between 0 and 1 or a bool', $options);
             }
         }
 
-        return $builder;
+        return $arguments;
     }
 }

@@ -12,22 +12,19 @@
 namespace Liip\ImagineBundle\Imagine\Filter\PostProcessor;
 
 use Liip\ImagineBundle\Binary\BinaryInterface;
-use Symfony\Component\Process\Exception\ProcessFailedException;
 
 /**
- * @author Konstantin Tjuterev <kostik.lv@gmail.com>
+ * Interface for PostProcessors - handlers which can operate on binaries prepared in FilterManager.
  */
 interface PostProcessorInterface
 {
     /**
-     * Performs post-process operation on passed binary and returns the resulting binary.
+     * Allows processing a BinaryInterface, with run-time options, so PostProcessors remain stateless.
      *
      * @param BinaryInterface $binary
-     * @param array           $options
-     *
-     * @throws ProcessFailedException
+     * @param array           $options Operation-specific options
      *
      * @return BinaryInterface
      */
-    public function process(BinaryInterface $binary /* array $options = array() */);
+    public function process(BinaryInterface $binary, array $options = []): BinaryInterface;
 }

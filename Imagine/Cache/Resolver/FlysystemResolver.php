@@ -12,7 +12,7 @@
 namespace Liip\ImagineBundle\Imagine\Cache\Resolver;
 
 use League\Flysystem\AdapterInterface;
-use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemInterface;
 use Liip\ImagineBundle\Binary\BinaryInterface;
 use Liip\ImagineBundle\Exception\Imagine\Cache\Resolver\NotResolvableException;
 use Symfony\Component\Routing\RequestContext;
@@ -20,7 +20,7 @@ use Symfony\Component\Routing\RequestContext;
 class FlysystemResolver implements ResolverInterface
 {
     /**
-     * @var Filesystem
+     * @var FilesystemInterface
      */
     protected $flysystem;
 
@@ -56,14 +56,14 @@ class FlysystemResolver implements ResolverInterface
     /**
      * FlysystemResolver constructor.
      *
-     * @param Filesystem     $flysystem
-     * @param RequestContext $requestContext
-     * @param string         $rootUrl
-     * @param string         $cachePrefix
-     * @param string         $visibility
+     * @param FilesystemInterface $flysystem
+     * @param RequestContext      $requestContext
+     * @param string              $rootUrl
+     * @param string              $cachePrefix
+     * @param string              $visibility
      */
     public function __construct(
-        Filesystem $flysystem,
+        FilesystemInterface $flysystem,
         RequestContext $requestContext,
         $rootUrl,
         $cachePrefix = 'media/cache',
@@ -92,25 +92,6 @@ class FlysystemResolver implements ResolverInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    protected function getFilePath($path, $filter)
-    {
-        return $this->getFileUrl($path, $filter);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getFileUrl($path, $filter)
-    {
-        // crude way of sanitizing URL scheme ("protocol") part
-        $path = str_replace('://', '---', $path);
-
-        return $this->cachePrefix.'/'.$filter.'/'.ltrim($path, '/');
-    }
-
-    /**
      * Resolves filtered path for rendering in the browser.
      *
      * @param string $path   The path where the original file is expected to be
@@ -124,8 +105,8 @@ class FlysystemResolver implements ResolverInterface
     {
         return sprintf(
             '%s/%s',
-            $this->webRoot,
-            $this->getFileUrl($path, $filter)
+            rtrim($this->webRoot, '/'),
+            ltrim($this->getFileUrl($path, $filter), '/')
         );
     }
 
@@ -141,7 +122,7 @@ class FlysystemResolver implements ResolverInterface
         $this->flysystem->put(
             $this->getFilePath($path, $filter),
             $binary->getContent(),
-            array('visibility' => $this->visibility)
+            ['visibility' => $this->visibility, 'mimetype' => $binary->getMimeType()]
         );
     }
 
@@ -171,5 +152,24 @@ class FlysystemResolver implements ResolverInterface
                 }
             }
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getFilePath($path, $filter)
+    {
+        return $this->getFileUrl($path, $filter);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getFileUrl($path, $filter)
+    {
+        // crude way of sanitizing URL scheme ("protocol") part
+        $path = str_replace('://', '---', $path);
+
+        return $this->cachePrefix.'/'.$filter.'/'.ltrim($path, '/');
     }
 }

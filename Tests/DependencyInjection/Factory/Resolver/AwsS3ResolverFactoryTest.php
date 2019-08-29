@@ -12,33 +12,38 @@
 namespace Liip\ImagineBundle\Tests\DependencyInjection\Factory\Resolver;
 
 use Liip\ImagineBundle\DependencyInjection\Factory\Resolver\AwsS3ResolverFactory;
-use Liip\ImagineBundle\Utility\Framework\SymfonyFramework;
+use Liip\ImagineBundle\DependencyInjection\Factory\Resolver\ResolverFactoryInterface;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * @covers \Liip\ImagineBundle\DependencyInjection\Factory\Resolver\AwsS3ResolverFactory<extended>
  */
-class AwsS3ResolverFactoryTest extends \Phpunit_Framework_TestCase
+class AwsS3ResolverFactoryTest extends TestCase
 {
     public function testImplementsResolverFactoryInterface()
     {
-        $rc = new \ReflectionClass('\Liip\ImagineBundle\DependencyInjection\Factory\Resolver\AwsS3ResolverFactory');
+        $rc = new \ReflectionClass(AwsS3ResolverFactory::class);
 
-        $this->assertTrue($rc->implementsInterface('\Liip\ImagineBundle\DependencyInjection\Factory\Resolver\ResolverFactoryInterface'));
+        $this->assertTrue($rc->implementsInterface(ResolverFactoryInterface::class));
     }
 
     public function testCouldBeConstructedWithoutAnyArguments()
     {
-        new AwsS3ResolverFactory();
+        $loader = new AwsS3ResolverFactory();
+
+        $this->assertInstanceOf(AwsS3ResolverFactory::class, $loader);
     }
 
     public function testReturnExpectedName()
     {
         $resolver = new AwsS3ResolverFactory();
 
-        $this->assertEquals('aws_s3', $resolver->getName());
+        $this->assertSame('aws_s3', $resolver->getName());
     }
 
     public function testCreateResolverDefinitionOnCreate()
@@ -47,53 +52,29 @@ class AwsS3ResolverFactoryTest extends \Phpunit_Framework_TestCase
 
         $resolver = new AwsS3ResolverFactory();
 
-        $resolver->create($container, 'the_resolver_name', array(
-            'client_config' => array(),
+        $resolver->create($container, 'the_resolver_name', [
+            'client_config' => [],
             'bucket' => 'theBucket',
             'acl' => 'theAcl',
-            'url_options' => array('fooKey' => 'fooVal'),
-            'get_options' => array(),
-            'put_options' => array('barKey' => 'barVal'),
+            'get_options' => ['fooKey' => 'fooVal'],
+            'put_options' => ['barKey' => 'barVal'],
             'cache' => false,
-            'proxies' => array(),
-        ));
+            'proxies' => [],
+        ]);
 
         $this->assertTrue($container->hasDefinition('liip_imagine.cache.resolver.the_resolver_name'));
 
         $resolverDefinition = $container->getDefinition('liip_imagine.cache.resolver.the_resolver_name');
-        $this->assertInstanceOf('\Symfony\Component\DependencyInjection\DefinitionDecorator', $resolverDefinition);
-        $this->assertEquals('liip_imagine.cache.resolver.prototype.aws_s3', $resolverDefinition->getParent());
+        $this->assertInstanceOf(ChildDefinition::class, $resolverDefinition);
+        $this->assertSame('liip_imagine.cache.resolver.prototype.aws_s3', $resolverDefinition->getParent());
 
-        $this->assertInstanceOf('\Symfony\Component\DependencyInjection\Reference', $resolverDefinition->getArgument(0));
-        $this->assertEquals('liip_imagine.cache.resolver.the_resolver_name.client', $resolverDefinition->getArgument(0));
+        $this->assertInstanceOf(Reference::class, $resolverDefinition->getArgument(0));
+        $this->assertSame('liip_imagine.cache.resolver.the_resolver_name.client', (string) $resolverDefinition->getArgument(0));
 
-        $this->assertEquals('theBucket', $resolverDefinition->getArgument(1));
-        $this->assertEquals('theAcl', $resolverDefinition->getArgument(2));
-        $this->assertEquals(array('fooKey' => 'fooVal'), $resolverDefinition->getArgument(3));
-        $this->assertEquals(array('barKey' => 'barVal'), $resolverDefinition->getArgument(4));
-    }
-
-    public function testOverrideDeprecatedUrlOptionsWithNewGetOptions()
-    {
-        $container = new ContainerBuilder();
-
-        $resolver = new AwsS3ResolverFactory();
-
-        $resolver->create($container, 'the_resolver_name', array(
-            'client_config' => array(),
-            'bucket' => 'theBucket',
-            'acl' => 'theAcl',
-            'url_options' => array('fooKey' => 'fooVal', 'barKey' => 'barVal'),
-            'get_options' => array('fooKey' => 'fooVal_overridden'),
-            'put_options' => array(),
-            'cache' => false,
-            'proxies' => array(),
-        ));
-
-        $this->assertTrue($container->hasDefinition('liip_imagine.cache.resolver.the_resolver_name'));
-
-        $resolverDefinition = $container->getDefinition('liip_imagine.cache.resolver.the_resolver_name');
-        $this->assertEquals(array('fooKey' => 'fooVal_overridden', 'barKey' => 'barVal'), $resolverDefinition->getArgument(3));
+        $this->assertSame('theBucket', $resolverDefinition->getArgument(1));
+        $this->assertSame('theAcl', $resolverDefinition->getArgument(2));
+        $this->assertSame(['fooKey' => 'fooVal'], $resolverDefinition->getArgument(3));
+        $this->assertSame(['barKey' => 'barVal'], $resolverDefinition->getArgument(4));
     }
 
     public function testCreateS3ClientDefinitionOnCreate()
@@ -102,76 +83,41 @@ class AwsS3ResolverFactoryTest extends \Phpunit_Framework_TestCase
 
         $resolver = new AwsS3ResolverFactory();
 
-        $resolver->create($container, 'the_resolver_name', array(
-            'client_config' => array('theClientConfigKey' => 'theClientConfigVal'),
+        $resolver->create($container, 'the_resolver_name', [
+            'client_config' => ['theClientConfigKey' => 'theClientConfigVal'],
             'bucket' => 'aBucket',
             'acl' => 'aAcl',
-            'url_options' => array(),
-            'get_options' => array(),
-            'put_options' => array(),
+            'get_options' => [],
+            'put_options' => [],
             'cache' => false,
-            'proxies' => array(),
-        ));
+            'proxies' => [],
+        ]);
 
         $this->assertTrue($container->hasDefinition('liip_imagine.cache.resolver.the_resolver_name.client'));
 
         $clientDefinition = $container->getDefinition('liip_imagine.cache.resolver.the_resolver_name.client');
-        $this->assertEquals('Aws\S3\S3Client', $clientDefinition->getClass());
-        $this->assertEquals(array('theClientConfigKey' => 'theClientConfigVal'), $clientDefinition->getArgument(0));
+        $this->assertSame('Aws\S3\S3Client', $clientDefinition->getClass());
+        $this->assertSame(['theClientConfigKey' => 'theClientConfigVal'], $clientDefinition->getArgument(0));
     }
 
     public function testCreateS3ClientDefinitionWithFactoryOnCreate()
     {
-        if (SymfonyFramework::isKernelLessThan(2, 6)) {
-            $this->markTestSkipped('No need to test on symfony < 2.6');
-        }
-
         $container = new ContainerBuilder();
 
         $resolver = new AwsS3ResolverFactory();
 
-        $resolver->create($container, 'the_resolver_name', array(
-            'client_config' => array('theClientConfigKey' => 'theClientConfigVal'),
+        $resolver->create($container, 'the_resolver_name', [
+            'client_config' => ['theClientConfigKey' => 'theClientConfigVal'],
             'bucket' => 'aBucket',
             'acl' => 'aAcl',
-            'url_options' => array(),
-            'get_options' => array(),
-            'put_options' => array(),
+            'get_options' => [],
+            'put_options' => [],
             'cache' => false,
-            'proxies' => array(),
-        ));
+            'proxies' => [],
+        ]);
 
         $clientDefinition = $container->getDefinition('liip_imagine.cache.resolver.the_resolver_name.client');
-        $this->assertEquals(array('Aws\S3\S3Client', 'factory'), $clientDefinition->getFactory());
-    }
-
-    /**
-     * @group legacy
-     */
-    public function testCreateS3ClientDefinitionWithFactoryOnCreateLegacy()
-    {
-        if (SymfonyFramework::isKernelGreaterThanOrEqualTo(2, 6)) {
-            $this->markTestSkipped('No need to test on symfony >= 2.6');
-        }
-
-        $container = new ContainerBuilder();
-
-        $resolver = new AwsS3ResolverFactory();
-
-        $resolver->create($container, 'the_resolver_name', array(
-            'client_config' => array('theClientConfigKey' => 'theClientConfigVal'),
-            'bucket' => 'aBucket',
-            'acl' => 'aAcl',
-            'url_options' => array(),
-            'get_options' => array(),
-            'put_options' => array(),
-            'cache' => false,
-            'proxies' => array(),
-        ));
-
-        $clientDefinition = $container->getDefinition('liip_imagine.cache.resolver.the_resolver_name.client');
-        $this->assertEquals('Aws\S3\S3Client', $clientDefinition->getFactoryClass());
-        $this->assertEquals('factory', $clientDefinition->getFactoryMethod());
+        $this->assertSame(['Aws\S3\S3Client', 'factory'], $clientDefinition->getFactory());
     }
 
     public function testWrapResolverWithProxyOnCreateWithoutCache()
@@ -180,33 +126,32 @@ class AwsS3ResolverFactoryTest extends \Phpunit_Framework_TestCase
 
         $resolver = new AwsS3ResolverFactory();
 
-        $resolver->create($container, 'the_resolver_name', array(
-            'client_config' => array(),
+        $resolver->create($container, 'the_resolver_name', [
+            'client_config' => [],
             'bucket' => 'aBucket',
             'acl' => 'aAcl',
-            'url_options' => array(),
-            'get_options' => array(),
-            'put_options' => array(),
+            'get_options' => [],
+            'put_options' => [],
             'cache' => false,
-            'proxies' => array('foo'),
-        ));
+            'proxies' => ['foo'],
+        ]);
 
         $this->assertTrue($container->hasDefinition('liip_imagine.cache.resolver.the_resolver_name.proxied'));
         $proxiedResolverDefinition = $container->getDefinition('liip_imagine.cache.resolver.the_resolver_name.proxied');
-        $this->assertInstanceOf('Symfony\Component\DependencyInjection\DefinitionDecorator', $proxiedResolverDefinition);
-        $this->assertEquals('liip_imagine.cache.resolver.prototype.aws_s3', $proxiedResolverDefinition->getParent());
+        $this->assertInstanceOf(ChildDefinition::class, $proxiedResolverDefinition);
+        $this->assertSame('liip_imagine.cache.resolver.prototype.aws_s3', $proxiedResolverDefinition->getParent());
 
         $this->assertFalse($container->hasDefinition('liip_imagine.cache.resolver.the_resolver_name.cached'));
 
         $this->assertTrue($container->hasDefinition('liip_imagine.cache.resolver.the_resolver_name'));
         $resolverDefinition = $container->getDefinition('liip_imagine.cache.resolver.the_resolver_name');
-        $this->assertInstanceOf('Symfony\Component\DependencyInjection\DefinitionDecorator', $resolverDefinition);
-        $this->assertEquals('liip_imagine.cache.resolver.prototype.proxy', $resolverDefinition->getParent());
+        $this->assertInstanceOf(ChildDefinition::class, $resolverDefinition);
+        $this->assertSame('liip_imagine.cache.resolver.prototype.proxy', $resolverDefinition->getParent());
 
-        $this->assertInstanceOf('Symfony\Component\DependencyInjection\Reference', $resolverDefinition->getArgument(0));
-        $this->assertEquals('liip_imagine.cache.resolver.the_resolver_name.proxied', $resolverDefinition->getArgument(0));
+        $this->assertInstanceOf(Reference::class, $resolverDefinition->getArgument(0));
+        $this->assertSame('liip_imagine.cache.resolver.the_resolver_name.proxied', (string) $resolverDefinition->getArgument(0));
 
-        $this->assertEquals(array('foo'), $resolverDefinition->getArgument(1));
+        $this->assertSame(['foo'], $resolverDefinition->getArgument(1));
     }
 
     public function testWrapResolverWithCacheOnCreateWithoutProxy()
@@ -215,34 +160,33 @@ class AwsS3ResolverFactoryTest extends \Phpunit_Framework_TestCase
 
         $resolver = new AwsS3ResolverFactory();
 
-        $resolver->create($container, 'the_resolver_name', array(
-            'client_config' => array(),
+        $resolver->create($container, 'the_resolver_name', [
+            'client_config' => [],
             'bucket' => 'aBucket',
             'acl' => 'aAcl',
-            'url_options' => array(),
-            'get_options' => array(),
-            'put_options' => array(),
+            'get_options' => [],
+            'put_options' => [],
             'cache' => 'the_cache_service_id',
-            'proxies' => array(),
-        ));
+            'proxies' => [],
+        ]);
 
         $this->assertTrue($container->hasDefinition('liip_imagine.cache.resolver.the_resolver_name.cached'));
         $cachedResolverDefinition = $container->getDefinition('liip_imagine.cache.resolver.the_resolver_name.cached');
-        $this->assertInstanceOf('\Symfony\Component\DependencyInjection\DefinitionDecorator', $cachedResolverDefinition);
-        $this->assertEquals('liip_imagine.cache.resolver.prototype.aws_s3', $cachedResolverDefinition->getParent());
+        $this->assertInstanceOf(ChildDefinition::class, $cachedResolverDefinition);
+        $this->assertSame('liip_imagine.cache.resolver.prototype.aws_s3', $cachedResolverDefinition->getParent());
 
         $this->assertFalse($container->hasDefinition('liip_imagine.cache.resolver.the_resolver_name.proxied'));
 
         $this->assertTrue($container->hasDefinition('liip_imagine.cache.resolver.the_resolver_name'));
         $resolverDefinition = $container->getDefinition('liip_imagine.cache.resolver.the_resolver_name');
-        $this->assertInstanceOf('\Symfony\Component\DependencyInjection\DefinitionDecorator', $resolverDefinition);
-        $this->assertEquals('liip_imagine.cache.resolver.prototype.cache', $resolverDefinition->getParent());
+        $this->assertInstanceOf(ChildDefinition::class, $resolverDefinition);
+        $this->assertSame('liip_imagine.cache.resolver.prototype.cache', $resolverDefinition->getParent());
 
-        $this->assertInstanceOf('\Symfony\Component\DependencyInjection\Reference', $resolverDefinition->getArgument(0));
-        $this->assertEquals('the_cache_service_id', $resolverDefinition->getArgument(0));
+        $this->assertInstanceOf(Reference::class, $resolverDefinition->getArgument(0));
+        $this->assertSame('the_cache_service_id', (string) $resolverDefinition->getArgument(0));
 
-        $this->assertInstanceOf('\Symfony\Component\DependencyInjection\Reference', $resolverDefinition->getArgument(1));
-        $this->assertEquals('liip_imagine.cache.resolver.the_resolver_name.cached', $resolverDefinition->getArgument(1));
+        $this->assertInstanceOf(Reference::class, $resolverDefinition->getArgument(1));
+        $this->assertSame('liip_imagine.cache.resolver.the_resolver_name.cached', (string) $resolverDefinition->getArgument(1));
     }
 
     public function testWrapResolverWithProxyAndCacheOnCreate()
@@ -251,42 +195,41 @@ class AwsS3ResolverFactoryTest extends \Phpunit_Framework_TestCase
 
         $resolver = new AwsS3ResolverFactory();
 
-        $resolver->create($container, 'the_resolver_name', array(
-            'client_config' => array(),
+        $resolver->create($container, 'the_resolver_name', [
+            'client_config' => [],
             'bucket' => 'aBucket',
             'acl' => 'aAcl',
-            'url_options' => array(),
-            'get_options' => array(),
-            'put_options' => array(),
+            'get_options' => [],
+            'put_options' => [],
             'cache' => 'the_cache_service_id',
-            'proxies' => array('foo'),
-        ));
+            'proxies' => ['foo'],
+        ]);
 
         $this->assertTrue($container->hasDefinition('liip_imagine.cache.resolver.the_resolver_name.proxied'));
         $proxiedResolverDefinition = $container->getDefinition('liip_imagine.cache.resolver.the_resolver_name.proxied');
-        $this->assertInstanceOf('\Symfony\Component\DependencyInjection\DefinitionDecorator', $proxiedResolverDefinition);
-        $this->assertEquals('liip_imagine.cache.resolver.prototype.aws_s3', $proxiedResolverDefinition->getParent());
+        $this->assertInstanceOf(ChildDefinition::class, $proxiedResolverDefinition);
+        $this->assertSame('liip_imagine.cache.resolver.prototype.aws_s3', $proxiedResolverDefinition->getParent());
 
         $this->assertTrue($container->hasDefinition('liip_imagine.cache.resolver.the_resolver_name.cached'));
         $cachedResolverDefinition = $container->getDefinition('liip_imagine.cache.resolver.the_resolver_name.cached');
-        $this->assertInstanceOf('\Symfony\Component\DependencyInjection\DefinitionDecorator', $cachedResolverDefinition);
-        $this->assertEquals('liip_imagine.cache.resolver.prototype.proxy', $cachedResolverDefinition->getParent());
+        $this->assertInstanceOf(ChildDefinition::class, $cachedResolverDefinition);
+        $this->assertSame('liip_imagine.cache.resolver.prototype.proxy', $cachedResolverDefinition->getParent());
 
-        $this->assertInstanceOf('\Symfony\Component\DependencyInjection\Reference', $cachedResolverDefinition->getArgument(0));
-        $this->assertEquals('liip_imagine.cache.resolver.the_resolver_name.proxied', $cachedResolverDefinition->getArgument(0));
+        $this->assertInstanceOf(Reference::class, $cachedResolverDefinition->getArgument(0));
+        $this->assertSame('liip_imagine.cache.resolver.the_resolver_name.proxied', (string) $cachedResolverDefinition->getArgument(0));
 
-        $this->assertEquals(array('foo'), $cachedResolverDefinition->getArgument(1));
+        $this->assertSame(['foo'], $cachedResolverDefinition->getArgument(1));
 
         $this->assertTrue($container->hasDefinition('liip_imagine.cache.resolver.the_resolver_name'));
         $resolverDefinition = $container->getDefinition('liip_imagine.cache.resolver.the_resolver_name');
-        $this->assertInstanceOf('\Symfony\Component\DependencyInjection\DefinitionDecorator', $resolverDefinition);
-        $this->assertEquals('liip_imagine.cache.resolver.prototype.cache', $resolverDefinition->getParent());
+        $this->assertInstanceOf(ChildDefinition::class, $resolverDefinition);
+        $this->assertSame('liip_imagine.cache.resolver.prototype.cache', $resolverDefinition->getParent());
 
-        $this->assertInstanceOf('\Symfony\Component\DependencyInjection\Reference', $resolverDefinition->getArgument(0));
-        $this->assertEquals('the_cache_service_id', $resolverDefinition->getArgument(0));
+        $this->assertInstanceOf(Reference::class, $resolverDefinition->getArgument(0));
+        $this->assertSame('the_cache_service_id', (string) $resolverDefinition->getArgument(0));
 
-        $this->assertInstanceOf('\Symfony\Component\DependencyInjection\Reference', $resolverDefinition->getArgument(1));
-        $this->assertEquals('liip_imagine.cache.resolver.the_resolver_name.cached', $resolverDefinition->getArgument(1));
+        $this->assertInstanceOf(Reference::class, $resolverDefinition->getArgument(1));
+        $this->assertSame('liip_imagine.cache.resolver.the_resolver_name.cached', (string) $resolverDefinition->getArgument(1));
     }
 
     public function testWrapResolverWithProxyMatchReplaceStrategyOnCreate()
@@ -295,31 +238,30 @@ class AwsS3ResolverFactoryTest extends \Phpunit_Framework_TestCase
 
         $resolver = new AwsS3ResolverFactory();
 
-        $resolver->create($container, 'the_resolver_name', array(
-            'client_config' => array(),
+        $resolver->create($container, 'the_resolver_name', [
+            'client_config' => [],
             'bucket' => 'aBucket',
             'acl' => 'aAcl',
-            'url_options' => array(),
-            'get_options' => array(),
-            'put_options' => array(),
+            'get_options' => [],
+            'put_options' => [],
             'cache' => 'the_cache_service_id',
-            'proxies' => array('foo' => 'bar'),
-        ));
+            'proxies' => ['foo' => 'bar'],
+        ]);
 
         $this->assertTrue($container->hasDefinition('liip_imagine.cache.resolver.the_resolver_name.proxied'));
         $proxiedResolverDefinition = $container->getDefinition('liip_imagine.cache.resolver.the_resolver_name.proxied');
-        $this->assertInstanceOf('\Symfony\Component\DependencyInjection\DefinitionDecorator', $proxiedResolverDefinition);
-        $this->assertEquals('liip_imagine.cache.resolver.prototype.aws_s3', $proxiedResolverDefinition->getParent());
+        $this->assertInstanceOf(ChildDefinition::class, $proxiedResolverDefinition);
+        $this->assertSame('liip_imagine.cache.resolver.prototype.aws_s3', $proxiedResolverDefinition->getParent());
 
         $this->assertTrue($container->hasDefinition('liip_imagine.cache.resolver.the_resolver_name.cached'));
         $cachedResolverDefinition = $container->getDefinition('liip_imagine.cache.resolver.the_resolver_name.cached');
-        $this->assertInstanceOf('\Symfony\Component\DependencyInjection\DefinitionDecorator', $cachedResolverDefinition);
-        $this->assertEquals('liip_imagine.cache.resolver.prototype.proxy', $cachedResolverDefinition->getParent());
+        $this->assertInstanceOf(ChildDefinition::class, $cachedResolverDefinition);
+        $this->assertSame('liip_imagine.cache.resolver.prototype.proxy', $cachedResolverDefinition->getParent());
 
-        $this->assertInstanceOf('\Symfony\Component\DependencyInjection\Reference', $cachedResolverDefinition->getArgument(0));
-        $this->assertEquals('liip_imagine.cache.resolver.the_resolver_name.proxied', $cachedResolverDefinition->getArgument(0));
+        $this->assertInstanceOf(Reference::class, $cachedResolverDefinition->getArgument(0));
+        $this->assertSame('liip_imagine.cache.resolver.the_resolver_name.proxied', (string) $cachedResolverDefinition->getArgument(0));
 
-        $this->assertEquals(array('foo' => 'bar'), $cachedResolverDefinition->getArgument(1));
+        $this->assertSame(['foo' => 'bar'], $cachedResolverDefinition->getArgument(1));
     }
 
     public function testSetCachePrefixIfDefined()
@@ -328,17 +270,16 @@ class AwsS3ResolverFactoryTest extends \Phpunit_Framework_TestCase
 
         $resolver = new AwsS3ResolverFactory();
 
-        $resolver->create($container, 'the_resolver_name', array(
-            'client_config' => array(),
+        $resolver->create($container, 'the_resolver_name', [
+            'client_config' => [],
             'bucket' => 'aBucket',
             'acl' => 'aAcl',
-            'url_options' => array(),
-            'get_options' => array(),
-            'put_options' => array(),
+            'get_options' => [],
+            'put_options' => [],
             'cache_prefix' => 'theCachePrefix',
             'cache' => null,
-            'proxies' => array(),
-        ));
+            'proxies' => [],
+        ]);
 
         $this->assertTrue($container->hasDefinition('liip_imagine.cache.resolver.the_resolver_name'));
         $resolverDefinition = $container->getDefinition('liip_imagine.cache.resolver.the_resolver_name');
@@ -346,151 +287,147 @@ class AwsS3ResolverFactoryTest extends \Phpunit_Framework_TestCase
         $methodCalls = $resolverDefinition->getMethodCalls();
 
         $this->assertCount(1, $methodCalls);
-        $this->assertEquals('setCachePrefix', $methodCalls[0][0]);
-        $this->assertEquals(array('theCachePrefix'), $methodCalls[0][1]);
+        $this->assertSame('setCachePrefix', $methodCalls[0][0]);
+        $this->assertSame(['theCachePrefix'], $methodCalls[0][1]);
     }
 
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage The child node "bucket" at path "aws_s3" must be configured.
-     */
     public function testThrowBucketNotSetOnAddConfiguration()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('aws_s3', 'array');
+        $this->expectException(\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException::class);
+        $this->expectExceptionMessage('The child node "bucket" at path "aws_s3" must be configured.');
+
+        $treeBuilder = new TreeBuilder('aws_s3');
+        $rootNode = method_exists(TreeBuilder::class, 'getRootNode')
+            ? $treeBuilder->getRootNode()
+            : $treeBuilder->root('aws_s3');
 
         $resolver = new AwsS3ResolverFactory();
         $resolver->addConfiguration($rootNode);
 
-        $this->processConfigTree($treeBuilder, array());
+        $this->processConfigTree($treeBuilder, []);
     }
 
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage The child node "client_config" at path "aws_s3" must be configured.
-     */
     public function testThrowClientConfigNotSetOnAddConfiguration()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('aws_s3', 'array');
+        $this->expectException(\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException::class);
+        $this->expectExceptionMessage('The child node "client_config" at path "aws_s3" must be configured.');
+
+        $treeBuilder = new TreeBuilder('aws_s3');
+        $rootNode = method_exists(TreeBuilder::class, 'getRootNode')
+            ? $treeBuilder->getRootNode()
+            : $treeBuilder->root('aws_s3');
 
         $resolver = new AwsS3ResolverFactory();
         $resolver->addConfiguration($rootNode);
 
-        $this->processConfigTree($treeBuilder, array(
-            'aws_s3' => array(
+        $this->processConfigTree($treeBuilder, [
+            'aws_s3' => [
                 'bucket' => 'aBucket',
-            ),
-        ));
+            ],
+        ]);
     }
 
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage Invalid type for path "aws_s3.client_config". Expected array, but got string
-     */
     public function testThrowClientConfigNotArrayOnAddConfiguration()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('aws_s3', 'array');
+        $this->expectException(\Symfony\Component\Config\Definition\Exception\InvalidConfigurationException::class);
+        $this->expectExceptionMessage('Invalid type for path "aws_s3.client_config". Expected array, but got string');
+
+        $treeBuilder = new TreeBuilder('aws_s3');
+        $rootNode = method_exists(TreeBuilder::class, 'getRootNode')
+            ? $treeBuilder->getRootNode()
+            : $treeBuilder->root('aws_s3');
 
         $resolver = new AwsS3ResolverFactory();
         $resolver->addConfiguration($rootNode);
 
-        $this->processConfigTree($treeBuilder, array(
-            'aws_s3' => array(
+        $this->processConfigTree($treeBuilder, [
+            'aws_s3' => [
                 'bucket' => 'aBucket',
                 'client_config' => 'not_array',
-            ),
-        ));
+            ],
+        ]);
     }
 
     public function testProcessCorrectlyOptionsOnAddConfiguration()
     {
-        $expectedClientConfig = array(
+        $expectedClientConfig = [
             'theKey' => 'theClientConfigVal',
             'theOtherKey' => 'theOtherClientConfigValue',
-        );
-        $expectedUrlOptions = array(
-            'theKey' => 'theUrlOptionsVal',
-            'theOtherKey' => 'theOtherUrlOptionsValue',
-        );
-        $expectedGetOptions = array(
+        ];
+        $expectedGetOptions = [
             'theKey' => 'theGetOptionsVal',
             'theOtherKey' => 'theOtherGetOptionsValue',
-        );
-        $expectedObjectOptions = array(
+        ];
+        $expectedObjectOptions = [
             'theKey' => 'theObjectOptionsVal',
             'theOtherKey' => 'theOtherObjectOptionsValue',
-        );
+        ];
         $expectedBucket = 'theBucket';
         $expectedAcl = 'theAcl';
         $expectedCachePrefix = 'theCachePrefix';
 
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('aws_s3', 'array');
+        $treeBuilder = new TreeBuilder('aws_s3');
+        $rootNode = method_exists(TreeBuilder::class, 'getRootNode')
+            ? $treeBuilder->getRootNode()
+            : $treeBuilder->root('aws_s3');
 
         $resolver = new AwsS3ResolverFactory();
         $resolver->addConfiguration($rootNode);
 
-        $config = $this->processConfigTree($treeBuilder, array(
-            'aws_s3' => array(
+        $config = $this->processConfigTree($treeBuilder, [
+            'aws_s3' => [
                 'bucket' => $expectedBucket,
                 'acl' => $expectedAcl,
                 'client_config' => $expectedClientConfig,
-                'url_options' => $expectedUrlOptions,
                 'get_options' => $expectedGetOptions,
                 'put_options' => $expectedObjectOptions,
                 'cache_prefix' => $expectedCachePrefix,
-            ),
-        ));
+            ],
+        ]);
 
         $this->assertArrayHasKey('bucket', $config);
-        $this->assertEquals($expectedBucket, $config['bucket']);
+        $this->assertSame($expectedBucket, $config['bucket']);
 
         $this->assertArrayHasKey('acl', $config);
-        $this->assertEquals($expectedAcl, $config['acl']);
+        $this->assertSame($expectedAcl, $config['acl']);
 
         $this->assertArrayHasKey('client_config', $config);
-        $this->assertEquals($expectedClientConfig, $config['client_config']);
-
-        $this->assertArrayHasKey('url_options', $config);
-        $this->assertEquals($expectedUrlOptions, $config['url_options']);
+        $this->assertSame($expectedClientConfig, $config['client_config']);
 
         $this->assertArrayHasKey('get_options', $config);
-        $this->assertEquals($expectedGetOptions, $config['get_options']);
+        $this->assertSame($expectedGetOptions, $config['get_options']);
 
         $this->assertArrayHasKey('put_options', $config);
-        $this->assertEquals($expectedObjectOptions, $config['put_options']);
+        $this->assertSame($expectedObjectOptions, $config['put_options']);
 
         $this->assertArrayHasKey('cache_prefix', $config);
-        $this->assertEquals($expectedCachePrefix, $config['cache_prefix']);
+        $this->assertSame($expectedCachePrefix, $config['cache_prefix']);
     }
 
     public function testAddDefaultOptionsIfNotSetOnAddConfiguration()
     {
         $expectedAcl = 'public-read';
 
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('aws_s3', 'array');
+        $treeBuilder = new TreeBuilder('aws_s3');
+        $rootNode = method_exists(TreeBuilder::class, 'getRootNode')
+            ? $treeBuilder->getRootNode()
+            : $treeBuilder->root('aws_s3');
 
         $resolver = new AwsS3ResolverFactory();
         $resolver->addConfiguration($rootNode);
 
-        $config = $this->processConfigTree($treeBuilder, array(
-            'aws_s3' => array(
+        $config = $this->processConfigTree($treeBuilder, [
+            'aws_s3' => [
                 'bucket' => 'aBucket',
-                'client_config' => array(),
-            ),
-        ));
+                'client_config' => [],
+            ],
+        ]);
 
         $this->assertArrayHasKey('acl', $config);
-        $this->assertEquals($expectedAcl, $config['acl']);
-
-        $this->assertArrayHasKey('url_options', $config);
-        $this->assertEquals(array(), $config['url_options']);
+        $this->assertSame($expectedAcl, $config['acl']);
 
         $this->assertArrayHasKey('get_options', $config);
-        $this->assertEquals(array(), $config['get_options']);
+        $this->assertSame([], $config['get_options']);
 
         $this->assertArrayHasKey('cache_prefix', $config);
         $this->assertNull($config['cache_prefix']);
@@ -498,69 +435,63 @@ class AwsS3ResolverFactoryTest extends \Phpunit_Framework_TestCase
 
     public function testSupportAwsV3ClientConfig()
     {
-        $expectedClientConfig = array(
-            'credentials' => array(
+        $expectedClientConfig = [
+            'credentials' => [
                 'key' => 'theKey',
                 'secret' => 'theSecret',
                 'token' => 'theToken',
-            ),
+            ],
             'region' => 'theRegion',
             'version' => 'theVersion',
-        );
-        $expectedUrlOptions = array(
-            'theKey' => 'theUrlOptionsVal',
-            'theOtherKey' => 'theOtherUrlOptionsValue',
-        );
-        $expectedGetOptions = array(
+        ];
+        $expectedGetOptions = [
             'theKey' => 'theGetOptionsVal',
             'theOtherKey' => 'theOtherGetOptionsValue',
-        );
-        $expectedObjectOptions = array(
+        ];
+        $expectedObjectOptions = [
             'theKey' => 'theObjectOptionsVal',
             'theOtherKey' => 'theOtherObjectOptionsValue',
-        );
+        ];
         $expectedBucket = 'theBucket';
         $expectedAcl = 'theAcl';
         $expectedCachePrefix = 'theCachePrefix';
 
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('aws_s3', 'array');
+        $treeBuilder = new TreeBuilder('aws_s3');
+        $rootNode = method_exists(TreeBuilder::class, 'getRootNode')
+            ? $treeBuilder->getRootNode()
+            : $treeBuilder->root('aws_s3');
 
         $resolver = new AwsS3ResolverFactory();
         $resolver->addConfiguration($rootNode);
 
-        $config = $this->processConfigTree($treeBuilder, array(
-            'aws_s3' => array(
+        $config = $this->processConfigTree($treeBuilder, [
+            'aws_s3' => [
                 'bucket' => $expectedBucket,
                 'acl' => $expectedAcl,
                 'client_config' => $expectedClientConfig,
-                'url_options' => $expectedUrlOptions,
                 'get_options' => $expectedGetOptions,
                 'put_options' => $expectedObjectOptions,
                 'cache_prefix' => $expectedCachePrefix,
-            ),
-        ));
+            ],
+        ]);
 
         $this->assertArrayHasKey('bucket', $config);
-        $this->assertEquals($expectedBucket, $config['bucket']);
+        $this->assertSame($expectedBucket, $config['bucket']);
 
         $this->assertArrayHasKey('acl', $config);
-        $this->assertEquals($expectedAcl, $config['acl']);
+        $this->assertSame($expectedAcl, $config['acl']);
 
         $this->assertArrayHasKey('client_config', $config);
-        $this->assertEquals($expectedClientConfig, $config['client_config']);
-
-        $this->assertArrayHasKey('url_options', $config);
-        $this->assertEquals($expectedUrlOptions, $config['url_options']);
+        $this->assertSame($expectedClientConfig, $config['client_config']);
 
         $this->assertArrayHasKey('get_options', $config);
-        $this->assertEquals($expectedGetOptions, $config['get_options']);
+        $this->assertSame($expectedGetOptions, $config['get_options']);
 
         $this->assertArrayHasKey('put_options', $config);
-        $this->assertEquals($expectedObjectOptions, $config['put_options']);
+        $this->assertSame($expectedObjectOptions, $config['put_options']);
 
         $this->assertArrayHasKey('cache_prefix', $config);
-        $this->assertEquals($expectedCachePrefix, $config['cache_prefix']);
+        $this->assertSame($expectedCachePrefix, $config['cache_prefix']);
     }
 
     /**

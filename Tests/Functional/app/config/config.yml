@@ -1,9 +1,11 @@
----
-
 parameters:
 
     locale: en
     secret: ThisTokenIsNotSoSecretChangeIt
+
+services:
+    logger:
+        class: \Psr\Log\NullLogger
 
 framework:
 
@@ -26,16 +28,8 @@ liip_imagine:
     loaders:
 
         default:
-            chain:
-                loaders:
-                    - web
-                    - foo
-                    - bar
-                    - bundles_all
-
-        web:
             filesystem:
-                data_root: "%kernel.root_dir%/web"
+                data_root: "%kernel.root_dir%/public"
 
         foo:
             filesystem:
@@ -44,6 +38,14 @@ liip_imagine:
         bar:
             filesystem:
                 data_root: "%kernel.root_dir%/../../Fixtures/FileSystemLocator/root-02"
+
+        baz:
+            chain:
+                loaders:
+                    - foo
+                    - bar
+                    - default
+                    - bundles_all
 
         bundles_all:
             filesystem:
@@ -71,27 +73,15 @@ liip_imagine:
 
         default:
             web_path:
-                web_root:     "%kernel.root_dir%/web"
+                web_root:     "%kernel.root_dir%/public"
                 cache_prefix: media/cache
 
     filter_sets:
 
-        profile_thumb_sm:
+        thumbnail_web_path:
             filters:
-                thumbnail:
-                    size: [100, 100]
-                    mode: inset
+                thumbnail: { size: [223, 223], mode: inset }
 
-        profile_thumb_lg:
+        thumbnail_default:
             filters:
-                thumbnail:
-                    size: [200, 200]
-                    mode: inset
-
-        profile_main:
-            filters:
-                scale:
-                    dim: [300, 300]
-
-    controller:
-        redirect_response_code: 302
+                thumbnail: { size: [223, 223], mode: inset }

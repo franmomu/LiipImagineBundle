@@ -21,30 +21,6 @@ use Symfony\Component\Finder\Finder;
  */
 class AbstractPostProcessorTest extends AbstractPostProcessorTestCase
 {
-    /**
-     * @group legacy
-     *
-     * @expectedDeprecation Calling the %s::process() method without a second parameter of options was deprecated in %s and will be removed in %s.
-     */
-    public function testProcessDeprecation()
-    {
-        $this
-            ->getProtectedReflectionMethodVisible($processor = $this->getPostProcessorInstance(), 'process')
-            ->invoke($processor, $this->getBinaryInterfaceMock());
-    }
-
-    /**
-     * @group legacy
-     *
-     * @expectedDeprecation The %s::processWithConfiguration() method was deprecated in %s and will be removed in %s. Use the %s::process() method instead.
-     */
-    public function testProcessWithConfigurationDeprecation()
-    {
-        $this
-            ->getProtectedReflectionMethodVisible($processor = $this->getPostProcessorInstance(), 'processWithConfiguration')
-            ->invoke($processor, $this->getBinaryInterfaceMock(), array());
-    }
-
     public function testIsBinaryOfType()
     {
         $binary = $this->getBinaryInterfaceMock();
@@ -71,30 +47,24 @@ class AbstractPostProcessorTest extends AbstractPostProcessorTestCase
         $this->assertTrue($m->invoke($processor, $binary));
     }
 
-    public function testCreateProcessBuilder()
+    public function testCreateProcess()
     {
         $optionTimeout = 120.0;
-        $optionPrefix = array('a-custom-prefix');
         $optionWorkDir = getcwd();
-        $optionEnvVars = array('FOO' => 'BAR');
-        $optionOptions = array('bypass_shell' => true);
+        $optionEnvVars = ['FOO' => 'BAR'];
 
-        $m = $this->getProtectedReflectionMethodVisible($processor = $this->getPostProcessorInstance(), 'createProcessBuilder');
-        $b = $m->invokeArgs($processor, array(array('/path/to/bin'), array(
-            'process' => array(
+        $m = $this->getProtectedReflectionMethodVisible($processor = $this->getPostProcessorInstance(), 'createProcess');
+        $b = $m->invokeArgs($processor, [['/path/to/bin'], [
+            'process' => [
                 'timeout' => $optionTimeout,
-                'prefix' => $optionPrefix,
                 'working_directory' => $optionWorkDir,
                 'environment_variables' => $optionEnvVars,
-                'options' => $optionOptions,
-            ),
-        )));
+            ],
+        ]]);
 
         $this->assertSame($optionTimeout, $this->getProtectedReflectionPropertyVisible($b, 'timeout')->getValue($b));
-        $this->assertSame($optionPrefix, $this->getProtectedReflectionPropertyVisible($b, 'prefix')->getValue($b));
         $this->assertSame($optionWorkDir, $this->getProtectedReflectionPropertyVisible($b, 'cwd')->getValue($b));
         $this->assertSame($optionEnvVars, $this->getProtectedReflectionPropertyVisible($b, 'env')->getValue($b));
-        $this->assertSame($optionOptions, $this->getProtectedReflectionPropertyVisible($b, 'options')->getValue($b));
     }
 
     /**
@@ -103,13 +73,13 @@ class AbstractPostProcessorTest extends AbstractPostProcessorTestCase
     public static function provideWriteTemporaryFileData()
     {
         $find = new Finder();
-        $data = array();
+        $data = [];
 
         foreach ($find->in(__DIR__)->name('*.php')->files() as $f) {
-            $data[] = array(file_get_contents($f), 'application/x-php', 'php', 'foo-context', array());
-            $data[] = array(file_get_contents($f), 'application/x-php', 'php', 'bar-context', array('temp_dir' => null));
-            $data[] = array(file_get_contents($f), 'application/x-php', 'php', 'bar-context', array('temp_dir' => sys_get_temp_dir()));
-            $data[] = array(file_get_contents($f), 'application/x-php', 'php', 'baz-context', array('temp_dir' => sprintf('%s/foo/bar/baz', sys_get_temp_dir())));
+            $data[] = [file_get_contents($f), 'application/x-php', 'php', 'foo-context', []];
+            $data[] = [file_get_contents($f), 'application/x-php', 'php', 'bar-context', ['temp_dir' => null]];
+            $data[] = [file_get_contents($f), 'application/x-php', 'php', 'bar-context', ['temp_dir' => sys_get_temp_dir()]];
+            $data[] = [file_get_contents($f), 'application/x-php', 'php', 'baz-context', ['temp_dir' => sprintf('%s/foo/bar/baz', sys_get_temp_dir())]];
         }
 
         return $data;
@@ -155,17 +125,17 @@ class AbstractPostProcessorTest extends AbstractPostProcessorTestCase
      */
     public static function provideIsValidReturnData()
     {
-        return array(
-            array(array(), array(), true),
-            array(array(0), array(), true),
-            array(array(100, 200, 0), array(), true),
-            array(array(100), array(), false),
-            array(array(100, 200), array(), false),
-            array(array(), array('ERROR'), true),
-            array(array(0), array('foo'), false),
-            array(array(0), array('foo-bar', 'baz'), false),
-            array(array(0), array('foo-bar', 'ERROR'), true),
-        );
+        return [
+            [[], [], true],
+            [[0], [], true],
+            [[100, 200, 0], [], true],
+            [[100], [], false],
+            [[100, 200], [], false],
+            [[], ['ERROR'], true],
+            [[0], ['foo'], false],
+            [[0], ['foo-bar', 'baz'], false],
+            [[0], ['foo-bar', 'ERROR'], true],
+        ];
     }
 
     /**
@@ -204,10 +174,10 @@ class AbstractPostProcessorTest extends AbstractPostProcessorTestCase
      *
      * @return \PHPUnit_Framework_MockObject_MockObject|AbstractPostProcessor
      */
-    protected function getPostProcessorInstance(array $parameters = array())
+    protected function getPostProcessorInstance(array $parameters = [])
     {
         if (count($parameters) === 0) {
-            $parameters = array(static::getPostProcessAsStdInExecutable());
+            $parameters = [static::getPostProcessAsStdInExecutable()];
         }
 
         return $this

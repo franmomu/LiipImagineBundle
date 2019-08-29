@@ -11,6 +11,7 @@
 
 namespace Liip\ImagineBundle\Tests\Filter;
 
+use Imagine\Image\ImageInterface;
 use Liip\ImagineBundle\Imagine\Filter\Loader\InterlaceFilterLoader;
 use Liip\ImagineBundle\Tests\AbstractTest;
 
@@ -27,11 +28,10 @@ class InterlaceFilterLoaderTest extends AbstractTest
         $image
             ->expects($this->once())
             ->method('interlace')
-            ->with('TEST')
-        ;
+            ->with('TEST');
 
-        $result = $loader->load($image, array('mode' => 'TEST'));
+        $result = $loader->load($image, ['mode' => 'TEST']);
 
-        $this->assertInstanceOf('\Imagine\Image\ImageInterface', $result);
+        $this->assertInstanceOf(ImageInterface::class, $result);
     }
 }

@@ -23,12 +23,12 @@ class ResolversCompilerPass extends AbstractCompilerPass
     {
         $tags = $container->findTaggedServiceIds('liip_imagine.cache.resolver');
 
-        if (count($tags) > 0 && $container->hasDefinition('liip_imagine.cache.manager')) {
+        if (\count($tags) > 0 && $container->hasDefinition('liip_imagine.cache.manager')) {
             $manager = $container->getDefinition('liip_imagine.cache.manager');
 
             foreach ($tags as $id => $tag) {
-                $manager->addMethodCall('addResolver', array($tag[0]['resolver'], new Reference($id)));
-                $this->log($container, 'Registered imagine-bundle cache resolver: %s', array($id));
+                $manager->addMethodCall('addResolver', [$tag[0]['resolver'], new Reference($id)]);
+                $this->log($container, 'Registered cache resolver: %s', $id);
             }
         }
     }

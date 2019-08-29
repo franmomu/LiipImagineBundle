@@ -19,7 +19,7 @@ class InvalidOptionException extends \RuntimeException implements ExceptionInter
      * @param string $message
      * @param array  $options
      */
-    public function __construct($message, array $options = array())
+    public function __construct($message, array $options = [])
     {
         parent::__construct(sprintf('Invalid post-processor configuration provided (%s) with options %s.',
             $message, $this->stringifyOptions($options)));
@@ -30,13 +30,13 @@ class InvalidOptionException extends \RuntimeException implements ExceptionInter
      *
      * @return string
      */
-    private function stringifyOptions(array $options = array())
+    private function stringifyOptions(array $options = [])
     {
         if (count($options) === 0) {
             return '[]';
         }
 
-        $options = array_map(array($this, 'stringifyOptionValue'), $options);
+        $options = array_map([$this, 'stringifyOptionValue'], $options);
 
         array_walk($options, function (&$o, $name) {
             $o = sprintf('%s="%s"', $name, $o);
@@ -52,14 +52,10 @@ class InvalidOptionException extends \RuntimeException implements ExceptionInter
      */
     private function stringifyOptionValue($value)
     {
-        if (is_array($value)) {
-            return json_encode($value);
-        }
-
         if (is_scalar($value)) {
             return $value;
         }
 
-        return str_replace("\n", '', var_export($value, true));
+        return json_encode($value);
     }
 }
