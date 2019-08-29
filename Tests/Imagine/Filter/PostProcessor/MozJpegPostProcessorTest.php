@@ -34,16 +34,16 @@ class MozJpegPostProcessorTest extends AbstractPostProcessorTestCase
     /**
      * @return mixed[]
      */
-    public static function provideSetupProcessBuilderData()
+    public static function provideProcessArgumentsData()
     {
-        $data = array(
-            array(array(), array('-quant-table', 2, '-optimise')),
-            array(array('quant_table' => 10), array('-quant-table', 10, '-optimise')),
-            array(array('optimise' => false), array('-quant-table', 2)),
-            array(array('optimise' => true), array('-quant-table', 2, '-optimise')),
-            array(array('quality' => 50), array('-quant-table', 2, '-optimise', '-quality', 50)),
-            array(array('quant_table' => 4, 'optimise' => true, 'quality' => 100), array('-quant-table', 4, '-optimise', '-quality', 100)),
-        );
+        $data = [
+            [[], ['-quant-table', 2, '-optimise']],
+            [['quant_table' => 10], ['-quant-table', 10, '-optimise']],
+            [['optimise' => false], ['-quant-table', 2]],
+            [['optimise' => true], ['-quant-table', 2, '-optimise']],
+            [['quality' => 50], ['-quant-table', 2, '-optimise', '-quality', 50]],
+            [['quant_table' => 4, 'optimise' => true, 'quality' => 100], ['-quant-table', 4, '-optimise', '-quality', 100]],
+        ];
 
         return array_map(function (array $d) {
             array_unshift($d[1], AbstractPostProcessorTestCase::getPostProcessAsStdInExecutable());
@@ -53,11 +53,11 @@ class MozJpegPostProcessorTest extends AbstractPostProcessorTestCase
     }
 
     /**
-     * @dataProvider provideSetupProcessBuilderData
+     * @dataProvider provideProcessArgumentsData
      */
-    public function testSetupProcessBuilder(array $options, array $expected)
+    public function testProcessArguments(array $options, array $expected)
     {
-        $this->assertSame($expected, $this->getSetupProcessBuilderArguments($options));
+        $this->assertSame($expected, $this->getProcessArguments($options));
     }
 
     /**
@@ -66,14 +66,14 @@ class MozJpegPostProcessorTest extends AbstractPostProcessorTestCase
     public static function provideProcessData()
     {
         $file = 'stdio-file-content-string';
-        $data = array(
-            array(array(), '-quant-table 2 -optimise'),
-            array(array('quant_table' => 10), '-quant-table 10 -optimise'),
-            array(array('optimise' => false), '-quant-table 2'),
-            array(array('optimise' => true), '-quant-table 2 -optimise'),
-            array(array('quality' => 50), '-quant-table 2 -optimise -quality 50'),
-            array(array('quant_table' => 4, 'optimise' => true, 'quality' => 100), '-quant-table 4 -optimise -quality 100'),
-        );
+        $data = [
+            [[], '-quant-table 2 -optimise'],
+            [['quant_table' => 10], '-quant-table 10 -optimise'],
+            [['optimise' => false], '-quant-table 2'],
+            [['optimise' => true], '-quant-table 2 -optimise'],
+            [['quality' => 50], '-quant-table 2 -optimise -quality 50'],
+            [['quant_table' => 4, 'optimise' => true, 'quality' => 100], '-quant-table 4 -optimise -quality 100'],
+        ];
 
         return array_map(function ($d) use ($file) {
             array_unshift($d, $file);
@@ -136,6 +136,6 @@ class MozJpegPostProcessorTest extends AbstractPostProcessorTestCase
      */
     protected function getPostProcessorInstance(array $parameters = array())
     {
-        return new MozJpegPostProcessor(isset($parameters[0]) ? $parameters[0] : static::getPostProcessAsStdinExecutable());
+        return new MozJpegPostProcessor($parameters[0] ?? static::getPostProcessAsStdinExecutable());
     }
 }

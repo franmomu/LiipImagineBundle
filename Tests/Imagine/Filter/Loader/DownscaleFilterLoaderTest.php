@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Liip\ImagineBundle\Tests\Filter;
+namespace Liip\ImagineBundle\Tests\Image\Filter\Loader;
 
 use Imagine\Image\Box;
 use Liip\ImagineBundle\Imagine\Filter\Loader\DownscaleFilterLoader;
@@ -22,7 +22,33 @@ use Liip\ImagineBundle\Tests\AbstractTest;
  */
 class DownscaleFilterLoaderTest extends AbstractTest
 {
-    public function testItWorksSomeHow()
+    /**
+     * @dataProvider provideSizes
+     *
+     * @param Box $resultSize
+     * @param Box $initialSize
+     */
+    public function testDontScaleUp($resultSize, $initialSize)
+    {
+        $this->assertLessThanOrEqual($initialSize->getHeight(), $resultSize->getHeight());
+        $this->assertLessThanOrEqual($initialSize->getWidth(), $resultSize->getWidth());
+    }
+
+    /**
+     * @dataProvider provideSizes
+     *
+     * @param Box $resultSize
+     */
+    public function testFitBoundingBox($resultSize)
+    {
+        $this->assertLessThanOrEqual(100, $resultSize->getHeight());
+        $this->assertLessThanOrEqual(90, $resultSize->getWidth());
+    }
+
+    /**
+     * @return \Generator|Box[]
+     */
+    public function provideSizes()
     {
         $loader = new DownscaleFilterLoader();
 
@@ -39,28 +65,8 @@ class DownscaleFilterLoaderTest extends AbstractTest
                 $resultSize = $box;
             });
 
-        $loader->load($image, array('max' => array(100, 90)));
+        $loader->load($image, ['max' => [100, 90]]);
 
-        return array($initialSize, $resultSize);
-    }
-
-    /**
-     * @depends testItWorksSomeHow
-     */
-    public function testDontScaleUp($sizes)
-    {
-        list($initialSize, $resultSize) = $sizes;
-        $this->assertLessThanOrEqual($initialSize->getHeight(), $resultSize->getHeight());
-        $this->assertLessThanOrEqual($initialSize->getWidth(), $resultSize->getWidth());
-    }
-
-    /**
-     * @depends testItWorksSomeHow
-     */
-    public function testFitBoundingBox($sizes)
-    {
-        list($initialSize, $resultSize) = $sizes;
-        $this->assertLessThanOrEqual(100, $resultSize->getHeight());
-        $this->assertLessThanOrEqual(90, $resultSize->getWidth());
+        yield [$resultSize, $initialSize];
     }
 }

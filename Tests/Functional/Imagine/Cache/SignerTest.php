@@ -11,17 +11,18 @@
 
 namespace Liip\ImagineBundle\Tests\Functional\Imagine\Cache;
 
+use Liip\ImagineBundle\Imagine\Cache\SignerInterface;
 use Liip\ImagineBundle\Tests\Functional\AbstractWebTestCase;
 
+/**
+ * @covers \Liip\ImagineBundle\Imagine\Cache\Signer
+ */
 class SignerTest extends AbstractWebTestCase
 {
     public function testGetAsService()
     {
         $this->createClient();
 
-        $this->assertInstanceOf(
-            '\Liip\ImagineBundle\Imagine\Cache\SignerInterface',
-            self::$kernel->getContainer()->get('liip_imagine.cache.signer')
-        );
+        $this->assertInstanceOf(SignerInterface::class, self::$kernel->getContainer()->get('liip_imagine.cache.signer'));
     }
 }

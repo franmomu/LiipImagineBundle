@@ -14,7 +14,7 @@ namespace Liip\ImagineBundle\Imagine\Filter\PostProcessor;
 use Liip\ImagineBundle\Binary\BinaryInterface;
 use Liip\ImagineBundle\Model\Binary;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\ProcessBuilder;
+use Symfony\Component\Process\Process;
 
 /**
  * mozjpeg post-processor, for noticably better jpeg compression.
@@ -27,7 +27,7 @@ use Symfony\Component\Process\ProcessBuilder;
 class MozJpegPostProcessor extends AbstractPostProcessor
 {
     /**
-     * @var null|int Quality factor
+     * @var int|null Quality factor
      */
     protected $quality;
 
@@ -66,13 +66,15 @@ class MozJpegPostProcessor extends AbstractPostProcessor
      *
      * @return BinaryInterface
      */
-    protected function doProcess(BinaryInterface $binary, array $options = array())
+    protected function doProcess(BinaryInterface $binary, array $options = []): BinaryInterface
     {
         if (!$this->isBinaryTypeJpgImage($binary)) {
             return $binary;
         }
 
-        $process = $this->setupProcessBuilder($options, $binary)->setInput($binary->getContent())->getProcess();
+        $arguments = $this->getProcessArguments($options);
+        $process = $this->createProcess($arguments, $options);
+        $process->setInput($binary->getContent());
         $process->run();
 
         if (!$this->isSuccessfulProcess($process)) {
@@ -85,24 +87,26 @@ class MozJpegPostProcessor extends AbstractPostProcessor
     /**
      * @param array $options
      *
-     * @return ProcessBuilder
+     * @return array
      */
-    private function setupProcessBuilder(array $options = array())
+    private function getProcessArguments(array $options = []): array
     {
-        $builder = $this->createProcessBuilder(array($this->executablePath), $options);
+        $arguments = [$this->executablePath];
 
-        if ($quantTable = isset($options['quant_table']) ? $options['quant_table'] : 2) {
-            $builder->add('-quant-table')->add($quantTable);
+        if ($quantTable = $options['quant_table'] ?? 2) {
+            $arguments[] = '-quant-table';
+            $arguments[] = $quantTable;
         }
 
-        if (isset($options['optimise']) ? $options['optimise'] : true) {
-            $builder->add('-optimise');
+        if ($options['optimise'] ?? true) {
+            $arguments[] = '-optimise';
         }
 
-        if (null !== $quality = isset($options['quality']) ? $options['quality'] : $this->quality) {
-            $builder->add('-quality')->add($quality);
+        if (null !== $quality = $options['quality'] ?? $this->quality) {
+            $arguments[] = '-quality';
+            $arguments[] = $quality;
         }
 
-        return $builder;
+        return $arguments;
     }
 }

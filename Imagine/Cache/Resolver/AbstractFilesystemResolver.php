@@ -21,11 +21,6 @@ use Symfony\Component\HttpFoundation\Request;
 abstract class AbstractFilesystemResolver implements ResolverInterface, CacheManagerAwareInterface
 {
     /**
-     * @var Request
-     */
-    private $request;
-
-    /**
      * @var Filesystem
      */
     protected $filesystem;
@@ -44,6 +39,10 @@ abstract class AbstractFilesystemResolver implements ResolverInterface, CacheMan
      * @var int
      */
     protected $folderPermissions = 0777;
+    /**
+     * @var Request
+     */
+    private $request;
 
     /**
      * Constructs a filesystem based cache resolver.
@@ -121,10 +120,10 @@ abstract class AbstractFilesystemResolver implements ResolverInterface, CacheMan
         }
 
         // TODO: this logic has to be refactored.
-        list($rootCachePath) = explode(current($filters), $this->getFilePath('whateverpath', current($filters)));
+        [$rootCachePath] = explode(current($filters), $this->getFilePath('whateverpath', current($filters)));
 
         if (empty($paths)) {
-            $filtersCachePaths = array();
+            $filtersCachePaths = [];
             foreach ($filters as $filter) {
                 $filterCachePath = $rootCachePath.$filter;
                 if (is_dir($filterCachePath)) {
@@ -151,7 +150,7 @@ abstract class AbstractFilesystemResolver implements ResolverInterface, CacheMan
      */
     protected function getRequest()
     {
-        if (false == $this->request) {
+        if (false === $this->request) {
             throw new \LogicException('The request was not injected, inject it before using resolver.');
         }
 
@@ -166,7 +165,7 @@ abstract class AbstractFilesystemResolver implements ResolverInterface, CacheMan
     protected function makeFolder($dir)
     {
         if (!is_dir($dir)) {
-            $parent = dirname($dir);
+            $parent = \dirname($dir);
             try {
                 $this->makeFolder($parent);
                 $this->filesystem->mkdir($dir);

@@ -13,63 +13,44 @@ namespace Liip\ImagineBundle\Tests\Binary\Locator;
 
 use Liip\ImagineBundle\Binary\Locator\FileSystemLocator;
 use Liip\ImagineBundle\Binary\Locator\LocatorInterface;
+use PHPUnit\Framework\TestCase;
 
-abstract class AbstractFileSystemLocatorTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractFileSystemLocatorTest extends TestCase
 {
-    /**
-     * @param string[]|string $roots
-     *
-     * @return LocatorInterface
-     */
-    abstract protected function getFileSystemLocator($roots);
-
     public function testImplementsLocatorInterface()
     {
-        $this->assertInstanceOf('\Liip\ImagineBundle\Binary\Locator\LocatorInterface', new FileSystemLocator());
+        $this->assertInstanceOf(LocatorInterface::class, new FileSystemLocator());
     }
 
-    /**
-     * @expectedException \Liip\ImagineBundle\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Root image path not resolvable
-     */
     public function testThrowsIfEmptyRootPath()
     {
+        $this->expectException(\Liip\ImagineBundle\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Root image path not resolvable');
+
         $this->getFileSystemLocator('');
     }
 
-    /**
-     * @expectedException \Liip\ImagineBundle\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Root image path not resolvable
-     */
     public function testThrowsIfRootPathDoesNotExist()
     {
+        $this->expectException(\Liip\ImagineBundle\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Root image path not resolvable');
+
         $this->getFileSystemLocator('/a/bad/root/path');
     }
 
-    /**
-     * @expectedException \Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException
-     * @expectedExceptionMessage Source image not resolvable
-     */
     public function testThrowsIfFileDoesNotExist()
     {
+        $this->expectException(\Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException::class);
+        $this->expectExceptionMessage('Source image not resolvable');
+
         $this->getFileSystemLocator(__DIR__)->locate('fileNotExist');
     }
 
-    /**
-     * @expectedException \Liip\ImagineBundle\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Invalid options provided to
-     */
-    public function testThrowsIfInvalidOptionProvided()
-    {
-        $this->getFileSystemLocator(__DIR__)->setOptions(array('foo' => 'bar'));
-    }
-
-    /**
-     * @expectedException \Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException
-     * @expectedExceptionMessage Invalid root placeholder "invalid-placeholder" for path
-     */
     public function testThrowsIfRootPlaceholderInvalid()
     {
+        $this->expectException(\Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException::class);
+        $this->expectExceptionMessage('Invalid root placeholder "@invalid-placeholder" for path');
+
         $this->getFileSystemLocator(__DIR__)->locate('@invalid-placeholder:file.ext');
     }
 
@@ -78,7 +59,7 @@ abstract class AbstractFileSystemLocatorTest extends \PHPUnit_Framework_TestCase
      */
     public static function provideLoadCases()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -97,7 +78,7 @@ abstract class AbstractFileSystemLocatorTest extends \PHPUnit_Framework_TestCase
      */
     public static function provideMultipleRootLoadCases()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -116,20 +97,29 @@ abstract class AbstractFileSystemLocatorTest extends \PHPUnit_Framework_TestCase
      */
     public function provideOutsideRootPathsData()
     {
-        return array(
-            array('../Loader/../../Binary/Loader/../../../Resources/config/routing.yaml'),
-            array('../../Binary/'),
-        );
+        return [
+            ['../Loader/../../Binary/Loader/../../../Resources/config/routing.yaml'],
+            ['../../Binary/'],
+        ];
     }
 
     /**
      * @dataProvider provideOutsideRootPathsData
      *
-     * @expectedException \Liip\ImagineBundle\Exception\InvalidArgumentException
-     * @expectedExceptionMessage Root image path not resolvable
+     * @param string $path
      */
     public function testThrowsIfRealPathOutsideRootPath($path)
     {
+        $this->expectException(\Liip\ImagineBundle\Exception\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Root image path not resolvable');
+
         $this->getFileSystemLocator($path)->locate($path);
     }
+
+    /**
+     * @param string[]|string $paths
+     *
+     * @return LocatorInterface
+     */
+    abstract protected function getFileSystemLocator($paths);
 }

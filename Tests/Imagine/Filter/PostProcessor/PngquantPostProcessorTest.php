@@ -38,7 +38,7 @@ class PngquantPostProcessorTest extends AbstractPostProcessorTestCase
      */
     public function testQualityOptionDeprecation()
     {
-        $this->getSetupProcessBuilderArguments(array('quality' => '0-100'));
+        $this->getProcessArguments(array('quality' => '0-100'));
     }
 
     /**
@@ -47,7 +47,7 @@ class PngquantPostProcessorTest extends AbstractPostProcessorTestCase
      */
     public function testQualityOptionThrowsOnLargerMinThanMaxValue()
     {
-        $this->getSetupProcessBuilderArguments(array('quality' => array(75, 25)));
+        $this->getProcessArguments(array('quality' => array(75, 25)));
     }
 
     /**
@@ -56,7 +56,7 @@ class PngquantPostProcessorTest extends AbstractPostProcessorTestCase
      */
     public function testQualityOptionThrowsOnOutOfScopeMaxInt()
     {
-        $this->getSetupProcessBuilderArguments(array('quality' => array(25, 1000)));
+        $this->getProcessArguments(array('quality' => array(25, 1000)));
     }
 
     /**
@@ -65,7 +65,7 @@ class PngquantPostProcessorTest extends AbstractPostProcessorTestCase
      */
     public function testQualityOptionThrowsOnOutOfScopeMinInt()
     {
-        $this->getSetupProcessBuilderArguments(array('quality' => array(-1000, 25)));
+        $this->getProcessArguments(array('quality' => array(-1000, 25)));
     }
 
     /**
@@ -74,7 +74,7 @@ class PngquantPostProcessorTest extends AbstractPostProcessorTestCase
      */
     public function testSpeedOptionThrowsOnOutOfScopeInt()
     {
-        $this->getSetupProcessBuilderArguments(array('speed' => 15));
+        $this->getProcessArguments(array('speed' => 15));
     }
 
     /**
@@ -83,26 +83,26 @@ class PngquantPostProcessorTest extends AbstractPostProcessorTestCase
      */
     public function testDitheringOptionThrowsOnOutOfScopeInt()
     {
-        $this->getSetupProcessBuilderArguments(array('dithering' => 2));
+        $this->getProcessArguments(array('dithering' => 2));
     }
 
     /**
      * @return mixed[]
      */
-    public static function provideSetupProcessBuilderData()
+    public static function provideProcessArgumentsData()
     {
-        $data = array(
-            array(array(), array('80-100')),
-            array(array('quality' => null), array('80-100')),
-            array(array('quality' => array(80, 100)), array('80-100')),
-            array(array('quality' => array(100)), array('0-100')),
-            array(array('quality' => '80'), array('0-80')),
-            array(array('speed' => null), array('80-100')),
-            array(array('speed' => 4), array('80-100', '--speed', 4)),
-            array(array('dithering' => null), array('80-100')),
-            array(array('dithering' => false), array('80-100', '--nofs')),
-            array(array('dithering' => 0.5), array('80-100', '--floyd', 0.5)),
-        );
+        $data = [
+            [[], ['80-100']],
+            [['quality' => null], ['80-100']],
+            [['quality' => [80, 100]], ['80-100']],
+            [['quality' => [100]], ['0-100']],
+            [['quality' => '80'], ['0-80']],
+            [['speed' => null], ['80-100']],
+            [['speed' => 4], ['80-100', '--speed', 4]],
+            [['dithering' => null], ['80-100']],
+            [['dithering' => false], ['80-100', '--nofs']],
+            [['dithering' => 0.5], ['80-100', '--floyd', 0.5]],
+        ];
 
         return array_map(function (array $d) {
             array_unshift($d[1], '--quality');
@@ -113,11 +113,11 @@ class PngquantPostProcessorTest extends AbstractPostProcessorTestCase
     }
 
     /**
-     * @dataProvider provideSetupProcessBuilderData
+     * @dataProvider provideProcessArgumentsData
      */
-    public function testSetupProcessBuilder(array $options, array $expected)
+    public function testProcessArguments(array $options, array $expected)
     {
-        $this->assertSame($expected, $this->getSetupProcessBuilderArguments($options));
+        $this->assertSame($expected, $this->getProcessArguments($options));
     }
 
     /**
@@ -126,18 +126,18 @@ class PngquantPostProcessorTest extends AbstractPostProcessorTestCase
     public static function provideProcessData()
     {
         $file = 'stdio-file-content-string';
-        $data = array(
-            array(array(), '--quality 80-100'),
-            array(array('quality' => null), '--quality 80-100'),
-            array(array('quality' => array(80, 100)), '--quality 80-100'),
-            array(array('quality' => array(100)), '--quality 0-100'),
-            array(array('quality' => '80'), '--quality 0-80'),
-            array(array('speed' => null), '--quality 80-100'),
-            array(array('speed' => 4), '--quality 80-100 --speed 4'),
-            array(array('dithering' => null), '--quality 80-100'),
-            array(array('dithering' => false), '--quality 80-100 --nofs'),
-            array(array('dithering' => 0.5), '--quality 80-100 --floyd 0.5'),
-        );
+        $data = [
+            [[], '--quality 80-100'],
+            [['quality' => null], '--quality 80-100'],
+            [['quality' => [80, 100]], '--quality 80-100'],
+            [['quality' => [100]], '--quality 0-100'],
+            [['quality' => '80'], '--quality 0-80'],
+            [['speed' => null], '--quality 80-100'],
+            [['speed' => 4], '--quality 80-100 --speed 4'],
+            [['dithering' => null], '--quality 80-100'],
+            [['dithering' => false], '--quality 80-100 --nofs'],
+            [['dithering' => 0.5], '--quality 80-100 --floyd 0.5'],
+        ];
 
         return array_map(function ($d) use ($file) {
             array_unshift($d, $file);

@@ -113,6 +113,10 @@ abstract class AbstractPostProcessorTestCase extends AbstractTest
         if ($object instanceof \ReflectionObject) {
             $r = $object;
         } else {
+            if (!is_object($object)) {
+
+                var_dump($object);exit;
+            }
             $r = new \ReflectionObject($object);
         }
 
@@ -127,11 +131,13 @@ abstract class AbstractPostProcessorTestCase extends AbstractTest
      *
      * @return array
      */
-    protected function getSetupProcessBuilderArguments(array $options)
+    protected function getProcessArguments(array $options)
     {
-        $builder = $this
-            ->getProtectedReflectionMethodVisible($processor = $this->getPostProcessorInstance(), 'setupProcessBuilder')
-            ->invokeArgs($processor, array($options));
+        $arguments = $this
+            ->getProtectedReflectionMethodVisible($processor = $this->getPostProcessorInstance(), 'getProcessArguments')
+            ->invokeArgs($processor, [$options]);
+
+        return $arguments;
 
         return $this
             ->getProtectedReflectionPropertyVisible($builder, 'arguments')

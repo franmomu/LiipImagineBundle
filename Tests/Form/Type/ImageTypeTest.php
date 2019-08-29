@@ -12,8 +12,10 @@
 namespace Liip\ImagineBundle\Tests\Form\Type;
 
 use Liip\ImagineBundle\Form\Type\ImageType;
-use Liip\ImagineBundle\Utility\Framework\SymfonyFramework;
 use Liip\ImagineBundle\Tests\AbstractTest;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -22,26 +24,22 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ImageTypeTest extends AbstractTest
 {
-    public function testGetName()
+    protected function setUp()
     {
-        $type = new ImageType();
-
-        $this->assertEquals('liip_imagine_image', $type->getName());
+        if (!class_exists(AbstractType::class)) {
+            $this->markTestSkipped('Requires the symfony/form package.');
+        }
     }
 
     public function testGetParent()
     {
         $type = new ImageType();
 
-        $this->assertEquals('file', $type->getParent());
+        $this->assertSame(FileType::class, $type->getParent());
     }
 
     public function testConfigureOptions()
     {
-        if (SymfonyFramework::isKernelLessThan(2, 6)) {
-            $this->markTestSkipped('No need to test on symfony < 2.6');
-        }
-
         $resolver = new OptionsResolver();
         $type = new ImageType();
 
@@ -56,49 +54,26 @@ class ImageTypeTest extends AbstractTest
         $this->assertTrue($resolver->isDefined('link_attr'));
     }
 
-    /**
-     * @group legacy
-     */
-    public function testSetDefaultOptionsLegacy()
-    {
-        if (SymfonyFramework::isKernelGreaterThanOrEqualTo(2, 6)) {
-            $this->markTestSkipped('No need to test on symfony >= 2.6');
-        }
-
-        $resolver = new OptionsResolver();
-        $type = new ImageType();
-
-        $type->setDefaultOptions($resolver);
-
-        $this->assertTrue($resolver->isRequired('image_path'));
-        $this->assertTrue($resolver->isRequired('image_filter'));
-
-        $this->assertTrue($resolver->isKnown('image_attr'));
-        $this->assertTrue($resolver->isKnown('link_url'));
-        $this->assertTrue($resolver->isKnown('link_filter'));
-        $this->assertTrue($resolver->isKnown('link_attr'));
-    }
-
     public function testBuildView()
     {
-        $options = array(
+        $options = [
             'image_path' => 'foo',
             'image_filter' => 'bar',
             'image_attr' => 'bazz',
             'link_url' => 'http://liip.com',
             'link_filter' => 'foo',
             'link_attr' => 'bazz',
-        );
+        ];
 
         $view = new FormView();
         $type = new ImageType();
-        $form = $this->createObjectMock('\Symfony\Component\Form\Test\FormInterface');
+        $form = $this->createObjectMock(FormInterface::class);
 
         $type->buildView($view, $form, $options);
 
         foreach ($options as $name => $value) {
             $this->assertArrayHasKey($name, $view->vars);
-            $this->assertEquals($value, $view->vars[$name]);
+            $this->assertSame($value, $view->vars[$name]);
         }
     }
 }

@@ -14,6 +14,9 @@ namespace Liip\ImagineBundle\Tests\Functional;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\Filesystem\Filesystem;
 
+/**
+ * @coversNothing
+ */
 class AbstractSetupWebTestCase extends AbstractWebTestCase
 {
     /**
@@ -41,7 +44,8 @@ class AbstractSetupWebTestCase extends AbstractWebTestCase
         parent::setUp();
 
         $this->client = $this->createClient();
-        $this->webRoot = self::$kernel->getContainer()->getParameter('kernel.root_dir').'/web';
+        $this->client->catchExceptions(false);
+        $this->webRoot = sprintf('%s/public', self::$kernel->getContainer()->getParameter('kernel.root_dir'));
         $this->cacheRoot = $this->webRoot.'/media/cache';
         $this->filesystem = new Filesystem();
         $this->filesystem->remove($this->cacheRoot);

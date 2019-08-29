@@ -27,7 +27,7 @@ class OptiPngPostProcessorTest extends AbstractPostProcessorTestCase
      */
     public function testInvalidLevelOption()
     {
-        $this->getSetupProcessBuilderArguments(array('level' => 100));
+        $this->getProcessArguments(array('level' => 100));
     }
 
     /**
@@ -36,7 +36,7 @@ class OptiPngPostProcessorTest extends AbstractPostProcessorTestCase
      */
     public function testInvalidInterlaceOption()
     {
-        $this->getSetupProcessBuilderArguments(array('interlace_type' => 10));
+        $this->getProcessArguments(array('interlace_type' => 10));
     }
 
     /**
@@ -48,7 +48,7 @@ class OptiPngPostProcessorTest extends AbstractPostProcessorTestCase
      */
     public function testInvalidStripOptionAndDeprecation()
     {
-        $this->getSetupProcessBuilderArguments(array('strip_all' => true, 'strip' => 'all'));
+        $this->getProcessArguments(array('strip_all' => true, 'strip' => 'all'));
     }
 
     /**
@@ -58,7 +58,7 @@ class OptiPngPostProcessorTest extends AbstractPostProcessorTestCase
      */
     public function testInvalidStripDeprecationMessage()
     {
-        $arguments = $this->getSetupProcessBuilderArguments(array('strip_all' => true));
+        $arguments = $this->getProcessArguments(array('strip_all' => true));
 
         $this->assertSame('all', array_pop($arguments));
         $this->assertSame('-strip', array_pop($arguments));
@@ -104,7 +104,7 @@ class OptiPngPostProcessorTest extends AbstractPostProcessorTestCase
      */
     public function testSetupProcessBuilder(array $options, array $expected)
     {
-        $this->assertSame($expected, $this->getSetupProcessBuilderArguments($options));
+        $this->assertSame($expected, $this->getProcessArguments($options));
     }
 
     /**
@@ -113,18 +113,18 @@ class OptiPngPostProcessorTest extends AbstractPostProcessorTestCase
     public static function provideProcessData()
     {
         $file = file_get_contents(__FILE__);
-        $data = array(
-            array(array(), '--quality 80-100'),
-            array(array('quality' => null), '--quality 80-100'),
-            array(array('quality' => array(80, 100)), '--quality 80-100'),
-            array(array('quality' => array(100)), '--quality 0-100'),
-            array(array('quality' => '80'), '--quality 0-80'),
-            array(array('speed' => null), '--quality 80-100'),
-            array(array('speed' => 4), '--quality 80-100 --speed 4'),
-            array(array('dithering' => null), '--quality 80-100'),
-            array(array('dithering' => false), '--quality 80-100 --nofs'),
-            array(array('dithering' => 0.5), '--quality 80-100 --floyd 0.5'),
-        );
+        $data = [
+            [[], '--quality 80-100'],
+            [['quality' => null], '--quality 80-100'],
+            [['quality' => [80, 100]], '--quality 80-100'],
+            [['quality' => [100]], '--quality 0-100'],
+            [['quality' => '80'], '--quality 0-80'],
+            [['speed' => null], '--quality 80-100'],
+            [['speed' => 4], '--quality 80-100 --speed 4'],
+            [['dithering' => null], '--quality 80-100'],
+            [['dithering' => false], '--quality 80-100 --nofs'],
+            [['dithering' => 0.5], '--quality 80-100 --floyd 0.5'],
+        ];
 
         return array_map(function ($d) use ($file) {
             array_unshift($d, $file);
@@ -187,6 +187,6 @@ class OptiPngPostProcessorTest extends AbstractPostProcessorTestCase
      */
     protected function getPostProcessorInstance(array $parameters = array())
     {
-        return new OptiPngPostProcessor(isset($parameters[0]) ? $parameters[0] : static::getPostProcessAsFileExecutable());
+        return new OptiPngPostProcessor($parameters[0] ?? static::getPostProcessAsFileExecutable());
     }
 }

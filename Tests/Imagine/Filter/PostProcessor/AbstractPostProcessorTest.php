@@ -33,18 +33,6 @@ class AbstractPostProcessorTest extends AbstractPostProcessorTestCase
             ->invoke($processor, $this->getBinaryInterfaceMock());
     }
 
-    /**
-     * @group legacy
-     *
-     * @expectedDeprecation The %s::processWithConfiguration() method was deprecated in %s and will be removed in %s. Use the %s::process() method instead.
-     */
-    public function testProcessWithConfigurationDeprecation()
-    {
-        $this
-            ->getProtectedReflectionMethodVisible($processor = $this->getPostProcessorInstance(), 'processWithConfiguration')
-            ->invoke($processor, $this->getBinaryInterfaceMock(), array());
-    }
-
     public function testIsBinaryOfType()
     {
         $binary = $this->getBinaryInterfaceMock();
@@ -71,30 +59,26 @@ class AbstractPostProcessorTest extends AbstractPostProcessorTestCase
         $this->assertTrue($m->invoke($processor, $binary));
     }
 
-    public function testCreateProcessBuilder()
+    public function testCreateProcess()
     {
         $optionTimeout = 120.0;
-        $optionPrefix = array('a-custom-prefix');
+        $optionPrefix = ['a-custom-prefix'];
         $optionWorkDir = getcwd();
         $optionEnvVars = array('FOO' => 'BAR');
         $optionOptions = array('bypass_shell' => true);
 
-        $m = $this->getProtectedReflectionMethodVisible($processor = $this->getPostProcessorInstance(), 'createProcessBuilder');
+        $m = $this->getProtectedReflectionMethodVisible($processor = $this->getPostProcessorInstance(), 'createProcess');
         $b = $m->invokeArgs($processor, array(array('/path/to/bin'), array(
             'process' => array(
                 'timeout' => $optionTimeout,
-                'prefix' => $optionPrefix,
                 'working_directory' => $optionWorkDir,
                 'environment_variables' => $optionEnvVars,
-                'options' => $optionOptions,
             ),
         )));
 
         $this->assertSame($optionTimeout, $this->getProtectedReflectionPropertyVisible($b, 'timeout')->getValue($b));
-        $this->assertSame($optionPrefix, $this->getProtectedReflectionPropertyVisible($b, 'prefix')->getValue($b));
         $this->assertSame($optionWorkDir, $this->getProtectedReflectionPropertyVisible($b, 'cwd')->getValue($b));
         $this->assertSame($optionEnvVars, $this->getProtectedReflectionPropertyVisible($b, 'env')->getValue($b));
-        $this->assertSame($optionOptions, $this->getProtectedReflectionPropertyVisible($b, 'options')->getValue($b));
     }
 
     /**

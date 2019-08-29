@@ -20,7 +20,7 @@ class ThumbnailFilterLoader implements LoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function load(ImageInterface $image, array $options = array())
+    public function load(ImageInterface $image, array $options = [])
     {
         $mode = ImageInterface::THUMBNAIL_OUTBOUND;
         if (!empty($options['mode']) && 'inset' === $options['mode']) {
@@ -28,7 +28,7 @@ class ThumbnailFilterLoader implements LoaderInterface
         }
 
         if (!empty($options['filter'])) {
-            $filter = constant('Imagine\Image\ImageInterface::FILTER_'.strtoupper($options['filter']));
+            $filter = \constant('Imagine\Image\ImageInterface::FILTER_'.mb_strtoupper($options['filter']));
         }
         if (empty($filter)) {
             $filter = ImageInterface::FILTER_UNDEFINED;

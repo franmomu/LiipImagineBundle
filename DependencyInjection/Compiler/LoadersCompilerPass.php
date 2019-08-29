@@ -23,12 +23,12 @@ class LoadersCompilerPass extends AbstractCompilerPass
     {
         $tags = $container->findTaggedServiceIds('liip_imagine.binary.loader');
 
-        if (count($tags) > 0 && $container->hasDefinition('liip_imagine.data.manager')) {
+        if (\count($tags) > 0 && $container->hasDefinition('liip_imagine.data.manager')) {
             $manager = $container->getDefinition('liip_imagine.data.manager');
 
             foreach ($tags as $id => $tag) {
-                $manager->addMethodCall('addLoader', array($tag[0]['loader'], new Reference($id)));
-                $this->log($container, 'Registered imagine-bundle binary loader: %s', array($id));
+                $manager->addMethodCall('addLoader', [$tag[0]['loader'], new Reference($id)]);
+                $this->log($container, 'Registered binary loader: %s', $id);
             }
         }
     }

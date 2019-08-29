@@ -11,13 +11,15 @@
 
 namespace Liip\ImagineBundle\Tests\Binary\Loader;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Liip\ImagineBundle\Binary\Loader\AbstractDoctrineLoader;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @covers \Liip\ImagineBundle\Binary\Loader\AbstractDoctrineLoader<extended>
  */
-class AbstractDoctrineLoaderTest extends \PHPUnit_Framework_TestCase
+class AbstractDoctrineLoaderTest extends TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ObjectRepository
@@ -31,13 +33,17 @@ class AbstractDoctrineLoaderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        if (!interface_exists(ObjectManager::class)) {
+            $this->markTestSkipped('Requires the doctrine/orm package.');
+        }
+
         $this->om = $this
-            ->getMockBuilder('\Doctrine\Common\Persistence\ObjectManager')
+            ->getMockBuilder(ObjectManager::class)
             ->getMock();
 
         $this->loader = $this
-            ->getMockBuilder('\Liip\ImagineBundle\Binary\Loader\AbstractDoctrineLoader')
-            ->setConstructorArgs(array($this->om))
+            ->getMockBuilder(AbstractDoctrineLoader::class)
+            ->setConstructorArgs([$this->om])
             ->getMockForAbstractClass();
     }
 
@@ -49,21 +55,21 @@ class AbstractDoctrineLoaderTest extends \PHPUnit_Framework_TestCase
             ->expects($this->atLeastOnce())
             ->method('mapPathToId')
             ->with('/foo/bar')
-            ->will($this->returnValue(1337));
+            ->willReturn(1337);
 
         $this->loader
             ->expects($this->atLeastOnce())
             ->method('getStreamFromImage')
             ->with($image)
-            ->will($this->returnValue(fopen('data://text/plain,foo', 'r')));
+            ->willReturn(fopen('data://text/plain,foo', 'rb'));
 
         $this->om
             ->expects($this->atLeastOnce())
             ->method('find')
             ->with(null, 1337)
-            ->will($this->returnValue($image));
+            ->willReturn($image);
 
-        $this->assertEquals('foo', $this->loader->find('/foo/bar'));
+        $this->assertSame('foo', $this->loader->find('/foo/bar'));
     }
 
     public function testFindWithValidObjectSecondHit()
@@ -73,38 +79,37 @@ class AbstractDoctrineLoaderTest extends \PHPUnit_Framework_TestCase
         $this->loader
             ->expects($this->atLeastOnce())
             ->method('mapPathToId')
-            ->will($this->returnValueMap(array(
-                array('/foo/bar.png', 1337),
-                array('/foo/bar', 4711),
-            )));
+            ->willReturnMap([
+                ['/foo/bar.png', 1337],
+                ['/foo/bar', 4711],
+            ]);
 
         $this->loader
             ->expects($this->atLeastOnce())
             ->method('getStreamFromImage')
             ->with($image)
-            ->will($this->returnValue(fopen('data://text/plain,foo', 'r')));
+            ->willReturn(fopen('data://text/plain,foo', 'rb'));
 
         $this->om
             ->expects($this->atLeastOnce())
             ->method('find')
-            ->will($this->returnValueMap(array(
-                array(null, 1337, null),
-                array(null, 4711, $image),
-            )));
+            ->willReturnMap([
+                [null, 1337, null],
+                [null, 4711, $image],
+            ]);
 
-        $this->assertEquals('foo', $this->loader->find('/foo/bar.png'));
+        $this->assertSame('foo', $this->loader->find('/foo/bar.png'));
     }
 
-    /**
-     * @expectedException \Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException
-     */
     public function testFindWithInvalidObject()
     {
+        $this->expectException(\Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException::class);
+
         $this->loader
             ->expects($this->atLeastOnce())
             ->method('mapPathToId')
             ->with('/foo/bar')
-            ->will($this->returnValue(1337));
+            ->willReturn(1337);
 
         $this->loader
             ->expects($this->never())
@@ -114,7 +119,7 @@ class AbstractDoctrineLoaderTest extends \PHPUnit_Framework_TestCase
             ->expects($this->atLeastOnce())
             ->method('find')
             ->with(null, 1337)
-            ->will($this->returnValue(null));
+            ->willReturn(null);
 
         $this->loader->find('/foo/bar');
     }

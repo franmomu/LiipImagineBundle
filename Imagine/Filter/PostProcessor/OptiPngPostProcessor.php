@@ -15,7 +15,7 @@ use Liip\ImagineBundle\Binary\BinaryInterface;
 use Liip\ImagineBundle\Exception\Imagine\Filter\PostProcessor\InvalidOptionException;
 use Liip\ImagineBundle\Model\Binary;
 use Symfony\Component\Process\Exception\ProcessFailedException;
-use Symfony\Component\Process\ProcessBuilder;
+use Symfony\Component\Process\Process;
 
 class OptiPngPostProcessor extends AbstractPostProcessor
 {
@@ -55,7 +55,7 @@ class OptiPngPostProcessor extends AbstractPostProcessor
      *
      * @return BinaryInterface|Binary
      */
-    protected function doProcess(BinaryInterface $binary, array $options = array())
+    protected function doProcess(BinaryInterface $binary, array $options = array()): BinaryInterface
     {
         if (!$this->isBinaryTypePngImage($binary)) {
             return $binary;
@@ -63,7 +63,9 @@ class OptiPngPostProcessor extends AbstractPostProcessor
 
         $file = $this->writeTemporaryFile($binary, $options, 'imagine-post-processor-optipng');
 
-        $process = $this->setupProcessBuilder($options)->add($file)->getProcess();
+        $arguments = $this->getProcessArguments($options);
+        $arguments[] = $file;
+        $process = $this->createProcess($arguments, $options);
         $process->run();
 
         if (!$this->isSuccessfulProcess($process)) {
@@ -81,18 +83,18 @@ class OptiPngPostProcessor extends AbstractPostProcessor
     /**
      * @param array $options
      *
-     * @return ProcessBuilder
+     * @return array
      */
-    private function setupProcessBuilder(array $options = array())
+    private function getProcessArguments(array $options = []): array
     {
-        $builder = $this->createProcessBuilder(array($this->executablePath), $options);
+        $arguments = [$this->executablePath];
 
-        if (null !== $level = isset($options['level']) ? $options['level'] : $this->level) {
+        if (null !== $level = $options['level'] ?? $this->level) {
             if (!in_array($level, range(0, 7))) {
                 throw new InvalidOptionException('the "level" option must be an int between 0 and 7', $options);
             }
 
-            $builder->add(sprintf('-o%d', $level));
+            $arguments[] = sprintf('-o%d', $level);
         }
 
         if (isset($options['strip_all'])) {
@@ -103,19 +105,20 @@ class OptiPngPostProcessor extends AbstractPostProcessor
                 throw new InvalidOptionException('the "strip" and "strip_all" options cannot both be set', $options);
             }
 
-            $options['strip'] = $options['strip_all'];
+            $arguments[] = $options['strip_all'];
         }
 
-        if ($strip = isset($options['strip']) ? $options['strip'] : $this->strip) {
-            $builder->add('-strip')->add(true === $strip ? 'all' : $strip);
+        if ($strip = $options['strip'] ?? $this->strip) {
+            $arguments[] = '-strip';
+            $arguments[] = true === $strip ? 'all' : $strip;
         }
 
         if (isset($options['snip']) && true === $options['snip']) {
-            $builder->add('-snip');
+            $arguments[] = '-snip';
         }
 
         if (isset($options['preserve_attributes']) && true === $options['preserve_attributes']) {
-            $builder->add('-preserve');
+            $arguments[] = '-preserve';
         }
 
         if (isset($options['interlace_type'])) {
@@ -123,25 +126,26 @@ class OptiPngPostProcessor extends AbstractPostProcessor
                 throw new InvalidOptionException('the "interlace_type" option must be either 0 or 1', $options);
             }
 
-            $builder->add('-i')->add($options['interlace_type']);
+            $arguments[] = '-i';
+            $arguments[] = $options['interlace_type'];
         }
 
         if (isset($options['no_bit_depth_reductions']) && true === $options['no_bit_depth_reductions']) {
-            $builder->add('-nb');
+            $arguments[] = '-nb';
         }
 
         if (isset($options['no_color_type_reductions']) && true === $options['no_color_type_reductions']) {
-            $builder->add('-nc');
+            $arguments[] = '-nc';
         }
 
         if (isset($options['no_palette_reductions']) && true === $options['no_palette_reductions']) {
-            $builder->add('-np');
+            $arguments[] = '-np';
         }
 
         if (isset($options['no_reductions']) && true === $options['no_reductions']) {
-            $builder->add('-nx');
+            $arguments[] = '-nx';
         }
 
-        return $builder;
+        return $arguments;
     }
 }

@@ -11,11 +11,14 @@
 
 namespace Liip\ImagineBundle\Tests\DependencyInjection\Compiler;
 
+use Liip\ImagineBundle\DependencyInjection\Compiler\AbstractCompilerPass;
 use Liip\ImagineBundle\Tests\AbstractTest;
-use Liip\ImagineBundle\Utility\Framework\SymfonyFramework;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 
+/**
+ * @coversNothing
+ */
 class AbstractCompilerPassTestCase extends AbstractTest
 {
     /**
@@ -23,7 +26,7 @@ class AbstractCompilerPassTestCase extends AbstractTest
      *
      * @return Definition
      */
-    protected function createDefinition(array $tags = array())
+    protected function createDefinition(array $tags = [])
     {
         $definition = new Definition();
 
@@ -35,11 +38,11 @@ class AbstractCompilerPassTestCase extends AbstractTest
     }
 
     /**
-     * @param array $definitions
+     * @param Definition[] $definitions
      *
      * @return ContainerBuilder
      */
-    protected function createContainerBuilder(array $definitions = array())
+    protected function createContainerBuilder(array $definitions = [])
     {
         $container = new ContainerBuilder();
 
@@ -51,18 +54,39 @@ class AbstractCompilerPassTestCase extends AbstractTest
     }
 
     /**
-     * @param Definition  $definition
-     * @param string|null $message
+     * @param string[]     $methods
+     * @param Definition[] $definitions
+     *
+     * @return ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function assertDefinitionSharingEnabled(Definition $definition, $message = null)
+    protected function createContainerBuilderMock(array $methods = [], array $definitions = [])
     {
-        if (SymfonyFramework::hasDefinitionSharing()) {
-            $this->assertTrue($definition->isShared(), $message);
-        } elseif (SymfonyFramework::hasDefinitionScoping()) {
-            $this->assertSame('container', $definition->getScope(), $message);
+        $container = $this
+            ->getMockBuilder(ContainerBuilder::class)
+            ->setMethods($methods)
+            ->getMock();
+
+        foreach ($definitions as $name => $object) {
+            $container->setDefinition($name, $object);
+        }
+
+        return $container;
+    }
+
+    /**
+     * @param \PHPUnit_Framework_MockObject_MockObject $container
+     * @param mixed[]                                  ...$expectedArguments
+     */
+    protected function expectContainerLogMethodCalledOnce(\PHPUnit_Framework_MockObject_MockObject $container, ...$expectedArguments): void
+    {
+        $expectation = $container
+            ->expects($this->once())
+            ->method('log');
+
+        if (!empty($expectedArguments)) {
+            $expectation->with(...$expectedArguments);
         } else {
-            $this->fail(sprintf('Neither sharing or scoping is available for assertion: %s',
-                $message ?: var_export($definition)));
+            $expectation->withAnyParameters();
         }
     }
 
@@ -70,23 +94,7 @@ class AbstractCompilerPassTestCase extends AbstractTest
      * @param Definition  $definition
      * @param string|null $message
      */
-    protected function assertDefinitionSharingDisabled(Definition $definition, $message = null)
-    {
-        if (SymfonyFramework::hasDefinitionSharing()) {
-            $this->assertFalse($definition->isShared(), $message);
-        } elseif (SymfonyFramework::hasDefinitionScoping()) {
-            $this->assertSame('prototype', $definition->getScope(), $message);
-        } else {
-            $this->fail(sprintf('Neither sharing or scoping is available for assertion: %s',
-                $message ?: var_export($definition)));
-        }
-    }
-
-    /**
-     * @param Definition  $definition
-     * @param string|null $message
-     */
-    protected function assertDefinitionMethodCallsNone(Definition $definition, $message = null)
+    protected function assertDefinitionMethodCallsNone(Definition $definition, $message = '')
     {
         $this->assertDefinitionMethodCallCount(0, $definition, $message);
     }
@@ -96,8 +104,38 @@ class AbstractCompilerPassTestCase extends AbstractTest
      * @param Definition  $definition
      * @param string|null $message
      */
-    protected function assertDefinitionMethodCallCount($expect, Definition $definition, $message = null)
+    protected function assertDefinitionMethodCallCount($expect, Definition $definition, $message = '')
     {
         $this->assertCount($expect, $definition->getMethodCalls(), $message);
+    }
+
+    /**
+     * @param AbstractCompilerPass $pass
+     * @param Definition[]|array[] $definitions
+     */
+    protected function assertContainerLogMethodCalledForCompilerPass(AbstractCompilerPass $pass, array $definitions): void
+    {
+        $container = $this->createContainerBuilderMock(['log'], $definitions[0]);
+
+        $this->expectContainerLogMethodCalledOnce($container);
+        $pass->process($container);
+    }
+
+    /**
+     * @param string $definition
+     * @param string $manager
+     * @param array  $tags
+     *
+     * @return Definition[]|array[]
+     */
+    protected function getCompilerPassContainerDefinitions(string $definition, string $manager, array $tags): array
+    {
+        $m = $this->createDefinition();
+        $l = $this->createDefinition($tags);
+
+        return [[
+            $definition => $l,
+            $manager => $m,
+        ], $m];
     }
 }

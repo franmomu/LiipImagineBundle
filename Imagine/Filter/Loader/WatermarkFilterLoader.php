@@ -35,17 +35,22 @@ class WatermarkFilterLoader implements LoaderInterface
     }
 
     /**
-     * @see Liip\ImagineBundle\Imagine\Filter\Loader\LoaderInterface::load()
+     * @see \Liip\ImagineBundle\Imagine\Filter\Loader\LoaderInterface::load()
+     *
+     * @param ImageInterface $image
+     * @param array          $options
+     *
+     * @return ImageInterface|static
      */
-    public function load(ImageInterface $image, array $options = array())
+    public function load(ImageInterface $image, array $options = [])
     {
-        $options += array(
+        $options += [
             'size' => null,
             'position' => 'center',
-        );
+        ];
 
-        if (substr($options['size'], -1) == '%') {
-            $options['size'] = substr($options['size'], 0, -1) / 100;
+        if ('%' === mb_substr($options['size'], -1)) {
+            $options['size'] = mb_substr($options['size'], 0, -1) / 100;
         }
 
         $watermark = $this->imagine->open($this->rootPath.'/'.$options['image']);

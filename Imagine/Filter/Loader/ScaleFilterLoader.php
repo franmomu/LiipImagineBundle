@@ -47,7 +47,7 @@ class ScaleFilterLoader implements LoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function load(ImageInterface $image, array $options = array())
+    public function load(ImageInterface $image, array $options = [])
     {
         if (!isset($options[$this->dimensionKey]) && !isset($options[$this->ratioKey])) {
             throw new \InvalidArgumentException("Missing $this->dimensionKey or $this->ratioKey option.");
@@ -56,6 +56,7 @@ class ScaleFilterLoader implements LoaderInterface
         $size = $image->getSize();
         $origWidth = $size->getWidth();
         $origHeight = $size->getHeight();
+        $ratio = 1;
 
         if (isset($options[$this->ratioKey])) {
             $ratio = $this->absoluteRatio ? $options[$this->ratioKey] : $this->calcAbsoluteRatio($options[$this->ratioKey]);
@@ -67,7 +68,7 @@ class ScaleFilterLoader implements LoaderInterface
             $widthRatio = $width / $origWidth;
             $heightRatio = $height / $origHeight;
 
-            if (null == $width || null == $height) {
+            if (null === $width || null === $height) {
                 $ratio = max($widthRatio, $heightRatio);
             } else {
                 $ratio = ('min' === $this->dimensionKey) ? max($widthRatio, $heightRatio) : min($widthRatio, $heightRatio);

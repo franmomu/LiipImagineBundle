@@ -40,10 +40,10 @@ class ResizeFilterLoaderTest extends AbstractTest
             ->with(new Box($width, $height))
             ->willReturn($image);
 
-        $options = array();
-        $options['size'] = array($width, $height);
+        $options = [];
+        $options['size'] = [$width, $height];
 
-        $result = $loader->load($image, $options);
+        $loader->load($image, $options);
     }
 
     /**
@@ -51,10 +51,10 @@ class ResizeFilterLoaderTest extends AbstractTest
      */
     public function resizeDataProvider()
     {
-        return array(
-            array(140, 130),
-            array(30, 60),
-            array(400, 500),
-        );
+        return [
+            [140, 130],
+            [30, 60],
+            [400, 500],
+        ];
     }
 }

@@ -48,7 +48,7 @@ class DataManager
     /**
      * @var LoaderInterface[]
      */
-    protected $loaders = array();
+    protected $loaders = [];
 
     /**
      * @param MimeTypeGuesserInterface  $mimeTypeGuesser
@@ -116,7 +116,7 @@ class DataManager
      *
      * @throws \LogicException
      *
-     * @return \Liip\ImagineBundle\Binary\BinaryInterface
+     * @return BinaryInterface
      */
     public function find($filter, $path)
     {
@@ -137,7 +137,7 @@ class DataManager
             throw new \LogicException(sprintf('The mime type of image %s was not guessed.', $path));
         }
 
-        if (0 !== strpos($binary->getMimeType(), 'image/')) {
+        if (0 !== mb_strpos($binary->getMimeType(), 'image/')) {
             throw new \LogicException(sprintf('The mime type of image %s must be image/xxx got %s.', $path, $binary->getMimeType()));
         }
 
@@ -149,14 +149,14 @@ class DataManager
      *
      * @param string $filter
      *
-     * @return string
+     * @return string|null
      */
     public function getDefaultImageUrl($filter)
     {
         $config = $this->filterConfig->get($filter);
 
         $defaultImage = null;
-        if (false == empty($config['default_image'])) {
+        if (false === empty($config['default_image'])) {
             $defaultImage = $config['default_image'];
         } elseif (!empty($this->globalDefaultImage)) {
             $defaultImage = $this->globalDefaultImage;
