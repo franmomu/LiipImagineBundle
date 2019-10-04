@@ -11,22 +11,24 @@
 
 namespace Liip\ImagineBundle\Utility\Path;
 
-class PathResolver implements PathResolverInterface
+use Liip\ImagineBundle\Imagine\Cache\Helper\PathHelper;
+
+final class PathResolver implements PathResolverInterface
 {
     /**
      * @var string
      */
-    protected $webRoot;
+    private $webRoot;
 
     /**
      * @var string
      */
-    protected $cachePrefix;
+    private $cachePrefix;
 
     /**
      * @var string
      */
-    protected $cacheRoot;
+    private $cacheRoot;
 
     public function __construct(
         $webRootDir,
@@ -37,30 +39,26 @@ class PathResolver implements PathResolverInterface
         $this->cacheRoot = $this->webRoot.'/'.$this->cachePrefix;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFilePath($path, $filter)
+    public function getFilePath(string $path, string $filter): string
     {
-        return $this->webRoot.'/'.$this->getFileUrl($path, $filter);
+        return $this->webRoot.'/'.$this->getFullPath($path, $filter);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFileUrl($path, $filter)
+    public function getFileUrl(string $path, string $filter): string
+    {
+        return PathHelper::filePathToUrlPath($this->getFullPath($path, $filter));
+    }
+
+    public function getCacheRoot(): string
+    {
+        return $this->cacheRoot;
+    }
+
+    private function getFullPath($path, $filter): string
     {
         // crude way of sanitizing URL scheme ("protocol") part
         $path = str_replace('://', '---', $path);
 
         return $this->cachePrefix.'/'.$filter.'/'.ltrim($path, '/');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCacheRoot()
-    {
-        return $this->cacheRoot;
     }
 }
