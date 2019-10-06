@@ -1,140 +1,205 @@
 # Change Log
 
-This file contains a complete enumeration of all [pull requests](https://github.com/liip/LiipImagineBundle/pulls) merged
-for a given releases. Unreleased, upcoming changes will be updated here periodically; reference the next release on our
-[milestones](https://github.com/liip/LiipImagineBundle/milestones) page for the latest changes.
+## [Unreleased](https://github.com/liip/LiipImagineBundle/tree/HEAD)
 
-## [2.2.0](https://github.com/liip/LiipImagineBundle/tree/HEAD) (2019-10-04)
+[Full Changelog](https://github.com/liip/LiipImagineBundle/compare/2.2.0...HEAD)
+
+- Update UPGRADE.md with a bc break notice [\#1235](https://github.com/liip/LiipImagineBundle/pull/1235) ([franmomu](https://github.com/franmomu))
+- Update orientation documentation [\#1231](https://github.com/liip/LiipImagineBundle/pull/1231) ([franmomu](https://github.com/franmomu))
+
+## [2.2.0](https://github.com/liip/LiipImagineBundle/tree/2.2.0) (2019-10-04)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/2.1.0...2.2.0)
 
-- Allow unresolvable data roots for filesystem locator ([robfrawley](https://github.com/robfrawley))
-- Add "fixed-size" filter implementation ([peter-gribanov](https://github.com/peter-gribanov))
-- Only use actual path without any query parameters from the url ([TiMESPLiNTER](https://github.com/TiMESPLiNTER))
-- Add missing ImageType::getBlockPrefix() method ([EmmanuelVella](https://github.com/EmmanuelVella))
-- Replace app/console with bin/console ([welcoMattic](https://github.com/welcoMattic))
-- Fix Symfony 4.2 Deprecation Warnings ([hjanuschka](https://github.com/hjanuschka))
-- Fix special characters encoding in URL path ([dbalabka](https://github.com/dbalabka))
-- Update imagine/imagine dependency to 1.1 ([maximgubar](https://github.com/maximgubar))
-- Only use actual path without any query parameters from the url ([maximgubar](https://github.com/maximgubar))
-- __\[Dependency Injection\]__ Add aliases for data and filter manager ([fpaterno](https://github.com/fpaterno))
-- Use Autorotate Filter from Imagine library ([franmomu](https://github.com/franmomu))
-- Fix Mime deprecations for Symfony 4 ([franmomu](https://github.com/franmomu))
+- Use Autorotate Filter from Imagine library [\#1230](https://github.com/liip/LiipImagineBundle/pull/1230) ([franmomu](https://github.com/franmomu))
+- Fix remaining Mime deprecation for symfony 4.3 [\#1226](https://github.com/liip/LiipImagineBundle/pull/1226) ([franmomu](https://github.com/franmomu))
+- added reference type to generate url [\#1224](https://github.com/liip/LiipImagineBundle/pull/1224) ([eroluysal](https://github.com/eroluysal))
+- update changelog [\#1223](https://github.com/liip/LiipImagineBundle/pull/1223) ([garak](https://github.com/garak))
+- \[Console\] Lazy commands, separate IO concerns, add forced resolve to command, and prettify and detail output [\#1222](https://github.com/liip/LiipImagineBundle/pull/1222) ([franmomu](https://github.com/franmomu))
+- Add support for default filter sets configuration [\#1221](https://github.com/liip/LiipImagineBundle/pull/1221) ([franmomu](https://github.com/franmomu))
+- \[DI\] \[Controller\] Add controller redirect response code configuration option [\#1220](https://github.com/liip/LiipImagineBundle/pull/1220) ([franmomu](https://github.com/franmomu))
+- \[Post-Processors\] Add timeout option, refactor processors, add tests for all, add/remove/deprecate options [\#1219](https://github.com/liip/LiipImagineBundle/pull/1219) ([franmomu](https://github.com/franmomu))
+- Fix deprecated usage of Symfony\Component\EventDispatcher\Event class [\#1218](https://github.com/liip/LiipImagineBundle/pull/1218) ([fbourigault](https://github.com/fbourigault))
+- Fix Mime deprecations for Symfony 4.3 [\#1217](https://github.com/liip/LiipImagineBundle/pull/1217) ([franmomu](https://github.com/franmomu))
+- Remove minimum-stability and prefer-stable configuration [\#1215](https://github.com/liip/LiipImagineBundle/pull/1215) ([fbourigault](https://github.com/fbourigault))
+- Fix double slash in WebPathResolver when cache\_prefix is empty [\#1214](https://github.com/liip/LiipImagineBundle/pull/1214) ([franmomu](https://github.com/franmomu))
+- Handle Symfony templating deprecation [\#1213](https://github.com/liip/LiipImagineBundle/pull/1213) ([fbourigault](https://github.com/fbourigault))
+- Fix event dispatcher deprecation sf 4.3 [\#1212](https://github.com/liip/LiipImagineBundle/pull/1212) ([franmomu](https://github.com/franmomu))
+- Use Twig namespaces [\#1211](https://github.com/liip/LiipImagineBundle/pull/1211) ([franmomu](https://github.com/franmomu))
+- add branch alias for master [\#1210](https://github.com/liip/LiipImagineBundle/pull/1210) ([dbu](https://github.com/dbu))
+- Fix deprecated use of SYMFONY\_DEPRECATIONS\_HELPER [\#1209](https://github.com/liip/LiipImagineBundle/pull/1209) ([fbourigault](https://github.com/fbourigault))
+- Fix wording in basic usage doc [\#1208](https://github.com/liip/LiipImagineBundle/pull/1208) ([kix](https://github.com/kix))
+- Upgrade Enqueue to 0.9 [\#1207](https://github.com/liip/LiipImagineBundle/pull/1207) ([florianajir](https://github.com/florianajir))
+- Fix TreeBuilder depecations notices [\#1206](https://github.com/liip/LiipImagineBundle/pull/1206) ([fbourigault](https://github.com/fbourigault))
+- I merged to 2.0 instead of master [\#1203](https://github.com/liip/LiipImagineBundle/pull/1203) ([dbu](https://github.com/dbu))
+- Improve travis-ci matrix [\#1202](https://github.com/liip/LiipImagineBundle/pull/1202) ([fbourigault](https://github.com/fbourigault))
+- Merge 2.0 branch into master [\#1201](https://github.com/liip/LiipImagineBundle/pull/1201) ([franmomu](https://github.com/franmomu))
+- Upgrade 2.0 from 1.0 [\#1199](https://github.com/liip/LiipImagineBundle/pull/1199) ([franmomu](https://github.com/franmomu))
+- Fix double slashes in Flysystem cache resolver when cache\_prefix is empty [\#1195](https://github.com/liip/LiipImagineBundle/pull/1195) ([gnutix](https://github.com/gnutix))
+- Support custom HTTP/S port in NoCacheWebPathResolver [\#1194](https://github.com/liip/LiipImagineBundle/pull/1194) ([gnutix](https://github.com/gnutix))
+- Apply php cs fixer to tests [\#1183](https://github.com/liip/LiipImagineBundle/pull/1183) ([franmomu](https://github.com/franmomu))
+- Set the mime type when uploading cached files [\#1182](https://github.com/liip/LiipImagineBundle/pull/1182) ([simon-tma](https://github.com/simon-tma))
+- \[Docs\] Fix link for Gaufrette README file [\#1178](https://github.com/liip/LiipImagineBundle/pull/1178) ([broiniac](https://github.com/broiniac))
+- Update form\_div\_layout.html.twig [\#1176](https://github.com/liip/LiipImagineBundle/pull/1176) ([salletti](https://github.com/salletti))
+- Dependency Injection: add aliases for data and filter manager [\#1165](https://github.com/liip/LiipImagineBundle/pull/1165) ([fpaterno](https://github.com/fpaterno))
+- Fix build [\#1163](https://github.com/liip/LiipImagineBundle/pull/1163) ([dbu](https://github.com/dbu))
+- Fix special characters encoding in URL path [\#1162](https://github.com/liip/LiipImagineBundle/pull/1162) ([dbalabka](https://github.com/dbalabka))
+- Updated Dynamic filters [\#1161](https://github.com/liip/LiipImagineBundle/pull/1161) ([ThomasLandauer](https://github.com/ThomasLandauer))
+- Replace app/console with bin/console [\#1157](https://github.com/liip/LiipImagineBundle/pull/1157) ([welcoMattic](https://github.com/welcoMattic))
+- Add missing ImageType::getBlockPrefix\(\) method [\#1146](https://github.com/liip/LiipImagineBundle/pull/1146) ([EmmanuelVella](https://github.com/EmmanuelVella))
+- Update imagine/imagine dependency to 1.1 [\#1141](https://github.com/liip/LiipImagineBundle/pull/1141) ([franmomu](https://github.com/franmomu))
+- fix deprecation warnings in symfony 4.2 [\#1139](https://github.com/liip/LiipImagineBundle/pull/1139) ([hjanuschka](https://github.com/hjanuschka))
+- Only use actual path without any query parameters from the url [\#1117](https://github.com/liip/LiipImagineBundle/pull/1117) ([TiMESPLiNTER](https://github.com/TiMESPLiNTER))
+- Type-hint on FilesystemInterface in FlysystemResolver [\#1102](https://github.com/liip/LiipImagineBundle/pull/1102) ([joker806](https://github.com/joker806))
 
 ## [2.1.0](https://github.com/liip/LiipImagineBundle/tree/2.1.0) (2018-07-10)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/2.0.0...2.1.0)
 
 - added bypassing of loaders and resolvers configuration [\#1110](https://github.com/liip/LiipImagineBundle/pull/1110) ([maximgubar](https://github.com/maximgubar))
 - php-cs-fixer: skip native constants check [\#1107](https://github.com/liip/LiipImagineBundle/pull/1107) ([maximgubar](https://github.com/maximgubar))
 - added ability to inject custom drivers [\#1105](https://github.com/liip/LiipImagineBundle/pull/1105) ([maximgubar](https://github.com/maximgubar))
-- __\[Filters\]__ __\[Config\]__ __\[DI\]__ Add Filter configuration class as public service [\#1098](https://github.com/liip/LiipImagineBundle/pull/1098) ([maximgubar](https://github.com/maximgubar))
-- __\[Data Loader\]__ __\[Docs\]__ Add chain loader implementation and related docs [\#1096](https://github.com/liip/LiipImagineBundle/pull/1096) ([robfrawley](https://github.com/robfrawley))
+- \[Filters\] \[Config\] \[DI\] Add Filter configuration class as public service [\#1098](https://github.com/liip/LiipImagineBundle/pull/1098) ([maximgubar](https://github.com/maximgubar))
 - Added transparency to background filter [\#1095](https://github.com/liip/LiipImagineBundle/pull/1095) ([nielstholenaar](https://github.com/nielstholenaar))
-- __\[Docs\]__ Add routing removal in Upgrade file [\#1092](https://github.com/liip/LiipImagineBundle/pull/1092) ([tifabien](https://github.com/tifabien))
-- __\[Tests\]__ __\[Deprecation\]__ Updated bundle notation to accommodate Symfony 4.1 and set browser client to not catch exceptions [\#1090](https://github.com/liip/LiipImagineBundle/pull/1090) ([robfrawley](https://github.com/robfrawley))
+- \[Docs\] Add routing removal in Upgrade file [\#1092](https://github.com/liip/LiipImagineBundle/pull/1092) ([tifabien](https://github.com/tifabien))
 - moved GitHub-specific documents into .github and split issue template [\#1089](https://github.com/liip/LiipImagineBundle/pull/1089) ([maximgubar](https://github.com/maximgubar))
 - fix annotation [\#1072](https://github.com/liip/LiipImagineBundle/pull/1072) ([auipga](https://github.com/auipga))
+- \[Data Loader\] \[Docs\] Add chain loader implementation and related docs [\#1096](https://github.com/liip/LiipImagineBundle/pull/1096) ([robfrawley](https://github.com/robfrawley))
+- \[Data Locator\] Add toggle to allow invalid paths for filesystem locator [\#1094](https://github.com/liip/LiipImagineBundle/pull/1094) ([robfrawley](https://github.com/robfrawley))
+- \[Tests\] \[Deprecation\] Updated bundle notation to accommodate Symfony 4.1 and set browser client to not catch exceptions [\#1090](https://github.com/liip/LiipImagineBundle/pull/1090) ([robfrawley](https://github.com/robfrawley))
 
 ## [2.0.0](https://github.com/liip/LiipImagineBundle/tree/2.0.0) (2018-04-30)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.9.1...2.0.0)
 
-- __\[Post Processors\]__ __\[Filters\]__ __\[BC BREAK\]__ Remove configurable post processor interface for one interface and cleanup filter manager [\#1075](https://github.com/liip/LiipImagineBundle/pull/1075) ([robfrawley](https://github.com/robfrawley))
-- __\[Meta\]__ Add code of conduct and update contributor instructions [\#1071](https://github.com/liip/LiipImagineBundle/pull/1071) ([robfrawley](https://github.com/robfrawley))
-- __\[Dependencies\]__ Update imagine/imagine to ^0.7.1,\<0.8 [\#1067](https://github.com/liip/LiipImagineBundle/pull/1067) ([robfrawley](https://github.com/robfrawley))
-- __\[Documentation\]__ Correct indentation in AWS-S3 cache resolver documentation [\#1063](https://github.com/liip/LiipImagineBundle/pull/1063) ([robfrawley](https://github.com/robfrawley))
-- __\[CS\]__ Globally update code style using new php-cs-fixer rules [\#1058](https://github.com/liip/LiipImagineBundle/pull/1058) ([robfrawley](https://github.com/robfrawley))
-- __\[CI\]__ __\[CS\]__ Add a required php-cs-fixer build run to Travis matrix [\#1057](https://github.com/liip/LiipImagineBundle/pull/1057) ([robfrawley](https://github.com/robfrawley))
-- __\[Tests\]__ Add missing PHPUnit @covers annotations [\#1054](https://github.com/liip/LiipImagineBundle/pull/1054) ([robfrawley](https://github.com/robfrawley))
-- __\[CI\]__ Move the "simple-phpunit install" command to Travis install section to collapse the output [\#1048](https://github.com/liip/LiipImagineBundle/pull/1048) ([dbu](https://github.com/dbu))
-- __\[CS\]__ __\[Dependencies\]__ __\[Dependency Injection\]__ __\[Form\]__ __\[General\]__ Update compiler log format, remove legacy code, remove deprecated, fix docblocks/style, general Travis config, upgrade coveralls, and general fixes [\#1047](https://github.com/liip/LiipImagineBundle/pull/1047) ([robfrawley](https://github.com/robfrawley))
-- __\[CS\]__ Changes to support new php-cs-fixer rule set [\#1046](https://github.com/liip/LiipImagineBundle/pull/1046) ([robfrawley](https://github.com/robfrawley))
-- __\[Dependencies\]__ Revert php-cs-fixer development dependency removal [\#1045](https://github.com/liip/LiipImagineBundle/pull/1045) ([dbu](https://github.com/dbu))
-- __\[Dependency Injection\]__ Detect proper web root path based on Symfony kernel version [\#1044](https://github.com/liip/LiipImagineBundle/pull/1044) ([robfrawley](https://github.com/robfrawley))
-- __\[Async\]__ __\[DI\]__ Make resolve\_cache\_processor a public service [\#1043](https://github.com/liip/LiipImagineBundle/pull/1043) ([silverbackdan](https://github.com/silverbackdan))
-- __\[CS\]__ Implement new php-cs-fixer rules and related code cleanup [\#1040](https://github.com/liip/LiipImagineBundle/pull/1040) ([sebastianblum](https://github.com/sebastianblum))
-- __\[Dependency Injection\]__ Change cache manager from private service to public to fix deprecation [\#1038](https://github.com/liip/LiipImagineBundle/pull/1038) ([fabianoroberto](https://github.com/fabianoroberto))
-- __\[CI\]__ Extend and enhance Travis build matrix [\#1035](https://github.com/liip/LiipImagineBundle/pull/1035) ([sebastianblum](https://github.com/sebastianblum))
-- __\[Dependencies\]__ Remove unused php-cs-fixer from require-dev [\#1031](https://github.com/liip/LiipImagineBundle/pull/1031) ([dbu](https://github.com/dbu))
-- __\[Tests\]__ __\[CI\]__ __\[Dependencies\]__ Refactored Travis config to use simple-phpunit and remove phpunit Composer dependency [\#1029](https://github.com/liip/LiipImagineBundle/pull/1029) ([sebastianblum](https://github.com/sebastianblum))
-- __\[Documentation\]__ Fix binary name in png-quant.rst [\#1026](https://github.com/liip/LiipImagineBundle/pull/1026) ([bruno-ds](https://github.com/bruno-ds))
-- __\[Post-Processors\]__ Replaced ProcessBuilder with Process and add additional tests [\#1025](https://github.com/liip/LiipImagineBundle/pull/1025) ([fabianbloching](https://github.com/fabianbloching))
-- __\[Tests\]__ Fix tests on Symfony 3.4 and 4.0 [\#1023](https://github.com/liip/LiipImagineBundle/pull/1023) ([lsmith77](https://github.com/lsmith77))
-- __\[Dependency Injection\]__ Add alias for cache manager [\#1022](https://github.com/liip/LiipImagineBundle/pull/1022) ([garak](https://github.com/garak))
-- __\[Documentation\]__ Align example and description quality values in png-quant.rst [\#1020](https://github.com/liip/LiipImagineBundle/pull/1020) ([qkdreyer](https://github.com/qkdreyer))
-- __\[Dependency Injection\]__ Change imagine controller from private service to public service [\#1019](https://github.com/liip/LiipImagineBundle/pull/1019) ([michaelperrin](https://github.com/michaelperrin))
-- __\[Dependencies\]__ Enable Symfony 4.0 support [\#1013](https://github.com/liip/LiipImagineBundle/pull/1013) ([lsmith77](https://github.com/lsmith77))
-- __\[Dependencies\]__ Enable Symfony 4.0 support [\#1010](https://github.com/liip/LiipImagineBundle/pull/1010) ([llaakkkk](https://github.com/llaakkkk))
-- __\[Tests\]__ __\[CI\]__ Add PHP 7.2 to Travis test matrix [\#1009](https://github.com/liip/LiipImagineBundle/pull/1009) ([dbu](https://github.com/dbu))
-- __\[Documentation\]__ Fix bucket parameter nesting level in aws_s3.rst YAML example [\#996](https://github.com/liip/LiipImagineBundle/pull/996) ([bocharsky-bw](https://github.com/bocharsky-bw))
-- __\[Data Loader\]__ __\[Data Locator\]__ __\[Dependency Injection\]__ Pass root paths to FileSystemLocator during construction [\#930](https://github.com/liip/LiipImagineBundle/pull/930) ([rpkamp](https://github.com/rpkamp))
-- __\[Dependency Injection\]__ __\[Filter\]__ Implement filter service abstraction for creating images [\#922](https://github.com/liip/LiipImagineBundle/pull/922) ([rpkamp](https://github.com/rpkamp))
-
+- \[Async\] \[DI\] Make resolve\_cache\_processor a public service [\#1043](https://github.com/liip/LiipImagineBundle/pull/1043) ([silverbackdan](https://github.com/silverbackdan))
+- \[Dependency Injection\] Change cache manager from private service to public to fix deprecation [\#1038](https://github.com/liip/LiipImagineBundle/pull/1038) ([fabianoroberto](https://github.com/fabianoroberto))
+- \[Dependencies\] Remove unused php-cs-fixer from require-dev [\#1031](https://github.com/liip/LiipImagineBundle/pull/1031) ([dbu](https://github.com/dbu))
+- \[Tests\] \[CI\] \[Dependencies\] Refactored Travis config to use simple-phpunit and remove phpunit Composer dependency [\#1029](https://github.com/liip/LiipImagineBundle/pull/1029) ([sebastianblum](https://github.com/sebastianblum))
+- \[Documentation\] Fix binary name in png-quant.rst [\#1026](https://github.com/liip/LiipImagineBundle/pull/1026) ([bruno-ds](https://github.com/bruno-ds))
+- \[Tests\] Fix tests on Symfony 3.4 and 4.0 [\#1023](https://github.com/liip/LiipImagineBundle/pull/1023) ([lsmith77](https://github.com/lsmith77))
+- \[Dependency Injection\] Add alias for cache manager [\#1022](https://github.com/liip/LiipImagineBundle/pull/1022) ([garak](https://github.com/garak))
+- \[Documentation\] Align example and description quality values in png-quant.rst [\#1020](https://github.com/liip/LiipImagineBundle/pull/1020) ([qkdreyer](https://github.com/qkdreyer))
+- \[Dependency Injection\] Change imagine controller from private service to public service [\#1019](https://github.com/liip/LiipImagineBundle/pull/1019) ([michaelperrin](https://github.com/michaelperrin))
+- \[Dependencies\] Enable Symfony 4.0 support [\#1013](https://github.com/liip/LiipImagineBundle/pull/1013) ([lsmith77](https://github.com/lsmith77))
+- \[Dependencies\] Enable Symfony 4.0 support [\#1010](https://github.com/liip/LiipImagineBundle/pull/1010) ([llaakkkk](https://github.com/llaakkkk))
+- \[Tests\] \[CI\] Add PHP 7.2 to Travis test matrix [\#1009](https://github.com/liip/LiipImagineBundle/pull/1009) ([dbu](https://github.com/dbu))
+- \[Documentation\] Fix bucket parameter nesting level in aws\_s3.rst YAML example [\#996](https://github.com/liip/LiipImagineBundle/pull/996) ([bocharsky-bw](https://github.com/bocharsky-bw))
+- Release 2.0.0 [\#1084](https://github.com/liip/LiipImagineBundle/pull/1084) ([robfrawley](https://github.com/robfrawley))
+- \[Docs\] Correct a tyop in the filters section of RST documentation [\#1082](https://github.com/liip/LiipImagineBundle/pull/1082) ([broiniac](https://github.com/broiniac))
+- \[Documentation\] \[Meta\] Update CHANGELOG.md and UPGRADE.md to reflect all merged changes [\#1077](https://github.com/liip/LiipImagineBundle/pull/1077) ([robfrawley](https://github.com/robfrawley))
+- \[Data Locator\] Check if file is readable in file system loactor [\#1076](https://github.com/liip/LiipImagineBundle/pull/1076) ([robfrawley](https://github.com/robfrawley))
+- \[Filters\] \[Post Processors\] Remove configurable post processor interface for one interface and cleanup filter manager [\#1075](https://github.com/liip/LiipImagineBundle/pull/1075) ([robfrawley](https://github.com/robfrawley))
+- \[Meta\] Add code of conduct and update contributor instructions [\#1071](https://github.com/liip/LiipImagineBundle/pull/1071) ([robfrawley](https://github.com/robfrawley))
+- \[Dependencies\] Update imagine/imagine to ^0.7.1,\<0.8 [\#1067](https://github.com/liip/LiipImagineBundle/pull/1067) ([robfrawley](https://github.com/robfrawley))
+- \[Documentation\] Correct indentation in AWS-S3 cache resolver documentation [\#1063](https://github.com/liip/LiipImagineBundle/pull/1063) ([robfrawley](https://github.com/robfrawley))
+- \[CS\] Globally update code style using new php-cs-fixer rules [\#1058](https://github.com/liip/LiipImagineBundle/pull/1058) ([robfrawley](https://github.com/robfrawley))
+- \[CI\] \[CS\] Add a required php-cs-fixer build run to Travis matrix [\#1057](https://github.com/liip/LiipImagineBundle/pull/1057) ([robfrawley](https://github.com/robfrawley))
+- \[Documentation\] Update Amazon S3 service RST docs to include version argument [\#1056](https://github.com/liip/LiipImagineBundle/pull/1056) ([robfrawley](https://github.com/robfrawley))
+- \[Tests\] Add missing PHPUnit @covers annotations [\#1054](https://github.com/liip/LiipImagineBundle/pull/1054) ([robfrawley](https://github.com/robfrawley))
+- \[CI\] Move the "simple-phpunit install" command to Travis install section to collapse the output [\#1048](https://github.com/liip/LiipImagineBundle/pull/1048) ([dbu](https://github.com/dbu))
+- \[CS\] \[Dependencies\] \[Dependency Injection\] \[Form\] \[General\] Update compiler log format, remove legacy code, remove deprecated, fix docblocks/style, general Travis config, upgrade coveralls, and general fixes [\#1047](https://github.com/liip/LiipImagineBundle/pull/1047) ([robfrawley](https://github.com/robfrawley))
+- \[CS\] Changes to support new php-cs-fixer rule set [\#1046](https://github.com/liip/LiipImagineBundle/pull/1046) ([robfrawley](https://github.com/robfrawley))
+- \[Dependencies\] Revert php-cs-fixer development dependency removal [\#1045](https://github.com/liip/LiipImagineBundle/pull/1045) ([dbu](https://github.com/dbu))
+- \[Dependency Injection\] Detect proper web root path based on Symfony kernel version [\#1044](https://github.com/liip/LiipImagineBundle/pull/1044) ([robfrawley](https://github.com/robfrawley))
+- \[CS\] Implement new php-cs-fixer rules and related code cleanup [\#1040](https://github.com/liip/LiipImagineBundle/pull/1040) ([sebastianblum](https://github.com/sebastianblum))
+- \[CI\] Extend and enhance Travis build matrix [\#1035](https://github.com/liip/LiipImagineBundle/pull/1035) ([sebastianblum](https://github.com/sebastianblum))
+- \[Post-Processors\] Replaced ProcessBuilder with Process and add additional tests [\#1025](https://github.com/liip/LiipImagineBundle/pull/1025) ([fabianbloching](https://github.com/fabianbloching))
+- \[Filter\] Add "fixed-size" filter implementation [\#1015](https://github.com/liip/LiipImagineBundle/pull/1015) ([peter-gribanov](https://github.com/peter-gribanov))
+- \[Composer\] \[Travis\] Require PHP 7.1, remove HHVM support, and remove unsupported Symfony version testing [\#986](https://github.com/liip/LiipImagineBundle/pull/986) ([robfrawley](https://github.com/robfrawley))
+- Solve issues with file type, which wasn’t converted to the new standard [\#975](https://github.com/liip/LiipImagineBundle/pull/975) ([jorisros](https://github.com/jorisros))
+- \[enqueue\] Upgrade to enqueue v5. Use its features [\#959](https://github.com/liip/LiipImagineBundle/pull/959) ([makasim](https://github.com/makasim))
+- \[Twig\] Use Twig namespaced path [\#934](https://github.com/liip/LiipImagineBundle/pull/934) ([z38](https://github.com/z38))
+- \[Data Loader\] \[Data Locator\] \[Dependency Injection\] Pass root paths to FileSystemLocator during construction [\#930](https://github.com/liip/LiipImagineBundle/pull/930) ([rpkamp](https://github.com/rpkamp))
+- \[Dependency Injection\] \[Filter\] Implement filter service abstraction for creating images [\#922](https://github.com/liip/LiipImagineBundle/pull/922) ([rpkamp](https://github.com/rpkamp))
+- Remove all .class parameters [\#914](https://github.com/liip/LiipImagineBundle/pull/914) ([rpkamp](https://github.com/rpkamp))
+- Remove deprecated and legacy code, migrate some syntax, cleanup [\#908](https://github.com/liip/LiipImagineBundle/pull/908) ([robfrawley](https://github.com/robfrawley))
 
 ## [1.9.1](https://github.com/liip/LiipImagineBundle/tree/1.9.1) (2017-09-09)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.9.0...1.9.1)
 
-- __\[Console\]__ __\[BC BREAK\]__ The resolve command's --as-script/-s option/shortcut renamed to --machine-readable/-m \(fixes [\#988](https://github.com/liip/LiipImagineBundle/pull/988)\), its output updated to aligned with the resolve command, and the "--machine-readable/-m" option added.  [\#991](https://github.com/liip/LiipImagineBundle/pull/991) *([robfrawley](https://github.com/robfrawley))*
+- \[Console\] Renamed resolve command's -s option to -m \(-s conflicts with core Symfony 2.x cmd option\), machine readable added to remove command, and both commands output aligned [\#991](https://github.com/liip/LiipImagineBundle/pull/991) ([robfrawley](https://github.com/robfrawley))
+- Allow to configure the HTTP response code for redirects [\#970](https://github.com/liip/LiipImagineBundle/pull/970) ([lstrojny](https://github.com/lstrojny))
 
 ## [1.9.0](https://github.com/liip/LiipImagineBundle/tree/1.9.0) (2017-09-02)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.8.0...1.9.0)
 
-- __\[Tests\]__ Fix filesystem loader deprecation message in tests. [\#982](https://github.com/liip/LiipImagineBundle/pull/982) *([robfrawley](https://github.com/robfrawley))*
-- __\[Filter\]__ Add "centerright" and "centerleft" positions to background filter. [\#974](https://github.com/liip/LiipImagineBundle/pull/974) *([cmodijk](https://github.com/cmodijk))*
-- __\[Config\]__ Allow to configure the HTTP response code for redirects. [\#970](https://github.com/liip/LiipImagineBundle/pull/970) *([lstrojny](https://github.com/lstrojny))*
-- __\[Console\]__ Added --force option, renamed --filters to --filter, and made resolve command output pretty. [\#967](https://github.com/liip/LiipImagineBundle/pull/967) *([robfrawley](https://github.com/robfrawley))*
-- __\[CS\]__ Fix two docblock annotations. [\#965](https://github.com/liip/LiipImagineBundle/pull/965) *([imanalopher](https://github.com/imanalopher))*
-- __\[Data Loader\]__ __\[Deprecation\]__ The FileSystemLoader no longer accepts an array of data root paths; instead pass a FileSystemLocator, which should instead be passed said paths. [\#963](https://github.com/liip/LiipImagineBundle/pull/963/) *([robfrawley](https://github.com/robfrawley), [rpkamp](https://github.com/rpkamp))*
-- __\[Composer\]__ Allow [avalanche123/Imagine](https://github.com/avalanche123/Imagine) version 0.7.0. [\#958](https://github.com/liip/LiipImagineBundle/pull/958) *([robfrawley](https://github.com/robfrawley))*
-- __\[Data Loader\]__ __\[Documentation\]__ Add chain loader documentation. [\#957](https://github.com/liip/LiipImagineBundle/pull/957) *([robfrawley](https://github.com/robfrawley))*
-- __\[Data Loader\]__ Add chain loader implementation. [\#953](https://github.com/liip/LiipImagineBundle/pull/953) *([robfrawley](https://github.com/robfrawley))*
-- __\[CS\]__ Fix templating extension method return type. [\#951](https://github.com/liip/LiipImagineBundle/pull/951) *([imanalopher](https://github.com/imanalopher))*
-- __\[Dependency Injection\]__ Fix compiler pass log message typo. [\#947](https://github.com/liip/LiipImagineBundle/pull/947) *([you-ser](https://github.com/you-ser))*
-- __\[Travis\]__ Default to trusty container image \(with precise image for php 5.3\). [\#945](https://github.com/liip/LiipImagineBundle/pull/945) *([robfrawley](https://github.com/robfrawley))*
-- __\[Enqueue\]__ Use simplified transport configuration. [\#942](https://github.com/liip/LiipImagineBundle/pull/942) *([makasim](https://github.com/makasim))*
-- __\[Filter\]__ Add resolution loader implementation. [\#941](https://github.com/liip/LiipImagineBundle/pull/941) *([robfrawley](https://github.com/robfrawley))*
-- __\[Travis\]__ Remove Symfony 3.3 from allowed failures. [\#940](https://github.com/liip/LiipImagineBundle/pull/940) *([robfrawley](https://github.com/robfrawley))*
-- __\[Utility\]__ Use simplified Symfony kernel version comparison operation. [\#939](https://github.com/liip/LiipImagineBundle/pull/939) *([robfrawley](https://github.com/robfrawley))*
+- Added support for centerright and centerleft position [\#974](https://github.com/liip/LiipImagineBundle/pull/974) ([cmodijk](https://github.com/cmodijk))
+- Sync with changes in enqueue lib.  [\#973](https://github.com/liip/LiipImagineBundle/pull/973) ([makasim](https://github.com/makasim))
+- Modify some PHP Annotations [\#965](https://github.com/liip/LiipImagineBundle/pull/965) ([imanalopher](https://github.com/imanalopher))
+- Remove extra check [\#950](https://github.com/liip/LiipImagineBundle/pull/950) ([Cosmologist](https://github.com/Cosmologist))
+- Fix issues in AWS documentation [\#946](https://github.com/liip/LiipImagineBundle/pull/946) ([kvdnberg](https://github.com/kvdnberg))
+- Release 1.9.0 [\#983](https://github.com/liip/LiipImagineBundle/pull/983) ([robfrawley](https://github.com/robfrawley))
+- \[Tests\] Fix filesystem loader deprecation message in tests [\#982](https://github.com/liip/LiipImagineBundle/pull/982) ([robfrawley](https://github.com/robfrawley))
+- Updated the docs for \#974 [\#979](https://github.com/liip/LiipImagineBundle/pull/979) ([cmodijk](https://github.com/cmodijk))
+- \[Console\] Add forced resolve to command and prittify and detail output [\#967](https://github.com/liip/LiipImagineBundle/pull/967) ([robfrawley](https://github.com/robfrawley))
+- \[Data Loader\] Pass root paths to file system locator constructor \(instead of loader\) [\#963](https://github.com/liip/LiipImagineBundle/pull/963) ([robfrawley](https://github.com/robfrawley))
+- \[Composer\] Allow imagine-library version 0.7.0 [\#958](https://github.com/liip/LiipImagineBundle/pull/958) ([robfrawley](https://github.com/robfrawley))
+- \[Data Loader\] Add chain loader documentation [\#957](https://github.com/liip/LiipImagineBundle/pull/957) ([robfrawley](https://github.com/robfrawley))
+- \[Data Loader\] Add a chain loader implementation [\#953](https://github.com/liip/LiipImagineBundle/pull/953) ([robfrawley](https://github.com/robfrawley))
+- \[CS\] Fix templating extension "filter" return type [\#951](https://github.com/liip/LiipImagineBundle/pull/951) ([imanalopher](https://github.com/imanalopher))
+- \[Dependency Injection\] Fix compiler pass log message typo [\#947](https://github.com/liip/LiipImagineBundle/pull/947) ([you-ser](https://github.com/you-ser))
+- \[Travis\] Use "trusty" container image default with "precise" image for php 5.3 [\#945](https://github.com/liip/LiipImagineBundle/pull/945) ([robfrawley](https://github.com/robfrawley))
+- \[Enqueue\] Use simplified transport configuration [\#942](https://github.com/liip/LiipImagineBundle/pull/942) ([makasim](https://github.com/makasim))
+- \[Filter\] Add resolution filter loader [\#941](https://github.com/liip/LiipImagineBundle/pull/941) ([robfrawley](https://github.com/robfrawley))
+- \[Travis\] Remove symfony 3.3 from build matrix "allow\_failures" [\#940](https://github.com/liip/LiipImagineBundle/pull/940) ([robfrawley](https://github.com/robfrawley))
+- \[Utility\] \[CS\] Use simplified symfony version comparison and minor cs fixes [\#939](https://github.com/liip/LiipImagineBundle/pull/939) ([robfrawley](https://github.com/robfrawley))
 
 ## [1.8.0](https://github.com/liip/LiipImagineBundle/tree/1.8.0) (2017-05-09)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.7.4...1.8.0)
 
-- __\[Minor\]__ __\[Bug\]__ Revert to php-cs-fixer 1.x and run fixer [\#927](https://github.com/liip/LiipImagineBundle/pull/927) ([robfrawley](https://github.com/robfrawley))
-- __\[Routing\]__ Deprecate XML routing file in favor of YAML [\#925](https://github.com/liip/LiipImagineBundle/pull/925) ([robfrawley](https://github.com/robfrawley))
-- __\[Filter\]__ Add flip filter implementation to core [\#920](https://github.com/liip/LiipImagineBundle/pull/920) ([robfrawley](https://github.com/robfrawley))
-- __\[Queue\]__ Resolve image caches in background using message queue. [\#919](https://github.com/liip/LiipImagineBundle/pull/919) ([makasim](https://github.com/makasim))
+- Use correct version number for 1.7.4 in changelog [\#896](https://github.com/liip/LiipImagineBundle/pull/896) ([cedricziel](https://github.com/cedricziel))
+- Release 1.7.4 [\#895](https://github.com/liip/LiipImagineBundle/pull/895) ([robfrawley](https://github.com/robfrawley))
+- Release 1.8.0 [\#928](https://github.com/liip/LiipImagineBundle/pull/928) ([robfrawley](https://github.com/robfrawley))
+- Revert to php-cs-fixer 1.x and run fixer [\#927](https://github.com/liip/LiipImagineBundle/pull/927) ([robfrawley](https://github.com/robfrawley))
+- Deprecate XML routing file in favor of YAML [\#925](https://github.com/liip/LiipImagineBundle/pull/925) ([robfrawley](https://github.com/robfrawley))
+- Add flip filter implementation to core [\#920](https://github.com/liip/LiipImagineBundle/pull/920) ([robfrawley](https://github.com/robfrawley))
+- Resolve image caches in background. Using message queue. [\#919](https://github.com/liip/LiipImagineBundle/pull/919) ([makasim](https://github.com/makasim))
 
 ## [1.7.4](https://github.com/liip/LiipImagineBundle/tree/1.7.4) (2017-03-02)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.7.3...1.7.4)
 
-- __\[Bug\]__ Revert adding leading slash to S3 class names [\#893](https://github.com/liip/LiipImagineBundle/pull/893) ([cedricziel](https://github.com/cedricziel))
+- Revert adding leading slash to S3 class names [\#893](https://github.com/liip/LiipImagineBundle/pull/893) ([cedricziel](https://github.com/cedricziel))
 
 ## [1.7.3](https://github.com/liip/LiipImagineBundle/tree/1.7.3) (2017-03-02)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.7.2...1.7.3)
 
-- __\[Tests\]__ Support PHPUnit 5.x (and remove depredations) [\#887](https://github.com/liip/LiipImagineBundle/pull/887) ([robfrawley](https://github.com/robfrawley))
-- __\[Tests\]__ Assert expected deprecation using symfony/phpunit-bridge [\#886](https://github.com/liip/LiipImagineBundle/pull/886) ([robfrawley](https://github.com/robfrawley))
-- __\[Minor\]__ __\[Docs\]__ Fix typo in general filters documentation [\#888](https://github.com/liip/LiipImagineBundle/pull/888) ([svenluijten](https://github.com/svenluijten))
-- __\[Loader\]__ Add bundle resources to safe path when requested [\#883](https://github.com/liip/LiipImagineBundle/pull/883) ([bobvandevijver](https://github.com/bobvandevijver), [robfrawley](https://github.com/robfrawley))
-- __\[Tests\]__ Enable mongo unit tests on PHP7 using "mongo" => "mongodb" extension adapter [\#882](https://github.com/liip/LiipImagineBundle/pull/882) ([robfrawley](https://github.com/robfrawley))
-- __\[Loader\]__ __\[Locator\]__ FileSystemLocator service must not be shared [\#875](https://github.com/liip/LiipImagineBundle/pull/875) ([robfrawley](https://github.com/liip/LiipImagineBundle/pull/875))
+- \[WIP\] Release 1.7.3 [\#891](https://github.com/liip/LiipImagineBundle/pull/891) ([robfrawley](https://github.com/robfrawley))
+- \[Minor\] \[Docs\] Fix typo in general filters documentation [\#888](https://github.com/liip/LiipImagineBundle/pull/888) ([svenluijten](https://github.com/svenluijten))
+- \[Tests\] Support PHPUnit 5.x \(and remove depredations\) [\#887](https://github.com/liip/LiipImagineBundle/pull/887) ([robfrawley](https://github.com/robfrawley))
+- \[Tests\] Assert expected deprecation using symfony/phpunit-bridge [\#886](https://github.com/liip/LiipImagineBundle/pull/886) ([robfrawley](https://github.com/robfrawley))
+- \[Loader\] Add bundle resources to safe path when requested [\#883](https://github.com/liip/LiipImagineBundle/pull/883) ([bobvandevijver](https://github.com/bobvandevijver))
+- \[Tests\] Enable mongo unit tests on PHP7 using "mongo" =\> "mongodb" extension adapter [\#882](https://github.com/liip/LiipImagineBundle/pull/882) ([robfrawley](https://github.com/robfrawley))
+- \[Loader\] \[Locator\] FileSystemLocator service must not be shared [\#875](https://github.com/liip/LiipImagineBundle/pull/875) ([robfrawley](https://github.com/robfrawley))
 
 ## [1.7.2](https://github.com/liip/LiipImagineBundle/tree/1.7.2) (2017-02-07)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.7.1...1.7.2)
 
-- __\[Loader\]__ Abstract filesystem resource locator and legacy insecure locator implementation [\#866](https://github.com/liip/LiipImagineBundle/pull/866) ([robfrawley](https://github.com/robfrawley))
-- __\[Minor\]__ __\[Loader\]__ Fix for FileSystemLoader annotation [\#868](https://github.com/liip/LiipImagineBundle/pull/868) ([tgabi333](https://github.com/tgabi333))
-- __\[DependencyInjection\]__ Container logging for compiler passes [\#867](https://github.com/liip/LiipImagineBundle/pull/867) ([robfrawley](https://github.com/robfrawley))
-- __\[CI\]__ Use Prestissimo package for Travis build [\#864](https://github.com/liip/LiipImagineBundle/pull/864) ([robfrawley](https://github.com/robfrawley))
-- __\[GitHub\]__ Add Hithub templates for issues and PRs [\#863](https://github.com/liip/LiipImagineBundle/pull/863) ([robfrawley](https://github.com/robfrawley))
-- __\[Symfony\]__ Bug fixes and deprecation cleanup for Symfony 3.3 [\#860](https://github.com/liip/LiipImagineBundle/pull/860) ([robfrawley](https://github.com/robfrawley))
-- __\[Filter\]__ Upscale filter should use the highest dimension to calculate ratio [\#856](https://github.com/liip/LiipImagineBundle/pull/856) ([Rattler3](https://github.com/Rattler3))
+- \[GitHub\] Add Hithub templates for issues and PRs  [\#863](https://github.com/liip/LiipImagineBundle/pull/863) ([robfrawley](https://github.com/robfrawley))
+- \[Release\] 1.7.2 [\#872](https://github.com/liip/LiipImagineBundle/pull/872) ([robfrawley](https://github.com/robfrawley))
+- \[Minor\] \[Loader\] Fix for FileSystemLoader annotation [\#868](https://github.com/liip/LiipImagineBundle/pull/868) ([tgabi333](https://github.com/tgabi333))
+- \[DependencyInjection\] Container logging for compiler passes [\#867](https://github.com/liip/LiipImagineBundle/pull/867) ([robfrawley](https://github.com/robfrawley))
+- \[Loader\] Abstract filesystem resource locator and legacy insecure locator implementation [\#866](https://github.com/liip/LiipImagineBundle/pull/866) ([robfrawley](https://github.com/robfrawley))
+- \[CI\] Use Prestissimo Package for Travis Build [\#864](https://github.com/liip/LiipImagineBundle/pull/864) ([robfrawley](https://github.com/robfrawley))
+- \[Symfony\] Bug fixes and deprecation cleanup for Symfony 3.3 [\#860](https://github.com/liip/LiipImagineBundle/pull/860) ([robfrawley](https://github.com/robfrawley))
+- \[Filter\] Upscale filter should use the highest dimension to calculate ratio [\#856](https://github.com/liip/LiipImagineBundle/pull/856) ([jrattue](https://github.com/jrattue))
 
 ## [1.7.1](https://github.com/liip/LiipImagineBundle/tree/1.7.1) (2017-01-20)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.7.0...1.7.1)
 
-- Allow multiple root paths for FileSystemLoader [\#851](https://github.com/liip/LiipImagineBundle/pull/851) ([robfrawley](https://github.com/robfrawley))
 - Fix strange wording in readme [\#847](https://github.com/liip/LiipImagineBundle/pull/847) ([svenluijten](https://github.com/svenluijten))
+- Release 1.7.0 [\#845](https://github.com/liip/LiipImagineBundle/pull/845) ([antoligy](https://github.com/antoligy))
+- Allow multiple root paths for FileSystemLoader [\#851](https://github.com/liip/LiipImagineBundle/pull/851) ([robfrawley](https://github.com/robfrawley))
 
 ## [1.7.0](https://github.com/liip/LiipImagineBundle/tree/1.7.0) (2017-01-08)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.6.0...1.7.0)
 
 - Set DefaultMetadataReader when ext-exif is not present [\#841](https://github.com/liip/LiipImagineBundle/pull/841) ([cedricziel](https://github.com/cedricziel))
@@ -146,7 +211,6 @@ for a given releases. Unreleased, upcoming changes will be updated here periodic
 - Update data-loaders.rst [\#821](https://github.com/liip/LiipImagineBundle/pull/821) ([IllesAprod](https://github.com/IllesAprod))
 - Updating 2.0 with corrections from 1.0 [\#820](https://github.com/liip/LiipImagineBundle/pull/820) ([antoligy](https://github.com/antoligy))
 - Typo fix [\#819](https://github.com/liip/LiipImagineBundle/pull/819) ([redjanym](https://github.com/redjanym))
-- Fix RST indentation error in AWS S3 cache resolver documentation [\#809](https://github.com/liip/LiipImagineBundle/pull/809) ([GeoffreyHervet](https://github.com/GeoffreyHervet))
 - Update basic-usage.rst [\#805](https://github.com/liip/LiipImagineBundle/pull/805) ([you-ser](https://github.com/you-ser))
 - Add data\_loader config to doc [\#803](https://github.com/liip/LiipImagineBundle/pull/803) ([davidfuhr](https://github.com/davidfuhr))
 - RST Typo Fix and Clarification for Watermark Docs [\#802](https://github.com/liip/LiipImagineBundle/pull/802) ([robfrawley](https://github.com/robfrawley))
@@ -164,13 +228,15 @@ for a given releases. Unreleased, upcoming changes will be updated here periodic
 - Tempdir for postprocessors [\#779](https://github.com/liip/LiipImagineBundle/pull/779) ([jehaby](https://github.com/jehaby))
 - Add visibility argument to flysystem resolver [\#777](https://github.com/liip/LiipImagineBundle/pull/777) ([cedricziel](https://github.com/cedricziel))
 - Amend path resolution handlers and outside root check conditional in FileSystemLoader [\#775](https://github.com/liip/LiipImagineBundle/pull/775) ([robfrawley](https://github.com/robfrawley))
-- Scale filter and Downscale and Upscale as derivatives, with a new feature [\#773](https://github.com/liip/LiipImagineBundle/pull/773) ([deviprsd21](https://github.com/deviprsd21))
+- Scale filter and Downscale and Upscale as derivatives, with a new feature [\#773](https://github.com/liip/LiipImagineBundle/pull/773) ([deviprsd](https://github.com/deviprsd))
 - Applied fixes from StyleCI [\#768](https://github.com/liip/LiipImagineBundle/pull/768) ([lsmith77](https://github.com/lsmith77))
 - Replaced deprecated factory\_class and factory\_method [\#767](https://github.com/liip/LiipImagineBundle/pull/767) ([rvanlaarhoven](https://github.com/rvanlaarhoven))
 - Update basic-usage.rst [\#766](https://github.com/liip/LiipImagineBundle/pull/766) ([nochecksum](https://github.com/nochecksum))
 - Implemented ConfigurablePostProcessorInterface in OptiPngPostProcessor [\#764](https://github.com/liip/LiipImagineBundle/pull/764) ([jehaby](https://github.com/jehaby))
+- Fix RST indentation error in AWS S3 cache resolver documentation [\#809](https://github.com/liip/LiipImagineBundle/pull/809) ([GeoffreyHervet](https://github.com/GeoffreyHervet))
 
 ## [1.6.0](https://github.com/liip/LiipImagineBundle/tree/1.6.0) (2016-07-22)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.5.3...1.6.0)
 
 - Input is added twice in the OptiPngProcessor. [\#762](https://github.com/liip/LiipImagineBundle/pull/762) ([antoligy](https://github.com/antoligy))
@@ -187,6 +253,7 @@ for a given releases. Unreleased, upcoming changes will be updated here periodic
 - Implement Imagine Grayscale filter [\#638](https://github.com/liip/LiipImagineBundle/pull/638) ([gregumo](https://github.com/gregumo))
 
 ## [1.5.3](https://github.com/liip/LiipImagineBundle/tree/1.5.3) (2016-05-06)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.5.2...1.5.3)
 
 - add @Event annotation to let IDEs known event names and class instance [\#732](https://github.com/liip/LiipImagineBundle/pull/732) ([Haehnchen](https://github.com/Haehnchen))
@@ -194,16 +261,19 @@ for a given releases. Unreleased, upcoming changes will be updated here periodic
 - StreamLoader-exception-arguments [\#714](https://github.com/liip/LiipImagineBundle/pull/714) ([antonsmolin](https://github.com/antonsmolin))
 
 ## [1.5.2](https://github.com/liip/LiipImagineBundle/tree/1.5.2) (2016-02-16)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.5.1...1.5.2)
 
 - Revert "Merge pull request \#699 from jockri/fix-background-filter" [\#709](https://github.com/liip/LiipImagineBundle/pull/709) ([mangelsnc](https://github.com/mangelsnc))
 
 ## [1.5.1](https://github.com/liip/LiipImagineBundle/tree/1.5.1) (2016-02-13)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.5.0...1.5.1)
 
 - Fix regression introduced in bb8e4109672902e37931e0a491ff55ebac93d8e9 [\#707](https://github.com/liip/LiipImagineBundle/pull/707) ([Seldaek](https://github.com/Seldaek))
 
 ## [1.5.0](https://github.com/liip/LiipImagineBundle/tree/1.5.0) (2016-02-12)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.4.3...1.5.0)
 
 - Applied fixes from StyleCI [\#706](https://github.com/liip/LiipImagineBundle/pull/706) ([lsmith77](https://github.com/lsmith77))
@@ -215,6 +285,7 @@ for a given releases. Unreleased, upcoming changes will be updated here periodic
 - Adding optipng post transformer [\#692](https://github.com/liip/LiipImagineBundle/pull/692) ([gouaille](https://github.com/gouaille))
 
 ## [1.4.3](https://github.com/liip/LiipImagineBundle/tree/1.4.3) (2016-01-14)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.4.2...1.4.3)
 
 - Fixed build issues [\#691](https://github.com/liip/LiipImagineBundle/pull/691) ([yceruto](https://github.com/yceruto))
@@ -223,28 +294,32 @@ for a given releases. Unreleased, upcoming changes will be updated here periodic
 - Flysystem support added. [\#674](https://github.com/liip/LiipImagineBundle/pull/674) ([graundas](https://github.com/graundas))
 
 ## [1.4.2](https://github.com/liip/LiipImagineBundle/tree/1.4.2) (2015-12-29)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.4.1...1.4.2)
 
 - Proxy resolver allow find and replace and regexp strategies [\#687](https://github.com/liip/LiipImagineBundle/pull/687) ([makasim](https://github.com/makasim))
+- Aws sdk v3 [\#685](https://github.com/liip/LiipImagineBundle/pull/685) ([makasim](https://github.com/makasim))
 - added contributing docs [\#681](https://github.com/liip/LiipImagineBundle/pull/681) ([helios-ag](https://github.com/helios-ag))
 - rebased commands document patch, see \#533 [\#680](https://github.com/liip/LiipImagineBundle/pull/680) ([helios-ag](https://github.com/helios-ag))
 
 ## [1.4.1](https://github.com/liip/LiipImagineBundle/tree/1.4.1) (2015-12-27)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.4.0...1.4.1)
 
-- Aws sdk v3 [\#685](https://github.com/liip/LiipImagineBundle/pull/685) ([makasim](https://github.com/makasim))
-
 ## [1.4.0](https://github.com/liip/LiipImagineBundle/tree/1.4.0) (2015-12-27)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.3.3...1.4.0)
 
-- __\[resolver\]__ Add ability to force resolver. [\#684](https://github.com/liip/LiipImagineBundle/pull/684) ([makasim](https://github.com/makasim))
+- \[resolver\] Add ability to force resolver. [\#684](https://github.com/liip/LiipImagineBundle/pull/684) ([makasim](https://github.com/makasim))
 
 ## [1.3.3](https://github.com/liip/LiipImagineBundle/tree/1.3.3) (2015-12-27)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.3.2...1.3.3)
 
 - Destruct image to cleanup memory [\#682](https://github.com/liip/LiipImagineBundle/pull/682) ([cmodijk](https://github.com/cmodijk))
 
 ## [1.3.2](https://github.com/liip/LiipImagineBundle/tree/1.3.2) (2015-12-10)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.3.1...1.3.2)
 
 - Removed UrlGenerator deprecations from symfony 2.8 [\#673](https://github.com/liip/LiipImagineBundle/pull/673) ([sebastianblum](https://github.com/sebastianblum))
@@ -270,6 +345,7 @@ for a given releases. Unreleased, upcoming changes will be updated here periodic
 - introduced DownscaleFilterLoader [\#610](https://github.com/liip/LiipImagineBundle/pull/610) ([sascha-meissner](https://github.com/sascha-meissner))
 
 ## [1.3.1](https://github.com/liip/LiipImagineBundle/tree/1.3.1) (2015-08-27)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.3.0...1.3.1)
 
 - Fix deprecated twig filter syntax [\#631](https://github.com/liip/LiipImagineBundle/pull/631) ([jrattue](https://github.com/jrattue))
@@ -282,26 +358,29 @@ for a given releases. Unreleased, upcoming changes will be updated here periodic
 - fix upscale size not being calculated correctly [\#561](https://github.com/liip/LiipImagineBundle/pull/561) ([scuben](https://github.com/scuben))
 
 ## [1.3.0](https://github.com/liip/LiipImagineBundle/tree/1.3.0) (2015-06-04)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.2.7...1.3.0)
 
 - use setFactory service definition method for symfony \>= 2.6 \(when possible\) [\#566](https://github.com/liip/LiipImagineBundle/pull/566) ([adam187](https://github.com/adam187))
 
 ## [1.2.7](https://github.com/liip/LiipImagineBundle/tree/1.2.7) (2015-06-02)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.2.6...1.2.7)
 
 - Make AwsS3Resolver compatible with SDK v3 [\#605](https://github.com/liip/LiipImagineBundle/pull/605) ([cdaguerre](https://github.com/cdaguerre))
-- __\[Doc\]__ Add missing coma and fix indentation in README.md [\#604](https://github.com/liip/LiipImagineBundle/pull/604) ([grena](https://github.com/grena))
+- \[Doc\] Add missing coma and fix indentation in README.md [\#604](https://github.com/liip/LiipImagineBundle/pull/604) ([grena](https://github.com/grena))
 - Removed TransformerInterface [\#603](https://github.com/liip/LiipImagineBundle/pull/603) ([rvanlaarhoven](https://github.com/rvanlaarhoven))
 - remove duplicate parameter [\#601](https://github.com/liip/LiipImagineBundle/pull/601) ([ip512](https://github.com/ip512))
 - Fix typo [\#600](https://github.com/liip/LiipImagineBundle/pull/600) ([hpatoio](https://github.com/hpatoio))
+- Check $filters is an array [\#596](https://github.com/liip/LiipImagineBundle/pull/596) ([trsteel88](https://github.com/trsteel88))
 - Adding details to use the bundle with remote images [\#569](https://github.com/liip/LiipImagineBundle/pull/569) ([flug](https://github.com/flug))
 
 ## [1.2.6](https://github.com/liip/LiipImagineBundle/tree/1.2.6) (2015-04-24)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.2.5...1.2.6)
 
-- Check $filters is an array [\#596](https://github.com/liip/LiipImagineBundle/pull/596) ([trsteel88](https://github.com/trsteel88))
-
 ## [1.2.5](https://github.com/liip/LiipImagineBundle/tree/1.2.5) (2015-04-08)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.2.4...1.2.5)
 
 - Add image rotate filter [\#588](https://github.com/liip/LiipImagineBundle/pull/588) ([bocharsky-bw](https://github.com/bocharsky-bw))
@@ -311,12 +390,14 @@ for a given releases. Unreleased, upcoming changes will be updated here periodic
 - Fix typos [\#580](https://github.com/liip/LiipImagineBundle/pull/580) ([bicpi](https://github.com/bicpi))
 
 ## [1.2.4](https://github.com/liip/LiipImagineBundle/tree/1.2.4) (2015-03-27)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.2.3...1.2.4)
 
 - Update how missing filters are logged [\#579](https://github.com/liip/LiipImagineBundle/pull/579) ([trsteel88](https://github.com/trsteel88))
 - use isDefined method for OptionsResolver instead of isKnown  \(when possible\) [\#567](https://github.com/liip/LiipImagineBundle/pull/567) ([adam187](https://github.com/adam187))
 
 ## [1.2.3](https://github.com/liip/LiipImagineBundle/tree/1.2.3) (2015-02-22)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.2.2...1.2.3)
 
 - fix invalid in\_array [\#565](https://github.com/liip/LiipImagineBundle/pull/565) ([digitalkaoz](https://github.com/digitalkaoz))
@@ -330,40 +411,47 @@ for a given releases. Unreleased, upcoming changes will be updated here periodic
 - Add support for the new quality options [\#473](https://github.com/liip/LiipImagineBundle/pull/473) ([patrickli](https://github.com/patrickli))
 
 ## [1.2.2](https://github.com/liip/LiipImagineBundle/tree/1.2.2) (2015-01-08)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.2.1...1.2.2)
 
 - Update the filter\_sets Documentation about removed configurations [\#543](https://github.com/liip/LiipImagineBundle/pull/543) ([mbiagetti](https://github.com/mbiagetti))
 - implement interlace filter [\#503](https://github.com/liip/LiipImagineBundle/pull/503) ([wodka](https://github.com/wodka))
 
 ## [1.2.1](https://github.com/liip/LiipImagineBundle/tree/1.2.1) (2014-12-10)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.2.0...1.2.1)
 
 - argument to s3 resolver prototype definition has been added [\#536](https://github.com/liip/LiipImagineBundle/pull/536) ([ruslan-polutsygan](https://github.com/ruslan-polutsygan))
 
 ## [1.2.0](https://github.com/liip/LiipImagineBundle/tree/1.2.0) (2014-12-10)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.1.1...1.2.0)
 
 - S3 resolver put options [\#535](https://github.com/liip/LiipImagineBundle/pull/535) ([ruslan-polutsygan](https://github.com/ruslan-polutsygan))
 - Fixed minor PHPDoc [\#528](https://github.com/liip/LiipImagineBundle/pull/528) ([sdaoudi](https://github.com/sdaoudi))
 
 ## [1.1.1](https://github.com/liip/LiipImagineBundle/tree/1.1.1) (2014-11-12)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.1.0...1.1.1)
 
 - Fix crash when no post processor is defined [\#526](https://github.com/liip/LiipImagineBundle/pull/526) ([lolautruche](https://github.com/lolautruche))
 - WebPathResolver - sanitize URL to directory name [\#480](https://github.com/liip/LiipImagineBundle/pull/480) ([teohhanhui](https://github.com/teohhanhui))
 
 ## [1.1.0](https://github.com/liip/LiipImagineBundle/tree/1.1.0) (2014-10-29)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.0.8...1.1.0)
 
 - Post-processors - handlers to be applied on filtered image binary [\#519](https://github.com/liip/LiipImagineBundle/pull/519) ([kostiklv](https://github.com/kostiklv))
 
 ## [1.0.8](https://github.com/liip/LiipImagineBundle/tree/1.0.8) (2014-10-22)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.0.7...1.0.8)
 
 - Delete АГГЗ.jpeg [\#515](https://github.com/liip/LiipImagineBundle/pull/515) ([ndoulgeridis](https://github.com/ndoulgeridis))
 - Update configuration.md [\#513](https://github.com/liip/LiipImagineBundle/pull/513) ([hugohenrique](https://github.com/hugohenrique))
 
 ## [1.0.7](https://github.com/liip/LiipImagineBundle/tree/1.0.7) (2014-10-18)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.0.6...1.0.7)
 
 - fix tests, upgrade phpunit up to 4.3 [\#511](https://github.com/liip/LiipImagineBundle/pull/511) ([makasim](https://github.com/makasim))
@@ -373,11 +461,13 @@ for a given releases. Unreleased, upcoming changes will be updated here periodic
 - Support custom output format for each filter set [\#477](https://github.com/liip/LiipImagineBundle/pull/477) ([teohhanhui](https://github.com/teohhanhui))
 
 ## [1.0.6](https://github.com/liip/LiipImagineBundle/tree/1.0.6) (2014-09-17)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.0.5...1.0.6)
 
 - Fix GridFSLoader [\#461](https://github.com/liip/LiipImagineBundle/pull/461) ([aldeck](https://github.com/aldeck))
 
 ## [1.0.5](https://github.com/liip/LiipImagineBundle/tree/1.0.5) (2014-09-15)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.0.4...1.0.5)
 
 - check if runtimeconfig path is stored [\#498](https://github.com/liip/LiipImagineBundle/pull/498) ([trsteel88](https://github.com/trsteel88))
@@ -387,11 +477,13 @@ for a given releases. Unreleased, upcoming changes will be updated here periodic
 - support animated gif [\#466](https://github.com/liip/LiipImagineBundle/pull/466) ([scuben](https://github.com/scuben))
 
 ## [1.0.4](https://github.com/liip/LiipImagineBundle/tree/1.0.4) (2014-07-30)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.0.3...1.0.4)
 
 - Update WebPathResolverFactory.php [\#467](https://github.com/liip/LiipImagineBundle/pull/467) ([JJK801](https://github.com/JJK801))
 
 ## [1.0.3](https://github.com/liip/LiipImagineBundle/tree/1.0.3) (2014-07-30)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.0.2...1.0.3)
 
 - Fixing issue with removed class Color [\#458](https://github.com/liip/LiipImagineBundle/pull/458) ([lstrojny](https://github.com/lstrojny))
@@ -399,31 +491,58 @@ for a given releases. Unreleased, upcoming changes will be updated here periodic
 - make the Bundle compatible with config:dump-reference command [\#452](https://github.com/liip/LiipImagineBundle/pull/452) ([lsmith77](https://github.com/lsmith77))
 
 ## [1.0.2](https://github.com/liip/LiipImagineBundle/tree/1.0.2) (2014-06-24)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.0.1...1.0.2)
 
 - Update README.md [\#447](https://github.com/liip/LiipImagineBundle/pull/447) ([sgaze](https://github.com/sgaze))
 - Update configuration.md [\#446](https://github.com/liip/LiipImagineBundle/pull/446) ([sgaze](https://github.com/sgaze))
 
 ## [1.0.1](https://github.com/liip/LiipImagineBundle/tree/1.0.1) (2014-06-06)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.0.0...1.0.1)
 
-- __\[stream\]__ throws exception when content cannot be read. [\#444](https://github.com/liip/LiipImagineBundle/pull/444) ([makasim](https://github.com/makasim))
+- \[stream\] throws exception when content cannot be read. [\#444](https://github.com/liip/LiipImagineBundle/pull/444) ([makasim](https://github.com/makasim))
 - remove unused use-statement and fix phpdoc [\#441](https://github.com/liip/LiipImagineBundle/pull/441) ([UFOMelkor](https://github.com/UFOMelkor))
 
 ## [1.0.0](https://github.com/liip/LiipImagineBundle/tree/1.0.0) (2014-05-22)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.0.0-alpha7...1.0.0)
 
+- \[router\] remove custom route loader. [\#425](https://github.com/liip/LiipImagineBundle/pull/425) ([makasim](https://github.com/makasim))
 - added possibility to use imagine new metadata api [\#413](https://github.com/liip/LiipImagineBundle/pull/413) ([digitalkaoz](https://github.com/digitalkaoz))
+- Add a Signer Utility to sign filters, run php-cs-fixer on bundle [\#405](https://github.com/liip/LiipImagineBundle/pull/405) ([trsteel88](https://github.com/trsteel88))
+- \[config\] correctly process resolvers\loaders section if not array or null [\#396](https://github.com/liip/LiipImagineBundle/pull/396) ([makasim](https://github.com/makasim))
+- Issue\#368 wrong image path [\#395](https://github.com/liip/LiipImagineBundle/pull/395) ([serdyuka](https://github.com/serdyuka))
+- \[WIP\] Added resolve events to cache manager [\#388](https://github.com/liip/LiipImagineBundle/pull/388) ([serdyuka](https://github.com/serdyuka))
+- \[1.0\]\[config\] Fix default loader not found bug. [\#385](https://github.com/liip/LiipImagineBundle/pull/385) ([makasim](https://github.com/makasim))
+- Cli command to resolve cache [\#379](https://github.com/liip/LiipImagineBundle/pull/379) ([serdyuka](https://github.com/serdyuka))
+- Merge latest changes in master to develop branch  [\#334](https://github.com/liip/LiipImagineBundle/pull/334) ([makasim](https://github.com/makasim))
+- \[1.0\]\[Configuration\] Cleanup bundle configuration. [\#325](https://github.com/liip/LiipImagineBundle/pull/325) ([makasim](https://github.com/makasim))
+- \[1.0\]\[resolver\] Decouple WebPathResolver from http request. Simplify its logic. [\#320](https://github.com/liip/LiipImagineBundle/pull/320) ([makasim](https://github.com/makasim))
+- added background\_image filter [\#319](https://github.com/liip/LiipImagineBundle/pull/319) ([digitalkaoz](https://github.com/digitalkaoz))
+- \[1.0\]\[filter\] Dynamic filters [\#313](https://github.com/liip/LiipImagineBundle/pull/313) ([makasim](https://github.com/makasim))
+- \[1.0\]\[cache\] CacheResolver has to cache isStored method too. [\#308](https://github.com/liip/LiipImagineBundle/pull/308) ([makasim](https://github.com/makasim))
+- \[1.0\]\[cache\]\[resolver\] Improve caches invalidation. [\#304](https://github.com/liip/LiipImagineBundle/pull/304) ([makasim](https://github.com/makasim))
+- \[1.0\]\[cache\] cache manager has to use isStored inside getBrowserPath method [\#303](https://github.com/liip/LiipImagineBundle/pull/303) ([makasim](https://github.com/makasim))
+- \[1.0\]\[CacheResolver\] Use binary on store method call. [\#301](https://github.com/liip/LiipImagineBundle/pull/301) ([makasim](https://github.com/makasim))
+- \[1.0\] Rework data loaders. Introduce mime type guesser.  [\#291](https://github.com/liip/LiipImagineBundle/pull/291) ([makasim](https://github.com/makasim))
+- \[1.0\]\[tests\] increase code coverage by tests. [\#290](https://github.com/liip/LiipImagineBundle/pull/290) ([makasim](https://github.com/makasim))
+- \[1.0\]\[Logger\] use PSR one logger [\#286](https://github.com/liip/LiipImagineBundle/pull/286) ([makasim](https://github.com/makasim))
+- \[1.0\]\[CacheResolver\] Resolver get rid of get browser path [\#284](https://github.com/liip/LiipImagineBundle/pull/284) ([makasim](https://github.com/makasim))
+- \[tests\] use real amazon libs in tests. [\#283](https://github.com/liip/LiipImagineBundle/pull/283) ([makasim](https://github.com/makasim))
+- \[1.0\]\[resolver\] do not expose `targetPath` [\#282](https://github.com/liip/LiipImagineBundle/pull/282) ([makasim](https://github.com/makasim))
+- \[1.0\]\[resolver\] remove request parameter [\#281](https://github.com/liip/LiipImagineBundle/pull/281) ([makasim](https://github.com/makasim))
 
 ## [1.0.0-alpha7](https://github.com/liip/LiipImagineBundle/tree/1.0.0-alpha7) (2014-05-22)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.0.0-alpha6...1.0.0-alpha7)
 
 ## [1.0.0-alpha6](https://github.com/liip/LiipImagineBundle/tree/1.0.0-alpha6) (2014-05-05)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.0.0-alpha5...1.0.0-alpha6)
 
-- __\[router\]__ remove custom route loader. [\#425](https://github.com/liip/LiipImagineBundle/pull/425) ([makasim](https://github.com/makasim))
-
 ## [1.0.0-alpha5](https://github.com/liip/LiipImagineBundle/tree/1.0.0-alpha5) (2014-04-29)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.0.0-alpha4...1.0.0-alpha5)
 
 - added scrutinizer config [\#420](https://github.com/liip/LiipImagineBundle/pull/420) ([digitalkaoz](https://github.com/digitalkaoz))
@@ -431,111 +550,105 @@ for a given releases. Unreleased, upcoming changes will be updated here periodic
 - increase test coverage report [\#417](https://github.com/liip/LiipImagineBundle/pull/417) ([digitalkaoz](https://github.com/digitalkaoz))
 - enabled symfony 2.4 on travis [\#416](https://github.com/liip/LiipImagineBundle/pull/416) ([digitalkaoz](https://github.com/digitalkaoz))
 - Update configuration.md [\#410](https://github.com/liip/LiipImagineBundle/pull/410) ([ama3ing](https://github.com/ama3ing))
-- __\[ci\]__ run tests only on 2.3 version. [\#407](https://github.com/liip/LiipImagineBundle/pull/407) ([makasim](https://github.com/makasim))
+- \[ci\] run tests only on 2.3 version. [\#407](https://github.com/liip/LiipImagineBundle/pull/407) ([makasim](https://github.com/makasim))
 - Watermark filter documentation update. Fixes \#404 [\#406](https://github.com/liip/LiipImagineBundle/pull/406) ([ama3ing](https://github.com/ama3ing))
 - Fixes \#373. Replace NotFoundHttpException with SourceNotFoundException [\#403](https://github.com/liip/LiipImagineBundle/pull/403) ([ama3ing](https://github.com/ama3ing))
 - Removed unreachable statement [\#402](https://github.com/liip/LiipImagineBundle/pull/402) ([ama3ing](https://github.com/ama3ing))
 - Fix of \#369 \(Trim of forwarding slash in path\) [\#401](https://github.com/liip/LiipImagineBundle/pull/401) ([ama3ing](https://github.com/ama3ing))
 
 ## [1.0.0-alpha4](https://github.com/liip/LiipImagineBundle/tree/1.0.0-alpha4) (2014-04-14)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.0.0-alpha3...1.0.0-alpha4)
 
-- __\[config\]__ correctly process resolvers\loaders section if not array or null [\#396](https://github.com/liip/LiipImagineBundle/pull/396) ([makasim](https://github.com/makasim))
-- Issue\#368 wrong image path [\#395](https://github.com/liip/LiipImagineBundle/pull/395) ([serdyuka](https://github.com/serdyuka))
-
 ## [1.0.0-alpha3](https://github.com/liip/LiipImagineBundle/tree/1.0.0-alpha3) (2014-04-14)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.0.0-alpha2...1.0.0-alpha3)
 
 - Added proxy to aws s3 resolver factory [\#392](https://github.com/liip/LiipImagineBundle/pull/392) ([serdyuka](https://github.com/serdyuka))
 
 ## [1.0.0-alpha2](https://github.com/liip/LiipImagineBundle/tree/1.0.0-alpha2) (2014-04-10)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/1.0.0-alpha1...1.0.0-alpha2)
 
 - Documentation update fixes \#389 [\#390](https://github.com/liip/LiipImagineBundle/pull/390) ([ama3ing](https://github.com/ama3ing))
-- Added resolve events to cache manager [\#388](https://github.com/liip/LiipImagineBundle/pull/388) ([serdyuka](https://github.com/serdyuka))
 
 ## [1.0.0-alpha1](https://github.com/liip/LiipImagineBundle/tree/1.0.0-alpha1) (2014-04-07)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.21.1...1.0.0-alpha1)
 
 - Remove cli command [\#387](https://github.com/liip/LiipImagineBundle/pull/387) ([serdyuka](https://github.com/serdyuka))
 - fixed and improved tests for resolve cache command [\#386](https://github.com/liip/LiipImagineBundle/pull/386) ([serdyuka](https://github.com/serdyuka))
-- __\[1.0\]__\[config\] Fix default loader not found bug. [\#385](https://github.com/liip/LiipImagineBundle/pull/385) ([makasim](https://github.com/makasim))
 - Resolve command few paths [\#383](https://github.com/liip/LiipImagineBundle/pull/383) ([serdyuka](https://github.com/serdyuka))
 - Move data loaders to binary folder [\#382](https://github.com/liip/LiipImagineBundle/pull/382) ([serdyuka](https://github.com/serdyuka))
 - Documentation for cli command [\#380](https://github.com/liip/LiipImagineBundle/pull/380) ([serdyuka](https://github.com/serdyuka))
-- Cli command to resolve cache [\#379](https://github.com/liip/LiipImagineBundle/pull/379) ([serdyuka](https://github.com/serdyuka))
 - Update README.md [\#374](https://github.com/liip/LiipImagineBundle/pull/374) ([daslicht](https://github.com/daslicht))
-- __\[1.0\]__\[loader\] cleanup filesystem loader, simplify logic, add factory. [\#371](https://github.com/liip/LiipImagineBundle/pull/371) ([makasim](https://github.com/makasim))
-- __\[1.0\]__\[aws-resolver\] allow configure cache\_prefix via factory. [\#370](https://github.com/liip/LiipImagineBundle/pull/370) ([makasim](https://github.com/makasim))
-- __\[1.0\]__ set web\_path resolver as default if not configured. [\#367](https://github.com/liip/LiipImagineBundle/pull/367) ([makasim](https://github.com/makasim))
-- __\[1.0\]__\[Config\] remove path option. [\#366](https://github.com/liip/LiipImagineBundle/pull/366) ([makasim](https://github.com/makasim))
+- \[1.0\]\[loader\] cleanup filesystem loader, simplify logic, add factory. [\#371](https://github.com/liip/LiipImagineBundle/pull/371) ([makasim](https://github.com/makasim))
+- \[1.0\]\[aws-resolver\] allow configure cache\_prefix via factory. [\#370](https://github.com/liip/LiipImagineBundle/pull/370) ([makasim](https://github.com/makasim))
+- \[1.0\] set web\_path resolver as default if not configured. [\#367](https://github.com/liip/LiipImagineBundle/pull/367) ([makasim](https://github.com/makasim))
+- \[1.0\]\[Config\] remove path option. [\#366](https://github.com/liip/LiipImagineBundle/pull/366) ([makasim](https://github.com/makasim))
 - Fixed yaml code block on stream loader documentation [\#363](https://github.com/liip/LiipImagineBundle/pull/363) ([rvanlaarhoven](https://github.com/rvanlaarhoven))
-- __\[1.0\]__\[WebResolver\] Use baseUrl and port while generating image path. [\#362](https://github.com/liip/LiipImagineBundle/pull/362) ([makasim](https://github.com/makasim))
+- \[1.0\]\[WebResolver\] Use baseUrl and port while generating image path. [\#362](https://github.com/liip/LiipImagineBundle/pull/362) ([makasim](https://github.com/makasim))
 - Removed cache\_clearer documentation [\#359](https://github.com/liip/LiipImagineBundle/pull/359) ([rvanlaarhoven](https://github.com/rvanlaarhoven))
 - CacheManager updated [\#355](https://github.com/liip/LiipImagineBundle/pull/355) ([ossinkine](https://github.com/ossinkine))
 - FilesystemLoader updated [\#354](https://github.com/liip/LiipImagineBundle/pull/354) ([ossinkine](https://github.com/ossinkine))
 - Update filters.md [\#346](https://github.com/liip/LiipImagineBundle/pull/346) ([zazoomauro](https://github.com/zazoomauro))
 
 ## [v0.21.1](https://github.com/liip/LiipImagineBundle/tree/v0.21.1) (2014-03-14)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.21.0...v0.21.1)
 
 ## [v0.21.0](https://github.com/liip/LiipImagineBundle/tree/v0.21.0) (2014-03-14)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.20.2...v0.21.0)
 
 - Added reference on how to get image path inside a controller [\#340](https://github.com/liip/LiipImagineBundle/pull/340) ([ama3ing](https://github.com/ama3ing))
-- __\[1.0\]__ add phpunit as require-dev [\#339](https://github.com/liip/LiipImagineBundle/pull/339) ([makasim](https://github.com/makasim))
-- __\[1.0\]__ Twig helper not escape filter url [\#337](https://github.com/liip/LiipImagineBundle/pull/337) ([makasim](https://github.com/makasim))
+- \[1.0\] add phpunit as require-dev [\#339](https://github.com/liip/LiipImagineBundle/pull/339) ([makasim](https://github.com/makasim))
+- \[1.0\] Twig helper not escape filter url [\#337](https://github.com/liip/LiipImagineBundle/pull/337) ([makasim](https://github.com/makasim))
 - Added cache clearing & setting cachePrefix for Aws S3 [\#336](https://github.com/liip/LiipImagineBundle/pull/336) ([rvanlaarhoven](https://github.com/rvanlaarhoven))
-- Merge latest changes in master to develop branch  [\#334](https://github.com/liip/LiipImagineBundle/pull/334) ([makasim](https://github.com/makasim))
 - Update to Imagine 0.6 [\#330](https://github.com/liip/LiipImagineBundle/pull/330) ([vlastv](https://github.com/vlastv))
-- __\[1.0\]__\[Configuration\] Cleanup bundle configuration. [\#325](https://github.com/liip/LiipImagineBundle/pull/325) ([makasim](https://github.com/makasim))
-- __\[1.0\]__\[filter\] Dynamic filters [\#313](https://github.com/liip/LiipImagineBundle/pull/313) ([makasim](https://github.com/makasim))
 
 ## [v0.20.2](https://github.com/liip/LiipImagineBundle/tree/v0.20.2) (2014-02-20)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.20.1...v0.20.2)
 
 - GridFSLoader Bug [\#331](https://github.com/liip/LiipImagineBundle/pull/331) ([peterrehm](https://github.com/peterrehm))
 - Update filters.md [\#327](https://github.com/liip/LiipImagineBundle/pull/327) ([herb123456](https://github.com/herb123456))
 
 ## [v0.20.1](https://github.com/liip/LiipImagineBundle/tree/v0.20.1) (2014-02-10)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.20.0...v0.20.1)
 
 - fixed ProxyResolver-\>getBrowserPath [\#323](https://github.com/liip/LiipImagineBundle/pull/323) ([digitalkaoz](https://github.com/digitalkaoz))
 
 ## [v0.20.0](https://github.com/liip/LiipImagineBundle/tree/v0.20.0) (2014-02-07)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.19.0...v0.20.0)
 
-- __\[1.0\]__\[resolver\] Decouple WebPathResolver from http request. Simplify its logic. [\#320](https://github.com/liip/LiipImagineBundle/pull/320) ([makasim](https://github.com/makasim))
 - added proxy cache resolver [\#318](https://github.com/liip/LiipImagineBundle/pull/318) ([digitalkaoz](https://github.com/digitalkaoz))
 
 ## [v0.19.0](https://github.com/liip/LiipImagineBundle/tree/v0.19.0) (2014-02-07)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.18.0...v0.19.0)
 
 - improved exception on generation failure [\#321](https://github.com/liip/LiipImagineBundle/pull/321) ([digitalkaoz](https://github.com/digitalkaoz))
-- __\[1.0\]__ Fix tests on current develop branch [\#316](https://github.com/liip/LiipImagineBundle/pull/316) ([makasim](https://github.com/makasim))
+- \[1.0\] Fix tests on current develop branch [\#316](https://github.com/liip/LiipImagineBundle/pull/316) ([makasim](https://github.com/makasim))
 
 ## [v0.18.0](https://github.com/liip/LiipImagineBundle/tree/v0.18.0) (2014-01-29)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.17.1...v0.18.0)
 
 - added an "auto\_rotate" filter based on exif data [\#254](https://github.com/liip/LiipImagineBundle/pull/254) ([digitalkaoz](https://github.com/digitalkaoz))
 
 ## [v0.17.1](https://github.com/liip/LiipImagineBundle/tree/v0.17.1) (2014-01-24)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.17.0...v0.17.1)
 
 - fixed missing namespace [\#306](https://github.com/liip/LiipImagineBundle/pull/306) ([digitalkaoz](https://github.com/digitalkaoz))
-- __\[1.0\]__\[cache\] cache manager has to use isStored inside getBrowserPath method [\#303](https://github.com/liip/LiipImagineBundle/pull/303) ([makasim](https://github.com/makasim))
-- __\[1.0\]__\[CacheResolver\] Use binary on store method call. [\#301](https://github.com/liip/LiipImagineBundle/pull/301) ([makasim](https://github.com/makasim))
-- __\[1.0\]__\[filter-manager\] make use of binary object. [\#297](https://github.com/liip/LiipImagineBundle/pull/297) ([makasim](https://github.com/makasim))
-- __\[1.0\]__\[loader\] remove deprecated phpcr loader [\#292](https://github.com/liip/LiipImagineBundle/pull/292) ([makasim](https://github.com/makasim))
-- __\[1.0\]__ Rework data loaders. Introduce mime type guesser.  [\#291](https://github.com/liip/LiipImagineBundle/pull/291) ([makasim](https://github.com/makasim))
-- __\[1.0\]__\[tests\] increase code coverage by tests. [\#290](https://github.com/liip/LiipImagineBundle/pull/290) ([makasim](https://github.com/makasim))
-- __\[1.0\]__\[Logger\] use PSR one logger [\#286](https://github.com/liip/LiipImagineBundle/pull/286) ([makasim](https://github.com/makasim))
-- __\[1.0\]__\[CacheResolver\] Resolver get rid of get browser path [\#284](https://github.com/liip/LiipImagineBundle/pull/284) ([makasim](https://github.com/makasim))
-- __\[tests\]__ use real amazon libs in tests. [\#283](https://github.com/liip/LiipImagineBundle/pull/283) ([makasim](https://github.com/makasim))
-- __\[1.0\]__\[resolver\] do not expose `targetPath` [\#282](https://github.com/liip/LiipImagineBundle/pull/282) ([makasim](https://github.com/makasim))
-- __\[1.0\]__\[resolver\] remove request parameter [\#281](https://github.com/liip/LiipImagineBundle/pull/281) ([makasim](https://github.com/makasim))
+- \[1.0\]\[filter-manager\] make use of binary object. [\#297](https://github.com/liip/LiipImagineBundle/pull/297) ([makasim](https://github.com/makasim))
+- \[1.0\]\[loader\] remove deprecated phpcr loader [\#292](https://github.com/liip/LiipImagineBundle/pull/292) ([makasim](https://github.com/makasim))
 
 ## [v0.17.0](https://github.com/liip/LiipImagineBundle/tree/v0.17.0) (2013-12-04)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.16.0...v0.17.0)
 
 - handle image extensions in doctrine loader [\#276](https://github.com/liip/LiipImagineBundle/pull/276) ([dbu](https://github.com/dbu))
@@ -545,16 +658,18 @@ for a given releases. Unreleased, upcoming changes will be updated here periodic
 - Add comment for image parameter in watermark filter configuration exampl... [\#263](https://github.com/liip/LiipImagineBundle/pull/263) ([USvER](https://github.com/USvER))
 
 ## [v0.16.0](https://github.com/liip/LiipImagineBundle/tree/v0.16.0) (2013-09-30)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.15.1...v0.16.0)
 
 - Add Upscale filter [\#248](https://github.com/liip/LiipImagineBundle/pull/248) ([maximecolin](https://github.com/maximecolin))
-
-## [v0.15.1](https://github.com/liip/LiipImagineBundle/tree/v0.15.1) (2013-09-20)
-[Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.15.0...v0.15.1)
-
 - Set ContentType of AWS cache object [\#246](https://github.com/liip/LiipImagineBundle/pull/246) ([eXtreme](https://github.com/eXtreme))
 
+## [v0.15.1](https://github.com/liip/LiipImagineBundle/tree/v0.15.1) (2013-09-20)
+
+[Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.15.0...v0.15.1)
+
 ## [v0.15.0](https://github.com/liip/LiipImagineBundle/tree/v0.15.0) (2013-09-18)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.14.0...v0.15.0)
 
 - deprecate the phpcr loader as CmfMediaBundle provides a better one now. [\#243](https://github.com/liip/LiipImagineBundle/pull/243) ([dbu](https://github.com/dbu))
@@ -562,47 +677,55 @@ for a given releases. Unreleased, upcoming changes will be updated here periodic
 - Corrected aws-sdk-php link [\#233](https://github.com/liip/LiipImagineBundle/pull/233) ([javiacei](https://github.com/javiacei))
 
 ## [v0.14.0](https://github.com/liip/LiipImagineBundle/tree/v0.14.0) (2013-08-21)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.13.0...v0.14.0)
 
 - add AwsS3Resolver for new SDK version [\#227](https://github.com/liip/LiipImagineBundle/pull/227) ([havvg](https://github.com/havvg))
 
 ## [v0.13.0](https://github.com/liip/LiipImagineBundle/tree/v0.13.0) (2013-08-19)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.12.0...v0.13.0)
 
 - Watermark loader [\#222](https://github.com/liip/LiipImagineBundle/pull/222) ([KingCrunch](https://github.com/KingCrunch))
 
 ## [v0.12.0](https://github.com/liip/LiipImagineBundle/tree/v0.12.0) (2013-08-19)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.11.1...v0.12.0)
 
 - Update dependency 'imagine/imagine' to 0.5.\* [\#221](https://github.com/liip/LiipImagineBundle/pull/221) ([KingCrunch](https://github.com/KingCrunch))
 
 ## [v0.11.1](https://github.com/liip/LiipImagineBundle/tree/v0.11.1) (2013-08-05)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.11.0...v0.11.1)
 
 - added documentation on inset and outbound modes of thumbnail filter Documentation \(issue \#207\) [\#210](https://github.com/liip/LiipImagineBundle/pull/210) ([rjbijl](https://github.com/rjbijl))
+- Thumbnail filter was not applied when allow\_upscale=true and one dimensi... [\#200](https://github.com/liip/LiipImagineBundle/pull/200) ([teohhanhui](https://github.com/teohhanhui))
 
 ## [v0.11.0](https://github.com/liip/LiipImagineBundle/tree/v0.11.0) (2013-06-21)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.10.1...v0.11.0)
 
 - Add link filter [\#201](https://github.com/liip/LiipImagineBundle/pull/201) ([EmmanuelVella](https://github.com/EmmanuelVella))
-- Thumbnail filter was not applied when allow\_upscale=true and one dimensi... [\#200](https://github.com/liip/LiipImagineBundle/pull/200) ([teohhanhui](https://github.com/teohhanhui))
 - Add badge poser in README [\#199](https://github.com/liip/LiipImagineBundle/pull/199) ([agiuliano](https://github.com/agiuliano))
 - add docs about allow\_scale of thumbnail filter [\#198](https://github.com/liip/LiipImagineBundle/pull/198) ([havvg](https://github.com/havvg))
 - add documentation on S3 object URL options [\#197](https://github.com/liip/LiipImagineBundle/pull/197) ([havvg](https://github.com/havvg))
+- mkdir\(\) doesn't take care about the umask [\#189](https://github.com/liip/LiipImagineBundle/pull/189) ([KingCrunch](https://github.com/KingCrunch))
 
 ## [v0.10.1](https://github.com/liip/LiipImagineBundle/tree/v0.10.1) (2013-05-29)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.10.0...v0.10.1)
 
-- mkdir\(\) doesn't take care about the umask [\#189](https://github.com/liip/LiipImagineBundle/pull/189) ([KingCrunch](https://github.com/KingCrunch))
 - The quickest PR to review I guess.  [\#188](https://github.com/liip/LiipImagineBundle/pull/188) ([Sydney-o9](https://github.com/Sydney-o9))
 
 ## [v0.10.0](https://github.com/liip/LiipImagineBundle/tree/v0.10.0) (2013-05-17)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.9.4...v0.10.0)
 
 - CacheResolver [\#184](https://github.com/liip/LiipImagineBundle/pull/184) ([havvg](https://github.com/havvg))
 - fix broken tests on windows [\#179](https://github.com/liip/LiipImagineBundle/pull/179) ([kevinarcher](https://github.com/kevinarcher))
 
 ## [v0.9.4](https://github.com/liip/LiipImagineBundle/tree/v0.9.4) (2013-05-14)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.9.3...v0.9.4)
 
 - fix doc of CacheManager::resolve to not lie [\#186](https://github.com/liip/LiipImagineBundle/pull/186) ([dbu](https://github.com/dbu))
@@ -611,11 +734,13 @@ for a given releases. Unreleased, upcoming changes will be updated here periodic
 - Allow symfony 2.3 and greater [\#176](https://github.com/liip/LiipImagineBundle/pull/176) ([tommygnr](https://github.com/tommygnr))
 
 ## [v0.9.3](https://github.com/liip/LiipImagineBundle/tree/v0.9.3) (2013-04-17)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.9.2...v0.9.3)
 
 - add CacheManagerAwareTrait [\#173](https://github.com/liip/LiipImagineBundle/pull/173) ([havvg](https://github.com/havvg))
 
 ## [v0.9.2](https://github.com/liip/LiipImagineBundle/tree/v0.9.2) (2013-04-08)
+
 [Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.9.1...v0.9.2)
 
 - Add background filter [\#171](https://github.com/liip/LiipImagineBundle/pull/171) ([maxbeutel](https://github.com/maxbeutel))
@@ -623,14 +748,18 @@ for a given releases. Unreleased, upcoming changes will be updated here periodic
 - use composer require command [\#160](https://github.com/liip/LiipImagineBundle/pull/160) ([gimler](https://github.com/gimler))
 - Update installation.md [\#159](https://github.com/liip/LiipImagineBundle/pull/159) ([dlondero](https://github.com/dlondero))
 - Update README.md [\#158](https://github.com/liip/LiipImagineBundle/pull/158) ([dlondero](https://github.com/dlondero))
-
-## [v0.9.1](https://github.com/liip/LiipImagineBundle/tree/v0.9.1) (2013-02-20)
-[Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.9.0...v0.9.1)
-
 - added the 'strip' filter [\#152](https://github.com/liip/LiipImagineBundle/pull/152) ([uwej711](https://github.com/uwej711))
 
-## [v0.9.0](https://github.com/liip/LiipImagineBundle/tree/v0.9.0) (2013-02-13)
+## [v0.9.1](https://github.com/liip/LiipImagineBundle/tree/v0.9.1) (2013-02-20)
+
+[Full Changelog](https://github.com/liip/LiipImagineBundle/compare/v0.9.0...v0.9.1)
+
 - add FilterManager::applyFilter [\#150](https://github.com/liip/LiipImagineBundle/pull/150) ([havvg](https://github.com/havvg))
+
+## [v0.9.0](https://github.com/liip/LiipImagineBundle/tree/v0.9.0) (2013-02-13)
+
+[Full Changelog](https://github.com/liip/LiipImagineBundle/compare/371140531ca574af759ef44b8eff5dac43e13df1...v0.9.0)
+
 - add "Introduction" chapter to documentation [\#149](https://github.com/liip/LiipImagineBundle/pull/149) ([havvg](https://github.com/havvg))
 - split documentation and README into chapters [\#148](https://github.com/liip/LiipImagineBundle/pull/148) ([havvg](https://github.com/havvg))
 - Add route options to routing loader [\#138](https://github.com/liip/LiipImagineBundle/pull/138) ([sveriger](https://github.com/sveriger))
